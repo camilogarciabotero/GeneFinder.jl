@@ -3,14 +3,14 @@ include("../helpers.jl")
 
 struct ORF
     start::Int64
-    stop::Int64
+    stop::Int64 
     strand::Char
-    # cds::LongDNA
 end
 
 function findorf(sequence::LongDNA)
     start_codon = ExactSearchQuery(dna"ATG", iscompatible)
-    stop_codon = ExactSearchQuery(dna"TAG", iscompatible)
+    stop_codon = ExactSearchQuery(dna"TAR", iscompatible) # still misson TGA
+    # stop_codon = ExactSearchQuery(dna"TRR", iscompatible)
 
     orfs = Vector{ORF}() # pre-allocate the vector with the appropriate size and then fill it in the loop. 
 
@@ -26,10 +26,11 @@ function findorf(sequence::LongDNA)
         # stoping_stop_idx = map(x -> x.stop, findall(stop_codon, seq))
         stoping_stop_idx = [stop_idx.stop for stop_idx in findall(stop_codon, seq)]
 
+        # combine all starts with the multiple stops creating an Array of all posible UnitRanges
         combinations = _create_pairs(starting_start_idx, stoping_stop_idx)
 
         for i in combinations
-            if length(seq[i]) % 3 == 0 && length(findall(AA_Term, translate(seq[i]))) == 1 
+            if length(seq[i]) % 3 == 0 && length(findall(AA_Term, translate(seq[i]))) == 1
                 # translation = translate(seq[i])
                 orf = ORF(i.start, i.stop, strand) # seq[i]
                 push!(orfs, orf)
@@ -39,11 +40,9 @@ function findorf(sequence::LongDNA)
     return orfs
 end
 
-
 seq = dna"ATGCATGCATGCATGCTAGCTAGCTAGCTAGCTAGTAA"
 
-
-@time findorf(anotherseq)
+@time findorf(seq)
 
 for i in findorf(seq)
     println(translate(i.cds))
