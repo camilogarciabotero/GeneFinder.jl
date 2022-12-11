@@ -42,14 +42,41 @@ end
 
 seq = dna"ATGCATGCATGCATGCTAGCTAGCTAGCTAGCTAGTAA"
 
-@time findorf(seq)
+# @time findorf(seq)
 
-for i in findorf(seq)
-    println(translate(i.cds))
-end
+# for i in findorf(seq)
+#     println(translate(i.cds))
+# end
 
 
 # start_idxs = findall(start_codon, seq)
 # stop_idxs = findall(stop_codon, seq)
 # starting_start_idx = collect(map(x -> x.start, start_idxs))
 # stoping_stop_idx = collect(map(x -> x.stop, stop_idxs))
+
+# struct CDS
+#     orf::ORF
+#     sequence::LongDNA
+# end
+
+function findcds(sequence::LongDNA)
+    orfs = findorf(sequence)
+    seqs = Vector{LongDNA}()
+    for i in orfs
+        if i.strand == '-'
+            cds = reverse_complement(sequence[i.start:i.stop])
+        else
+            cds = sequence[i.start:i.stop]
+        end
+        push!(seqs, cds)
+    end
+    return seqs
+end
+
+findcds(seq)
+
+
+
+# function findproteins(sequence::LongDNA)
+    
+# end

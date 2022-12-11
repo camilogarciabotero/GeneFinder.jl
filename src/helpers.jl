@@ -10,7 +10,6 @@ function _create_pairs(starts::Vector, stops::Vector)
     return combination
 end
 
-
 ## This function create unique pairs while having all the starts fixed
 # function _create_pairs(starts::Vector, stops::Vector)
 #     combination = Dict{Int, UnitRange}()
@@ -28,5 +27,4 @@ end
 # stops = [2, 4, 6, 8]
 
 # _create_pairs(starts,stops)
-
 
