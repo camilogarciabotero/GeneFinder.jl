@@ -10,7 +10,6 @@ function _create_pairs(starts::Vector, stops::Vector)
     return combination
 end
 
-#starts ∉ (starts -> starts.start, combination)
 
 # This function create unique pairs while having all the starts fixed
 # function _create_pairs(starts::Vector, stops::Vector)
@@ -24,11 +23,6 @@ end
 #     end
 #     return sort(collect(values(combination)), by=x -> x.start)
 # end
-
-# starts = [1, 1, 3, 5,1, 7]
-# stops = [2, 4, 6, 8]
-
-# _create_pairs(starts,stops)
 
 
 # function count_codons(seq::LongDNA)

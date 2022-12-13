@@ -1,4 +1,5 @@
 using BioSequences
+
 struct ORF
     start::Int64
     stop::Int64 
@@ -6,9 +7,9 @@ struct ORF
 end
 
 const startcodon = dna"ATG"
+const stopcodons = [dna"TAG", dna"TAA", dna"TGA"]
 
 function simplefinder(sequence::LongDNA)
-    stopcodons = [dna"TAG", dna"TAA", dna"TGA"]
     orfs = Vector{ORF}()
     for strand in ['+', '-']
         if strand == '-'
@@ -21,7 +22,7 @@ function simplefinder(sequence::LongDNA)
             if seq[i:i+2] == startcodon
                 orf = nothing
                 j = i
-                while j < length(seq) - 3 && seq[j:j+2] ∉ stopcodons #biore"TAG|TGA|TAA"d # !isstop(dna[j:j+2])
+                while j < length(seq) - 3 && seq[j:j+2] ∉ stopcodons
                     orf = ORF(i,  j + 5, strand)
                     j+=3
                 end
@@ -33,21 +34,3 @@ function simplefinder(sequence::LongDNA)
     end
     return orfs
 end
-
-# seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-
-# @time findorf(anotherseq)
-
-# for i in findorf(seq)
-#     println(seq[i.start:i.stop])
-# end
-
-
-
-# function isstop(dna::LongDNA)
-#     return dna == dna"TAA" || dna == dna"TGA" || dna == dna"TAG"
-# end
-
-# string = "ATCA"
-
-# ls = LongSequence{DNAAlphabet{2}}(string)
