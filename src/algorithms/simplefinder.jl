@@ -1,4 +1,13 @@
 using BioSequences
+
+"""
+    struct ORF
+        position::UnitRange{Int64}
+        strand::Char
+    end
+
+The ORF struct represents an open reading frame in a DNA sequence. It has two fields: position, which is a UnitRange{Int64} indicating the start and end positions of the ORF in the sequence, and strand, which is a Char indicating whether the ORF is on the forward ('+') or reverse ('-') strand of the sequence.
+"""
 struct ORF
     position::UnitRange{Int64}
     strand::Char
@@ -6,7 +15,27 @@ end
 
 const stopcodons = [dna"TAG", dna"TAA", dna"TGA"]
 
-function simplefinder(sequence::LongDNA; orfsize::Int64=12)
+"""
+    simplefinder(sequence::LongDNA)
+
+The simplest algorithm that finds ORFs in a DNA sequence.
+
+The simplefinder function takes a LongDNA sequence and returns a Vector{ORF} containing the ORFs found in the sequence. It searches the sequence for start codons (ATG) and stops when it finds a stop codon (TAG, TAA, or TGA), adding each ORF it finds to the vector. The function also searches the reverse complement of the sequence, so it finds ORFs on both strands.
+
+# Examples
+```jldoctest
+julia> seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA";
+
+julia> simplefinder(seq)
+5-element Vector{ORF}:
+ ORF(1:33, '+')
+ ORF(4:33, '+')
+ ORF(8:22, '+')
+ ORF(12:29, '+')
+ ORF(16:33, '+')
+```
+"""
+function simplefinder(sequence::LongDNA)
     orfs = Vector{ORF}()
     for strand in ['+', '-']
         seq = strand == '-' ? reverse_complement(sequence) : sequence
