@@ -16,7 +16,6 @@ function simplefinder(sequence::LongDNA; orfsize::Int64=12)
 
         for i in start_codon_indices
             orf = nothing
-
             j = i.start
             while j < length(seq) - 3
                 if seq[j:j+2] in stopcodons && orf != nothing
@@ -30,7 +29,3 @@ function simplefinder(sequence::LongDNA; orfsize::Int64=12)
     end
     return orfs
 end
-
-
-
-# How would you apply the length condition for only passing ORFs whose length is greater than 12 nucleotides?
