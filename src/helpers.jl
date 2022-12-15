@@ -10,7 +10,6 @@ function _create_pairs(starts::Vector, stops::Vector)
     return combination
 end
 
-
 # This function create unique pairs while having all the starts fixed
 # function _create_pairs(starts::Vector, stops::Vector)
 #     combination = Dict{Int, UnitRange}()
@@ -23,7 +22,6 @@ end
 #     end
 #     return sort(collect(values(combination)), by=x -> x.start)
 # end
-
 
 # function count_codons(seq::LongDNA)
 #     codons = Vector{Codon}()
@@ -49,3 +47,18 @@ end
 #     end
 #     stop_codon_count > 1
 # end
+
+
+# function _reversecomplement(sequence::LongDNA)
+#     # create an empty string to hold the reverse complement
+#     revcomp = LongDNA{4}()
+#     # iterate over the characters in the dna sequence in reverse order
+#     for base in reverse(sequence)
+#         push!(revcomp, complement(base))
+#     end
+    
+#     # return the reverse complement string
+#     return revcomp
+
+# end
+

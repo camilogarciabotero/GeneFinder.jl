@@ -1,23 +1,32 @@
 # this will be the main functions taking all the 
 include("algorithms/simplefinder.jl")
 
-seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+# seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
 
 function findcds(sequence::LongDNA)
     orfs = simplefinder(sequence)
     seqs = Vector{LongDNA}()
     for i in orfs
         if i.strand == '-'
-            cds = reverse_complement(sequence[i.start:i.stop])
+            reversedsequence = reverse_complement(sequence)
+            cds = reversedsequence[i.position]
         else
-            cds = sequence[i.start:i.stop]
+            cds = sequence[i.position]
         end
         push!(seqs, cds)
     end
     return seqs
 end
 
-findcds(seq)
+function findproteins(sequence::LongDNA)
+    cds = findcds(sequence)
+    proteins = Vector{LongAA}()
+    for i in cds
+        protein = translate(i)
+        push!(proteins, protein)
+    end
+    return proteins
+end
 
 #function findgenes(
 #    sequence::LongDNA,

@@ -1,36 +1,36 @@
 using BioSequences
-
 struct ORF
-    start::Int64
-    stop::Int64 
+    position::UnitRange{Int64}
     strand::Char
 end
 
-const startcodon = dna"ATG"
 const stopcodons = [dna"TAG", dna"TAA", dna"TGA"]
 
-function simplefinder(sequence::LongDNA)
+function simplefinder(sequence::LongDNA; orfsize::Int64=12)
     orfs = Vector{ORF}()
     for strand in ['+', '-']
-        if strand == '-'
-            seq = reverse_complement(sequence)
-        else
-            seq = sequence
-        end
-        i = 1
-        for i in 1:length(seq) - 3 
-            if seq[i:i+2] == startcodon
-                orf = nothing
-                j = i
-                while j < length(seq) - 3 && seq[j:j+2] ∉ stopcodons
-                    orf = ORF(i,  j + 5, strand)
-                    j+=3
-                end
-                if j < length(seq) - 3 && seq[j:j+2] ∈ stopcodons
+        seq = strand == '-' ? reverse_complement(sequence) : sequence
+        
+        start_codon = ExactSearchQuery(dna"ATG", iscompatible)
+        start_codon_indices = findall(start_codon, seq)
+
+        for i in start_codon_indices
+            orf = nothing
+
+            j = i.start
+            while j < length(seq) - 3
+                if seq[j:j+2] in stopcodons && orf != nothing
                     push!(orfs, orf)
+                    break
                 end
+                orf = ORF(i.start:j+5, strand)
+                j += 3 
             end
         end
     end
     return orfs
 end
+
+
+
+# How would you apply the length condition for only passing ORFs whose length is greater than 12 nucleotides?
