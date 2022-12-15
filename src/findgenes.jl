@@ -1,4 +1,4 @@
-# this will be the main functions taking all the 
+# this will be the main functions taking all the algorithms
 using BioSequences
 
 include("algorithms/simplefinder.jl")
@@ -24,7 +24,7 @@ struct CDS
 end
 
 """
-    findcds(sequence::LongDNA)
+    `findcds(sequence::LongDNA)`
 
 A function to generete CDSs sequence out of a DNA sequence.
 
@@ -61,15 +61,47 @@ function findcds(sequence::LongDNA)
     return seqs
 end
 
+
+"""
+    struct Protein
+        position::UnitRange{Int64}
+        strand::Char
+        sequence::LongDNA
+    end
+
+
+Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein sequence in a DNA sequence. It has three fields:
+
+    - `position`: a `UnitRange{Int64}` indicating the start and end positions of the CDS in the sequence
+    - `strand`: a `Char` indicating whether the CDS is on the forward ('+') or reverse ('-') strand of the sequence
+    - `sequence`: a `LongAA` sequence representing the actual translated sequence of the CDS
+
+"""
+struct Protein
+    position::UnitRange{Int64}
+    strand::Char
+    sequence::LongAA
+end
+
+
+"""
+    `findproteins(sequence::LongDNA)`
+
+As its name suggest this function generate the possible proteins directly from a DNA sequence. The 
+"""
 function findproteins(sequence::LongDNA)
     cds = findcds(sequence)
-    proteins = Vector{LongAA}()
+    proteins = Vector{Protein}()
     for i in cds
-        protein = translate(i.sequence)
+        proteinseq = translate(i.sequence)
+        protein = Protein(i.position, i.strand, proteinseq)
         push!(proteins, protein)
     end
     return proteins
 end
+
+
+
 
 #function findgenes(
 #    sequence::LongDNA,
