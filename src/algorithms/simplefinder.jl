@@ -13,14 +13,13 @@ struct ORF
     strand::Char
 end
 
-const stopcodons = [dna"TAG", dna"TAA", dna"TGA"]
-
 """
-    simplefinder(sequence::LongDNA)
+    `simplefinder(sequence::LongDNA)`
 
 The simplest algorithm that finds ORFs in a DNA sequence.
 
 The simplefinder function takes a LongDNA sequence and returns a Vector{ORF} containing the ORFs found in the sequence. It searches the sequence for start codons (ATG) and stops when it finds a stop codon (TAG, TAA, or TGA), adding each ORF it finds to the vector. The function also searches the reverse complement of the sequence, so it finds ORFs on both strands.
+    This function has not ORFs size and overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
 
 # Examples
 ```jldoctest
@@ -47,7 +46,7 @@ function simplefinder(sequence::LongDNA)
             orf = nothing
             j = i.start
             while j < length(seq) - 3
-                if seq[j:j+2] in stopcodons && orf != nothing
+                if seq[j:j+2] ∈ [dna"TAG", dna"TAA", dna"TGA"]
                     push!(orfs, orf)
                     break
                 end
