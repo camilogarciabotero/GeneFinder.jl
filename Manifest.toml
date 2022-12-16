@@ -2,7 +2,7 @@
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "f7f0ee962dd2d56db151a3e326b21374999d5459"
+project_hash = "30d9e02dfd9c94e6ad13384eeef4902030b35193"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -141,9 +141,25 @@ git-tree-sha1 = "609585ed628a4cd46f4c142762be37f5ced5dc7d"
 uuid = "354b36f9-a18e-4713-926e-db85100087ba"
 version = "1.0.3"
 
+[[deps.TOML]]
+deps = ["Dates"]
+uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+version = "1.0.0"
+
 [[deps.Test]]
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[[deps.TestItemRunner]]
+deps = ["TOML", "Test", "TestItems"]
+git-tree-sha1 = "724a24752f42117bf071df3fad3d4d0ea780d30e"
+uuid = "f8b46487-2199-4994-9208-9a1283c18c0a"
+version = "0.2.1"
+
+[[deps.TestItems]]
+git-tree-sha1 = "b7aab261a1662071e1c976b18ad2cee88e27d04a"
+uuid = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
+version = "0.1.0"
 
 [[deps.TranscodingStreams]]
 deps = ["Random", "Test"]

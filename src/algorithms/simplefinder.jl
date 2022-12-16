@@ -1,15 +1,16 @@
 using BioSequences
+using TestItems
 
 """
     struct ORF
-        position::UnitRange{Int64}
+        location::UnitRange{Int64}
         strand::Char
     end
 
-The ORF struct represents an open reading frame in a DNA sequence. It has two fields: position, which is a UnitRange{Int64} indicating the start and end positions of the ORF in the sequence, and strand, which is a Char indicating whether the ORF is on the forward ('+') or reverse ('-') strand of the sequence.
+The ORF struct represents an open reading frame in a DNA sequence. It has two fields: location, which is a UnitRange{Int64} indicating the start and end locations of the ORF in the sequence, and strand, which is a Char indicating whether the ORF is on the forward ('+') or reverse ('-') strand of the sequence.
 """
 struct ORF
-    position::UnitRange{Int64}
+    location::UnitRange{Int64} # Note that it is also called position for gene struct in GenomicAnotations
     strand::Char
 end
 
@@ -56,4 +57,12 @@ function simplefinder(sequence::LongDNA)
         end
     end
     return orfs
+end
+
+@testitem "simplefinder test" default_imports=true begin
+    using BioSequences
+    
+    seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+
+    @test simplefinder(seq) == [ORF(1:33, '+'), ORF(4:33, '+'), ORF(8:22, '+'), ORF(12:29, '+'), ORF(16:33, '+')]
 end
