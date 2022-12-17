@@ -7,7 +7,7 @@ authors:
 title: "GeneFinder.jl: an extensible Julia package hosting implementations of Gene Finding algorithms"
 version: 0.0.2
 # type: book
-date-released: 2022-04-18
+date-released: 2022-12-13
 url: "https://github.com/camilogarciabotero/GeneFinder.jl"
 # doi: 10.5281/zenodo.6468280
 preferred-citation:
@@ -18,6 +18,6 @@ preferred-citation:
   orcid: "https://orcid.org/0000-0002-0426-7007"
   title: "FGeneFinder.jl: an extensible Julia package hosting implementations of Gene Finding algorithms"
   version: 0.0.3
-  date-released: 2022-04-18
+  date-released: 2022-12-13
   url: "https://github.com/camilogarciabotero/GeneFinder.jl"
   # doi: 10.5281/zenodo.6468280
