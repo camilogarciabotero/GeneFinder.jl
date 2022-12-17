@@ -2,4 +2,4 @@
 *.jl.cov
 *.jl.mem
 /docs/build/
-.github/workflows/*
+.travis.yml
