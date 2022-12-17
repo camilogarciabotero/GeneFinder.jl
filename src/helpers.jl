@@ -1,14 +1,14 @@
-function _create_pairs(starts::Vector, stops::Vector)
-    combination = Vector{UnitRange}()
-    for i in starts
-        for j in stops
-            if i < j && length(i:j+2) % 3 == 0
-                push!(combination, UnitRange(i,j))
-            end
-        end
-    end
-    return combination
-end
+# function _create_pairs(starts::Vector, stops::Vector)
+#     combination = Vector{UnitRange}()
+#     for i in starts
+#         for j in stops
+#             if i < j && length(i:j+2) % 3 == 0
+#                 push!(combination, UnitRange(i,j))
+#             end
+#         end
+#     end
+#     return combination
+# end
 
 # This function create unique pairs while having all the starts fixed
 # function _create_pairs(starts::Vector, stops::Vector)

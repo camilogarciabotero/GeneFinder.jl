@@ -5,5 +5,8 @@
 # end
 
 using TestItemRunner: @run_package_tests
-
 @run_package_tests
+
+# using Aqua
+# using GeneFinder
+# Aqua.test_all(GeneFinder)

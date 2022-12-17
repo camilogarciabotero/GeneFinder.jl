@@ -1,14 +1,62 @@
-```@meta
-CurrentModule = GeneFinder
+# <img src="../assets/logo.svg" width="30%" align="right" /> GeneFinder
+
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+
+
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://camilogarciabotero.github.io/GeneFinder.jl/stable/)
+
+[![Build Status](https://travis-ci.com/camilogarciabotero/GeneFinder.jl.svg?branch=main)](https://travis-ci.com/camilogarciabotero/GeneFinder.jl)
+
+[![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE)
+
+<!-- [![Build Status](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml?query=branch%3Amain) -->
+<!-- [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://camilogarciabotero.github.io/GeneFinder.jl/dev/) -->
+
+***
+
+[![Coverage](https://codecov.io/gh/camilogarciabotero/GeneFinder.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/camilogarciabotero/GeneFinder.jl)
+
+<!-- [![CI](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml) -->
+
+<!-- [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl) -->
+
+<!-- [![Unit tests](https://github.com/camilogarciabotero/GeneFinder.jl/workflows/Unit%20tests/badge.svg?branch=main)](https://github.com/camilogarciabotero/GeneFinder.jl/actions?query=workflow%3A%22Unit+tests%22+branch%3Amain) -->
+
+
+## Overview
+
+>This is a species-agnostic, algorithm extensible, sequence-anonymous (genome, metagenomes) *gene finder* library for the Julia Language.
+
+The main idea is to create versatile module that enables apply different implemented algorithm to DNA sequences. See the BioAlignment implementation of different sequence alignment algorithms (local, global, edit-distance).
+
+## Installation
+
+You can install BioSequences from the julia
+REPL. Press `]` to enter pkg mode, and enter the following:
+
+```
+add GeneFinder
 ```
 
-# GeneFinder
+If you are interested in the cutting edge of the development, please check out
+the master branch to try new features before release.
 
-Documentation for [GeneFinder](https://github.com/camilogarciabotero/GeneFinder.jl).
+## Algorithms
 
-```@index
-```
 
-```@autodocs
-Modules = [GeneFinder]
-```
+## Compatibilities  
+
+Must interact with or extend:
+
+- GenomicAnnotations.jl
+- BioSequences.jl
+- SequenceVariation.jl
+- GenomicFeatures.jl
+- FASTX.jl
+- Kmers.jl
+
+## Contributing
+
+## Citing
+
+See [`CITATION.bib`](CITATION.bib) for the relevant reference(s).

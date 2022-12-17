@@ -10,12 +10,5 @@ export ORF, CDS, Proteins, simplefinder, findcds, findproteins
 # include("findgenes.jl")
 
 
-# Write your package code here.
-
-# Prediction types
-
-# Gene types
-
-# .
 
 end
