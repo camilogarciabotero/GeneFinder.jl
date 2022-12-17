@@ -16,7 +16,7 @@ preferred-citation:
   - family-names: "García-Botero"
   given-names: "Camilo"
   orcid: "https://orcid.org/0000-0002-0426-7007"
-  title: "FGeneFinder.jl: an extensible Julia package hosting implementations of Gene Finding algorithms"
+  title: "GeneFinder.jl: an extensible Julia package hosting implementations of Gene Finding algorithms"
   version: 0.0.3
   date-released: 2022-12-13
   url: "https://github.com/camilogarciabotero/GeneFinder.jl"
