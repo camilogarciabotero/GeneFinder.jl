@@ -68,9 +68,7 @@ The simplefinder function takes a LongDNA sequence and returns a Vector{ORF} con
 ```jldoctest
 julia> using BioSequences
 
-julia> seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA";
-
-julia> simplefinder(seq)
+julia> simplefinder(dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA")
 5-element Vector{ORF}:
  ORF(1:33, '+')
  ORF(4:33, '+')
