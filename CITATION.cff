@@ -6,7 +6,7 @@ authors:
   orcid: "https://orcid.org/0000-0002-0426-7007"
 title: "GeneFinder.jl: an extensible Julia package hosting implementations of Gene Finding algorithms"
 version: 0.0.2
-# type: book
+type: software
 date-released: 2022-12-13
 url: "https://github.com/camilogarciabotero/GeneFinder.jl"
 # doi: 10.5281/zenodo.6468280
