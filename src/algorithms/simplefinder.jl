@@ -120,19 +120,6 @@ The `findcds` function takes a `LongDNA` sequence and returns a `Vector{CDS}`
     It uses the `simplefinder` function to find open reading frames (ORFs) in the sequence, 
     and then it extracts the actual CDS sequence from each ORF. 
     The function also searches the reverse complement of the sequence, so it finds CDSs on both strands.
-
-# Examples
-```jldoctest
-# julia> seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA";
-
-# findcds(seq)
-# 5-element Vector{CDS}:
-#  CDS(1:33, '+', ATGATGCATGCATGCATGCTAGTAACTAGCTAG)
-#  CDS(4:33, '+', ATGCATGCATGCATGCTAGTAACTAGCTAG)
-#  CDS(8:22, '+', ATGCATGCATGCTAG)
-#  CDS(12:29, '+', ATGCATGCTAGTAACTAG)
-#  CDS(16:33, '+', ATGCTAGTAACTAGCTAG)
-```
 """
 function findcds(sequence::LongDNA)
 
@@ -153,6 +140,18 @@ function findcds(sequence::LongDNA)
 end
 
 
+@testitem "findcds test" default_imports=true begin
+    using BioSequences
+    
+    seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+    orfs = findcds(seq)
+    # @test findcds(seq) == [CDS(1:33, '+', dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(4:33, '+', dna"ATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(8:22, '+', dna"ATGCATGCATGCTAG"), CDS(12:29, '+', dna"ATGCATGCTAGTAACTAG"), CDS(16:33, '+', dna"ATGCTAGTAACTAGCTAG")]
+    @test orfs[1].location == 1:33
+    @test orfs[1].strand == '+'
+    @test orfs[1].sequence == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
+end
+
+
 """
     `findproteins(sequence::LongDNA)`
 
@@ -169,4 +168,16 @@ function findproteins(sequence::LongDNA)
         push!(proteins, protein)
     end
     return proteins
+end
+
+
+@testitem "findproteins test" default_imports=true begin
+    using BioSequences
+    
+    seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+    orfs = findproteins(seq)
+    # @test findcds(seq) == [CDS(1:33, '+', dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(4:33, '+', dna"ATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(8:22, '+', dna"ATGCATGCATGCTAG"), CDS(12:29, '+', dna"ATGCATGCTAGTAACTAG"), CDS(16:33, '+', dna"ATGCTAGTAACTAGCTAG")]
+    @test orfs[1].location == 1:33
+    @test orfs[1].strand == '+'
+    @test orfs[1].sequence == aa"MMHACMLVTS*"
 end
