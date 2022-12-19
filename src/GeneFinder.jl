@@ -1,12 +1,15 @@
 module GeneFinder
 
-# Write your package code here.
+using BioSequences
+using TestItems: @testitem
 
-# Prediction types
 
-# Gene types
+include("algorithms/simplefinder.jl")
+export simplefinder, findcds, findproteins
 
-# .
+include("types.jl")
+export ORF, CDS, Proteins, stopcodons
+
 
 
 end
