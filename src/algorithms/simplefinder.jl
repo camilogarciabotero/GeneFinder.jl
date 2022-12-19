@@ -12,16 +12,15 @@ The simplefinder function takes a LongDNA sequence and returns a Vector{ORF} con
 
 # Examples
 ```jldoctest
-julia> using BioSequences
+# julia> using BioSequences
 
-julia> simplefinder(dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA")
-5-element Vector{ORF}:
- ORF(1:33, '+')
- ORF(4:33, '+')
- ORF(8:22, '+')
- ORF(12:29, '+')
- ORF(16:33, '+')
-
+# julia> simplefinder(dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA")
+# 5-element Vector{ORF}:
+#  ORF(1:33, '+')
+#  ORF(4:33, '+')
+#  ORF(8:22, '+')
+#  ORF(12:29, '+')
+#  ORF(16:33, '+')
 ```
 """
 function simplefinder(sequence::LongDNA)
