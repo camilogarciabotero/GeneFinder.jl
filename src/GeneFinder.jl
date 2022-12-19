@@ -5,9 +5,10 @@ using TestItems: @testitem
 
 
 include("algorithms/simplefinder.jl")
-export ORF, CDS, Proteins, simplefinder, findcds, findproteins
+export simplefinder, findcds, findproteins
 
-# include("findgenes.jl")
+include("types.jl")
+export ORF, CDS, Proteins, stopcodons
 
 
 

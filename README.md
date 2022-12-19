@@ -1,4 +1,4 @@
-# <img src="docs/assets/logo.svg" width="30%" align="right" /> GeneFinder
+<!-- # <img src="docs/assets/logo.svg" width="30%" align="right" /> GeneFinder -->
 
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://camilogarciabotero.github.io/GeneFinder.jl/stable/)
@@ -27,11 +27,10 @@ The main idea is to create versatile module that enables apply different impleme
 
 ## Installation
 
-You can install BioSequences from the julia
-REPL. Press `]` to enter pkg mode, and enter the following:
+You can install BioSequences from the julia REPL. Press `]` to enter pkg mode, and enter the following:
 
 ```
-add GeneFinder
+add https://github.com/camilogarciabotero/GeneFinder.jl
 ```
 
 If you are interested in the cutting edge of the development, please check out
@@ -42,10 +41,11 @@ the master branch to try new features before release.
 ### Coding genes (CDS - ORFs)
 
 - [x] Simple finder (a simple ORF finder)
+- [ ] EasyGene
 - [ ] Prodigal - Pyrodigal
-- [ ] k-mer based (?)
-- [ ] Augustus (?)
 - [ ] PHANOTATE
+- [ ] k-mer based gene finders (?)
+- [ ] Augustus (?)
 
 ### Non-coding genes (RNA)
 
@@ -78,6 +78,9 @@ Must interact with or extend:
 - GenomicFeatures.jl
 - FASTX.jl
 - Kmers.jl
+- HMMBase.jl
+- Turing.jl
+- MLJ.jl
 
 ## Contributing
 

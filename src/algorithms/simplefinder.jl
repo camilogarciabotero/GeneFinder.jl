@@ -1,60 +1,6 @@
 using BioSequences
 using TestItems
-
-"""
-    struct ORF
-        location::UnitRange{Int64}
-        strand::Char
-    end
-
-The ORF struct represents an open reading frame in a DNA sequence. It has two fields: location, which is a UnitRange{Int64} indicating the start and end locations of the ORF in the sequence, and strand, which is a Char indicating whether the ORF is on the forward ('+') or reverse ('-') strand of the sequence.
-"""
-struct ORF
-    location::UnitRange{Int64} # Note that it is also called position for gene struct in GenomicAnotations
-    strand::Char
-end
-
-"""
-    struct CDS
-        location::UnitRange{Int64}
-        strand::Char
-        sequence::LongDNA
-    end
-
-The `CDS` struct represents a coding sequence in a DNA sequence. It has three fields:
-
-    - `location`: a `UnitRange{Int64}` indicating the start and end location of the CDS in the sequence
-    - `strand`: a `Char` indicating whether the CDS is on the forward ('+') or reverse ('-') strand of the sequence
-    - `sequence`: a `LongDNA` sequence representing the actual sequence of the CDS
-    
-"""
-struct CDS
-    location::UnitRange{Int64}
-    strand::Char
-    sequence::LongDNA
-end
-
-"""
-    struct Protein
-        location::UnitRange{Int64}
-        strand::Char
-        sequence::LongDNA
-    end
-
-
-Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein sequence in a DNA sequence. 
-    It has three fields:
-
-    - `location`: a `UnitRange{Int64}` indicating the start and end locations of the CDS in the sequence
-    - `strand`: a `Char` indicating whether the CDS is on the forward ('+') or reverse ('-') strand of the sequence
-    - `sequence`: a `LongAA` sequence representing the actual translated sequence of the CDS
-
-"""
-struct Protein
-    location::UnitRange{Int64}
-    strand::Char
-    sequence::LongAA
-end
+include("../types.jl")
 
 """
     `simplefinder(sequence::LongDNA)`
@@ -90,7 +36,7 @@ function simplefinder(sequence::LongDNA)
             orf = nothing
             j = i.start
             while j < length(seq) - 3
-                if seq[j:j+2] ∈ [dna"TAG", dna"TAA", dna"TGA"]
+                if seq[j:j+2] ∈ stopcodons
                     push!(orfs, orf)
                     break
                 end
