@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you find useful this repo, please cite it as below."
+authors:
+- family-names: "García-Botero"
+  given-names: "Camilo"
+  orcid: "https://orcid.org/0000-0002-0426-7007"
+title: "GeneFinder.jl: an extensible Julia package hosting implementations of Gene Finding algorithms"
+version: 0.0.2
+type: software
+date-released: 2022-12-13
+url: "https://github.com/camilogarciabotero/GeneFinder.jl"
+# doi: 10.5281/zenodo.6468280
+preferred-citation:
+  type: software
+  authors:
+  - family-names: "García-Botero"
+  given-names: "Camilo"
+  orcid: "https://orcid.org/0000-0002-0426-7007"
+  title: "GeneFinder.jl: an extensible Julia package hosting implementations of Gene Finding algorithms"
+  version: 0.0.3
+  date-released: 2022-12-13
+  url: "https://github.com/camilogarciabotero/GeneFinder.jl"
+  # doi: 10.5281/zenodo.6468280
