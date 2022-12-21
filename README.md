@@ -57,9 +57,9 @@ the master branch to try new features before release.
 - [ ] parallelism SIMD ?
 - [ ] memory management (?)
 - [ ] specialized types
-  - [ ] Gene
+  - [x] Gene
   - [x] ORF
-  - [ ] CDS
+  - [x] CDS
   - [ ] EukaryoticGene (?)
   - [ ] ProkaryoticGene (?)
   - [ ] Codon
