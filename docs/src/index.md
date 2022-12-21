@@ -1,27 +1,15 @@
 <!-- # <img src="../assets/logo.svg" width="30%" align="right" /> GeneFinder -->
 
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-
-
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://camilogarciabotero.github.io/GeneFinder.jl/stable/)
-
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://camilogarciabotero.github.io/GeneFinder.jl/dev/) 
 [![Build Status](https://travis-ci.com/camilogarciabotero/GeneFinder.jl.svg?branch=main)](https://travis-ci.com/camilogarciabotero/GeneFinder.jl)
-
 [![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE)
-
-<!-- [![Build Status](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml?query=branch%3Amain) -->
-<!-- [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://camilogarciabotero.github.io/GeneFinder.jl/dev/) -->
 
 ***
 
 [![Coverage](https://codecov.io/gh/camilogarciabotero/GeneFinder.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/camilogarciabotero/GeneFinder.jl)
-
-<!-- [![CI](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml) -->
-
-<!-- [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl) -->
-
-<!-- [![Unit tests](https://github.com/camilogarciabotero/GeneFinder.jl/workflows/Unit%20tests/badge.svg?branch=main)](https://github.com/camilogarciabotero/GeneFinder.jl/actions?query=workflow%3A%22Unit+tests%22+branch%3Amain) -->
-
+[![CI](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml)
 
 ## Overview
 
@@ -42,7 +30,6 @@ If you are interested in the cutting edge of the development, please check out
 the master branch to try new features before release.
 
 ## Algorithms
-
 
 ## Compatibilities  
 
