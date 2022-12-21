@@ -30,7 +30,7 @@ The main idea is to create versatile module that enables apply different impleme
 You can install GeneFinder from the julia REPL. Press `]` to enter pkg mode, and enter the following:
 
 ```
-add GeneFinder
+add https://github.com/camilogarciabotero/GeneFinder.jl
 ```
 
 If you are interested in the cutting edge of the development, please check out
