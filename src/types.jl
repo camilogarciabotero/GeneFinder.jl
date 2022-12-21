@@ -36,7 +36,7 @@ The `CDS` struct represents a coding sequence in a DNA sequence. It has three fi
     - `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) displaying the location of the ORF and the associate strand: forward ('+') or reverse ('-')
     - `sequence`: a `LongDNA` sequence representing the actual sequence of the CDS
 """
-struct CDS
+struct CDS <: Gene
     orf::ORF
     sequence::LongDNA
 end
@@ -56,7 +56,7 @@ Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein
     - `sequence`: a `LongAA` sequence representing the actual translated sequence of the CDS
 
 """
-struct Protein
+struct Protein <: Gene
     orf::ORF
     sequence::LongAA
 end
