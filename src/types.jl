@@ -2,15 +2,24 @@
 # using GenomicFeatures
 using BioSequences
 
+abstract type Gene end
+
+# abstract type exon end
+
+# abstract type intron end
+
 """
     struct ORF
         location::UnitRange{Int64}
         strand::Char
     end
 
-The ORF struct represents an open reading frame in a DNA sequence. It has two fields: location, which is a UnitRange{Int64} indicating the start and end locations of the ORF in the sequence, and strand, which is a Char indicating whether the ORF is on the forward ('+') or reverse ('-') strand of the sequence.
+The ORF struct represents an open reading frame in a DNA sequence. It has two fields: 
+
+    - `location`: which is a UnitRange{Int64} indicating the start and end locations of the ORF in the sequence
+    - `strand`:  is a Char type indicating whether the ORF is on the forward ('+') or reverse ('-') strand of the sequence.
 """
-struct ORF
+struct ORF <: Gene
     location::UnitRange{Int64} # Note that it is also called position for gene struct in GenomicAnotations
     strand::Char
 end
@@ -24,14 +33,11 @@ end
 
 The `CDS` struct represents a coding sequence in a DNA sequence. It has three fields:
 
-    - `location`: a `UnitRange{Int64}` indicating the start and end location of the CDS in the sequence
-    - `strand`: a `Char` indicating whether the CDS is on the forward ('+') or reverse ('-') strand of the sequence
+    - `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) displaying the location of the ORF and the associate strand: forward ('+') or reverse ('-')
     - `sequence`: a `LongDNA` sequence representing the actual sequence of the CDS
-    
 """
 struct CDS
-    location::UnitRange{Int64}
-    strand::Char
+    orf::ORF
     sequence::LongDNA
 end
 
@@ -46,51 +52,18 @@ end
 Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein sequence in a DNA sequence. 
     It has three fields:
 
-    - `location`: a `UnitRange{Int64}` indicating the start and end locations of the CDS in the sequence
-    - `strand`: a `Char` indicating whether the CDS is on the forward ('+') or reverse ('-') strand of the sequence
+    - `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) of the sequence
     - `sequence`: a `LongAA` sequence representing the actual translated sequence of the CDS
 
 """
 struct Protein
-    location::UnitRange{Int64}
-    strand::Char
+    orf::ORF
     sequence::LongAA
 end
 
 
 const stopcodons = [dna"TAG", dna"TAA", dna"TGA"]
 
-# abstract type Gene end
-
-# abstract type exon end
-
-# abstract type intron end
-
-
-# struct Gene
-#     sequence::DNA
-#     orfs::Array{DNA, 1}
-#     start_stops::Array{Tuple{Int64,Int64}, 1}
-# end
-
-# struct Gene
-#     orfs::Vector{ORF}
-#     dna_sequence::LongDNA
-# end
-
-# mutable struct ORF <: Gene
-#     strand::Strand # from GenomicFeatures
-#     start_position::Int
-#     stop_position::Int
-# end
-
-# struct ORF <: Gene
-#     start::Int
-#     stop::Int
-#     strand::Char # this allow simple bool elegant ORF.strand == '+' || '-',  note that the GenomicFeatures already got a field Strand!
-#     frame::Int #  1 to 3 and 
-#     sequence::BioSequences.LongDNA # Is this type piracy?
-# end
 
 # # The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/
 # struct Codon <: BioSequence{DNAAlphabet{2}}

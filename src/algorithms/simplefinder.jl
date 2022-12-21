@@ -9,19 +9,6 @@ The simplest algorithm that finds ORFs in a DNA sequence.
 
 The simplefinder function takes a LongDNA sequence and returns a Vector{ORF} containing the ORFs found in the sequence. It searches the sequence for start codons (ATG) and stops when it finds a stop codon (TAG, TAA, or TGA), adding each ORF it finds to the vector. The function also searches the reverse complement of the sequence, so it finds ORFs on both strands.
     This function has not ORFs size and overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
-
-# Examples
-```jldoctest
-# julia> using BioSequences
-
-# julia> simplefinder(dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA")
-# 5-element Vector{ORF}:
-#  ORF(1:33, '+')
-#  ORF(4:33, '+')
-#  ORF(8:22, '+')
-#  ORF(12:29, '+')
-#  ORF(16:33, '+')
-```
 """
 function simplefinder(sequence::LongDNA)
     orfs = Vector{ORF}()
@@ -51,8 +38,10 @@ end
     using BioSequences
     
     seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+    orfs = simplefinder(seq)
 
-    @test simplefinder(seq) == [ORF(1:33, '+'), ORF(4:33, '+'), ORF(8:22, '+'), ORF(12:29, '+'), ORF(16:33, '+')]
+    @test simplefinder(seq) == orfs
+    @test length(orfs) == 5
 end
 
 """
@@ -78,7 +67,7 @@ function findcds(sequence::LongDNA)
         else
             seq = sequence[i.location]
         end
-        cds = CDS(i.location, i.strand, seq)
+        cds = CDS(i, seq)
         push!(seqs, cds)
     end
     return seqs
@@ -89,11 +78,13 @@ end
     using BioSequences
     
     seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-    orfs = findcds(seq)
+    cds = findcds(seq)
     # @test findcds(seq) == [CDS(1:33, '+', dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(4:33, '+', dna"ATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(8:22, '+', dna"ATGCATGCATGCTAG"), CDS(12:29, '+', dna"ATGCATGCTAGTAACTAG"), CDS(16:33, '+', dna"ATGCTAGTAACTAGCTAG")]
-    @test orfs[1].location == 1:33
-    @test orfs[1].strand == '+'
-    @test orfs[1].sequence == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
+
+    @test cds[1].orf == ORF(1:33, '+')
+    @test cds[1].sequence == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
+    
+    @test length(cds) == 5
 end
 
 
@@ -109,7 +100,7 @@ function findproteins(sequence::LongDNA)
     proteins = Vector{Protein}()
     for i in cds
         proteinseq = translate(i.sequence)
-        protein = Protein(i.location, i.strand, proteinseq)
+        protein = Protein(i.orf, proteinseq)
         push!(proteins, protein)
     end
     return proteins
@@ -120,9 +111,10 @@ end
     using BioSequences
     
     seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-    orfs = findproteins(seq)
+    proteins = findproteins(seq)
     # @test findcds(seq) == [CDS(1:33, '+', dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(4:33, '+', dna"ATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(8:22, '+', dna"ATGCATGCATGCTAG"), CDS(12:29, '+', dna"ATGCATGCTAGTAACTAG"), CDS(16:33, '+', dna"ATGCTAGTAACTAGCTAG")]
-    @test orfs[1].location == 1:33
-    @test orfs[1].strand == '+'
-    @test orfs[1].sequence == aa"MMHACMLVTS*"
+    @test proteins[1].orf == ORF(1:33, '+')
+    @test proteins[1].sequence == aa"MMHACMLVTS*"
+
+    @test length(proteins) == 5
 end
