@@ -6,6 +6,14 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.1...main)
 
+## [0.0.3]
+
+- Clean `simplefinder`
+- Add references
+- Clean README
+- Clean initial structs
+- Make it public
+
 ## [0.0.2]
 
 - Add `findcds` and `findproteins` function for the first algorithm
