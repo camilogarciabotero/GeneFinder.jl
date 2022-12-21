@@ -27,7 +27,7 @@ The main idea is to create versatile module that enables apply different impleme
 
 ## Installation
 
-You can install BioSequences from the julia REPL. Press `]` to enter pkg mode, and enter the following:
+You can install GeneFinder from the julia REPL. Press `]` to enter pkg mode, and enter the following:
 
 ```
 add GeneFinder
