@@ -38,7 +38,7 @@ the master branch to try new features before release.
 
 ## Example
 
-The first implemented function is `simplefinder` a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has not ORFs size and overlapping condition contraints. Thus it might consider aa"M*" a posible encoding protein from the resulting ORFs.
+The first implemented function is `simplefinder` a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
 
 ```
 julia> using BioSequences, GeneFinder
@@ -89,6 +89,7 @@ julia> findcds(seq)
 
 ```
 julia> findproteins(seq)
+
 12-element Vector{Protein}:
  Protein(ORF(29:40, '+'), MQP*)
  Protein(ORF(137:145, '+'), MR*)
