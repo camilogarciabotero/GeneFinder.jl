@@ -58,7 +58,7 @@ simplefinder(seq)
  ORF(695:706, '+')
 ```
 
-Two other functions (`findcds` and `findproteins`) take the ORFs and make an index search and traslation: 
+Two other functions (`findcds` and `findproteins`) pass the sequence to `simplefinder` take the ORFs to index search the CDS and traslate into Protein:
 
 ```
 julia> findcds(seq)
