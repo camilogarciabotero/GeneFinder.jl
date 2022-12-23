@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>A first algorithm · GeneFinder.jl</title><script data-outdated-warner src="../assets/warner.js"></script><link rel="canonical" href="https://camilogarciabotero.github.io/GeneFinder.jl/simplefinder/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">GeneFinder.jl</a></span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../api/">API</a></li><li class="is-active"><a class="tocitem" href>A first algorithm</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>A first algorithm</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>A first algorithm</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/docs/src/simplefinder.md#" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="A-simple-algorithm"><a class="docs-heading-anchor" href="#A-simple-algorithm">A simple algorithm</a><a id="A-simple-algorithm-1"></a><a class="docs-heading-anchor-permalink" href="#A-simple-algorithm" title="Permalink"></a></h1><p>The first implemented function is <code>simplefinder</code> a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider <code>aa&quot;M*&quot;</code> a posible encoding protein from the resulting ORFs.</p><pre><code class="language-julia hljs">using BioSequences, GeneFinder
+
+# &gt; 180195.SAMN03785337.LFLS01000089 -&gt; finds only 1 gene in Prodigal (from Pyrodigal tests)
+seq = dna&quot;AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC&quot;</code></pre><pre><code class="nohighlight hljs">726nt DNA Sequence:
+AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC</code></pre><pre><code class="language-julia hljs">simplefinder(seq)</code></pre><pre><code class="nohighlight hljs">12-element Vector{ORF}:
+ ORF(29:40, &#39;+&#39;)
+ ORF(137:145, &#39;+&#39;)
+ ORF(164:184, &#39;+&#39;)
+ ORF(173:184, &#39;+&#39;)
+ ORF(236:241, &#39;+&#39;)
+ ORF(248:268, &#39;+&#39;)
+ ORF(362:373, &#39;+&#39;)
+ ORF(470:496, &#39;+&#39;)
+ ORF(551:574, &#39;+&#39;)
+ ORF(569:574, &#39;+&#39;)
+ ORF(581:601, &#39;+&#39;)
+ ORF(695:706, &#39;+&#39;)</code></pre><p>Two other functions (<code>findcds</code> and <code>findproteins</code>) pass the sequence to <code>simplefinder</code> take the ORFs to index search the CDS and traslate into Protein:</p><pre><code class="language-julia hljs">findcds(seq)</code></pre><pre><code class="nohighlight hljs">12-element Vector{CDS}:
+ CDS(ORF(29:40, &#39;+&#39;), ATGCAACCCTGA)
+ CDS(ORF(137:145, &#39;+&#39;), ATGCGCTGA)
+ CDS(ORF(164:184, &#39;+&#39;), ATGCGTCGAATGGCACGGTGA)
+ CDS(ORF(173:184, &#39;+&#39;), ATGGCACGGTGA)
+ CDS(ORF(236:241, &#39;+&#39;), ATGTGA)
+ CDS(ORF(248:268, &#39;+&#39;), ATGTGTCCAACGGCAGTCTGA)
+ CDS(ORF(362:373, &#39;+&#39;), ATGCAACCCTGA)
+ CDS(ORF(470:496, &#39;+&#39;), ATGCACTGGCTGGTCCTGTCAATCTGA)
+ CDS(ORF(551:574, &#39;+&#39;), ATGTCACCGCACAAGGCAATGTGA)
+ CDS(ORF(569:574, &#39;+&#39;), ATGTGA)
+ CDS(ORF(581:601, &#39;+&#39;), ATGTGTCCAACGGCAGCCTGA)
+ CDS(ORF(695:706, &#39;+&#39;), ATGCAACCCTGA)</code></pre><pre><code class="language-julia hljs">findproteins(seq)</code></pre><pre><code class="nohighlight hljs">12-element Vector{Protein}:
+ Protein(ORF(29:40, &#39;+&#39;), MQP*)
+ Protein(ORF(137:145, &#39;+&#39;), MR*)
+ Protein(ORF(164:184, &#39;+&#39;), MRRMAR*)
+ Protein(ORF(173:184, &#39;+&#39;), MAR*)
+ Protein(ORF(236:241, &#39;+&#39;), M*)
+ Protein(ORF(248:268, &#39;+&#39;), MCPTAV*)
+ Protein(ORF(362:373, &#39;+&#39;), MQP*)
+ Protein(ORF(470:496, &#39;+&#39;), MHWLVLSI*)
+ Protein(ORF(551:574, &#39;+&#39;), MSPHKAM*)
+ Protein(ORF(569:574, &#39;+&#39;), M*)
+ Protein(ORF(581:601, &#39;+&#39;), MCPTAA*)
+ Protein(ORF(695:706, &#39;+&#39;), MQP*)</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../api/">« API</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Friday 23 December 2022 20:14">Friday 23 December 2022</span>. Using Julia version 1.8.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
