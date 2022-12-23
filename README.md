@@ -121,36 +121,6 @@ julia> findproteins(seq)
 - [ ] Infernal
 - [ ] tRNAscan
 
-## Other features
-
-- [ ] parallelism SIMD ?
-- [ ] memory management (?)
-- [ ] specialized types
-  - [x] Gene
-  - [x] ORF
-  - [x] CDS
-  - [ ] EukaryoticGene (?)
-  - [ ] ProkaryoticGene (?)
-  - [ ] Codon
-  - [ ] Intron
-  - [ ] Exon
-  - [ ] GFF --> See other packages
-  - [ ] FASTX --> See I/O in other packages
-
-## Compatibilities  
-
-Must interact with or extend:
-
-- GenomicAnnotations.jl
-- BioSequences.jl
-- SequenceVariation.jl
-- GenomicFeatures.jl
-- FASTX.jl
-- Kmers.jl
-- HMMBase.jl
-- Turing.jl
-- MLJ.jl
-
 ## Contributing
 
 ## Citing
