@@ -30,6 +30,37 @@ the master branch to try new features before release.
 
 ## Algorithms
 
+### Coding genes (CDS - ORFs)
+
+- [x] [Simple finder](https://camilogarciabotero.github.io/GeneFinder.jl/dev/simplefinder/)
+- [ ] EasyGene
+- [ ] GLIMMER
+- [ ] Prodigal - Pyrodigal
+- [ ] PHANOTATE
+- [ ] k-mer based gene finders (?)
+- [ ] Augustus (?)
+
+### Non-coding genes (RNA)
+
+- [ ] Infernal
+- [ ] tRNAscan
+
+## Other features
+
+- [ ] parallelism SIMD ?
+- [ ] memory management (?)
+- [ ] specialized types
+  - [x] Gene
+  - [x] ORF
+  - [x] CDS
+  - [ ] EukaryoticGene (?)
+  - [ ] ProkaryoticGene (?)
+  - [ ] Codon
+  - [ ] Intron
+  - [ ] Exon
+  - [ ] GFF --> See other packages
+  - [ ] FASTX --> See I/O in other packages
+
 ## Compatibilities  
 
 Must interact with or extend:

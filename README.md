@@ -103,12 +103,14 @@ julia> findproteins(seq)
  Protein(ORF(581:601, '+'), MCPTAA*)
  Protein(ORF(695:706, '+'), MQP*)
 ```
+
 ## Algorithms
 
 ### Coding genes (CDS - ORFs)
 
-- [x] Simple finder (a simple ORF finder)
+- [x] [Simple finder](https://camilogarciabotero.github.io/GeneFinder.jl/dev/simplefinder/)
 - [ ] EasyGene
+- [ ] GLIMER3
 - [ ] Prodigal - Pyrodigal
 - [ ] PHANOTATE
 - [ ] k-mer based gene finders (?)
