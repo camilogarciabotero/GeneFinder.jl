@@ -29,7 +29,7 @@ The main idea is to create versatile module that enables apply different impleme
 
 You can install GeneFinder from the julia REPL. Press `]` to enter pkg mode, and enter the following:
 
-```
+```julia
 add https://github.com/camilogarciabotero/GeneFinder.jl
 ```
 
@@ -40,17 +40,16 @@ the master branch to try new features before release.
 
 The first implemented function is `simplefinder` a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
 
-```
+```julia
 julia> using BioSequences, GeneFinder
 
 # > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
 seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
 ```
 
-```
+```julia
 julia> simplefinder(seq)
 
-simplefinder(seq)
 12-element Vector{ORF}:
  ORF(29:40, '+')
  ORF(137:145, '+')
@@ -68,7 +67,7 @@ simplefinder(seq)
 
 Two other functions (`findcds` and `findproteins`) pass the sequence to `simplefinder` take the ORFs to index search the CDS and traslate into Protein: 
 
-```
+```julia
 julia> findcds(seq)
 
 12-element Vector{CDS}:
@@ -87,7 +86,7 @@ julia> findcds(seq)
 ```
 
 
-```
+```julia
 julia> findproteins(seq)
 
 12-element Vector{Protein}:

@@ -3,7 +3,7 @@ using TestItems
 include("../types.jl")
 
 """
-    `simplefinder(sequence::LongDNA)`
+    simplefinder(sequence::LongDNA)
 
 The simplest algorithm that finds ORFs in a DNA sequence.
 
@@ -45,7 +45,7 @@ end
 end
 
 """
-    `findcds(sequence::LongDNA)`
+    findcds(sequence::LongDNA)
 
 A function to generete CDSs sequence out of a DNA sequence.
 
@@ -89,7 +89,7 @@ end
 
 
 """
-    `findproteins(sequence::LongDNA)`
+    findproteins(sequence::LongDNA)
 
 As its name suggest this function generate the possible proteins directly from a DNA sequence. 
     The `findcds` function takes a `LongDNA` sequence and returns a `Vector{CDS}` containing the 

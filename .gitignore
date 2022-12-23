@@ -3,3 +3,5 @@
 *.jl.mem
 /docs/build/
 .travis.yml
+/docs/src/*_cache
+/docs/src/*_files
