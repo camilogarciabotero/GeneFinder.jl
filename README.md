@@ -85,7 +85,6 @@ julia> findcds(seq)
  CDS(ORF(695:706, '+'), ATGCAACCCTGA)
 ```
 
-
 ```julia
 julia> findproteins(seq)
 
