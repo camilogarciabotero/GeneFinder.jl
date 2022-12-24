@@ -26,8 +26,7 @@ end
 
 """
     struct CDS
-        location::UnitRange{Int64}
-        strand::Char
+        orf::ORF
         sequence::LongDNA
     end
 
@@ -43,8 +42,7 @@ end
 
 """
     struct Protein
-        location::UnitRange{Int64}
-        strand::Char
+        orf::ORF
         sequence::LongDNA
     end
 
@@ -59,7 +57,6 @@ struct Protein <: Gene
     orf::ORF
     sequence::LongAA
 end
-
 
 const stopcodons = [dna"TAG", dna"TAA", dna"TGA"]
 
