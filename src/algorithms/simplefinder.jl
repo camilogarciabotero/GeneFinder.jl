@@ -14,12 +14,12 @@ function simplefinder(sequence::LongDNA)
     orfs = Vector{ORF}()
     for strand in ['+', '-']
         seq = strand == '-' ? reverse_complement(sequence) : sequence
-        
+
         start_codon = ExactSearchQuery(dna"ATG", iscompatible)
         start_codon_indices = findall(start_codon, seq)
 
+        orf = nothing
         for i in start_codon_indices
-            orf = nothing
             j = i.start
             while j < length(seq) - 3
                 if seq[j:j+2] ∈ stopcodons
@@ -27,21 +27,27 @@ function simplefinder(sequence::LongDNA)
                     break
                 end
                 orf = ORF(i.start:j+5, strand)
-                j += 3 
+                j += 3
             end
         end
     end
     return orfs
 end
 
-@testitem "simplefinder test" default_imports=true begin
+@testitem "simplefinder test" default_imports = true begin
     using BioSequences
-    
-    seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-    orfs = simplefinder(seq)
 
-    @test simplefinder(seq) == orfs
-    @test length(orfs) == 5
+    seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+    orfs01 = simplefinder(seq01)
+
+    @test simplefinder(seq01) == [ORF(1:33, '+'), ORF(4:33, '+'), ORF(8:22, '+'), ORF(12:29, '+'), ORF(16:33, '+')]
+    @test length(orfs01) == 5
+
+    seq02 = dna"GATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+    orfs02 = simplefinder(seq02)
+
+    @test simplefinder(seq02) == [ORF(2:34, '+'), ORF(5:34, '+'), ORF(9:23, '+'), ORF(13:30, '+'), ORF(17:34, '+')]
+    @test length(orfs02) == 5
 end
 
 """
@@ -59,8 +65,8 @@ function findcds(sequence::LongDNA)
 
     orfs = simplefinder(sequence)
     seqs = Vector{CDS}()
-    
-    for i in orfs
+
+    @simd for i in orfs
         if i.strand == '-'
             reversedsequence = reverse_complement(sequence)
             seq = reversedsequence[i.location]
@@ -74,17 +80,16 @@ function findcds(sequence::LongDNA)
 end
 
 
-@testitem "findcds test" default_imports=true begin
+@testitem "findcds test" default_imports = true begin
     using BioSequences
-    
-    seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-    cds = findcds(seq)
-    # @test findcds(seq) == [CDS(1:33, '+', dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(4:33, '+', dna"ATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(8:22, '+', dna"ATGCATGCATGCTAG"), CDS(12:29, '+', dna"ATGCATGCTAGTAACTAG"), CDS(16:33, '+', dna"ATGCTAGTAACTAGCTAG")]
 
-    @test cds[1].orf == ORF(1:33, '+')
-    @test cds[1].sequence == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
+    seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+    cds01 = findcds(seq01)
     
-    @test length(cds) == 5
+    # @test findcds(seq01) == [CDS(ORF(1:33, '+'), dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(ORF(4:33, '+'), dna"ATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(ORF(8:22, '+'), dna"ATGCATGCATGCTAG"), CDS(ORF(12:29, '+'), dna"ATGCATGCTAGTAACTAG"), CDS(ORF(16:33), '+', dna"ATGCTAGTAACTAGCTAG")]
+    @test length(cds01) == 5
+    @test cds01[1].orf == ORF(1:33, '+')
+    @test cds01[1].sequence == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
 end
 
 
@@ -98,7 +103,7 @@ As its name suggest this function generate the possible proteins directly from a
 function findproteins(sequence::LongDNA)
     cds = findcds(sequence)
     proteins = Vector{Protein}()
-    for i in cds
+    @simd for i in cds
         proteinseq = translate(i.sequence)
         protein = Protein(i.orf, proteinseq)
         push!(proteins, protein)
@@ -107,9 +112,9 @@ function findproteins(sequence::LongDNA)
 end
 
 
-@testitem "findproteins test" default_imports=true begin
+@testitem "findproteins test" default_imports = true begin
     using BioSequences
-    
+
     seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
     proteins = findproteins(seq)
     # @test findcds(seq) == [CDS(1:33, '+', dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(4:33, '+', dna"ATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(8:22, '+', dna"ATGCATGCATGCTAG"), CDS(12:29, '+', dna"ATGCATGCTAGTAACTAG"), CDS(16:33, '+', dna"ATGCTAGTAACTAGCTAG")]
