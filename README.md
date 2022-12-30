@@ -1,29 +1,31 @@
-<!-- # <img src="docs/assets/logo.svg" width="30%" align="right" /> GeneFinder -->
-
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://camilogarciabotero.github.io/GeneFinder.jl/stable/)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://camilogarciabotero.github.io/GeneFinder.jl/dev/)
-[![Build Status](https://travis-ci.com/camilogarciabotero/GeneFinder.jl.svg?branch=main)](https://travis-ci.com/camilogarciabotero/GeneFinder.jl)
-[![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE)
-
-<!-- [![Build Status](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml?query=branch%3Amain) -->
+<p align="center">
+  <img src="docs/assets/logo.svg" height="150"><br/>
+  <i>A Gene Finder framework for Julia.</i><br/><br/>
+  <a href="https://www.repostatus.org/#wip">
+    <img src="https://www.repostatus.org/badges/latest/wip.svg">
+  </a>
+  <a href="https://codecov.io/gh/camilogarciabotero/GeneFinder.jl">
+    <img src="https://img.shields.io/codecov/c/github/camilogarciabotero/GeneFinder.jl?logo=codecov&logoColor=white">
+  </a>
+  <a href="https://camilogarciabotero.github.io/GeneFinder.jl/dev/">
+    <img src="https://img.shields.io/badge/documentation-online-blue.svg?logo=Julia&logoColor=white">
+  </a>
+  <a href="https://travis-ci.com/camilogarciabotero/GeneFinder.jl">
+    <img src="https://travis-ci.com/camilogarciabotero/GeneFinder.jl.svg?branch=main">
+  <a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-green.svg">
+  </a>
+</p>
 
 ***
 
-[![Coverage](https://codecov.io/gh/camilogarciabotero/GeneFinder.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/camilogarciabotero/GeneFinder.jl)
-
-<!-- [![CI](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml) -->
-
 <!-- [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl) -->
-
-<!-- [![Unit tests](https://github.com/camilogarciabotero/GeneFinder.jl/workflows/Unit%20tests/badge.svg?branch=main)](https://github.com/camilogarciabotero/GeneFinder.jl/actions?query=workflow%3A%22Unit+tests%22+branch%3Amain) -->
-
 
 ## Overview
 
->This is a species-agnostic, algorithm extensible, sequence-anonymous (genome, metagenomes) *gene finder* library for the Julia Language.
+>This is a species-agnostic, algorithm extensible, sequence-anonymous (genome, metagenomes) *gene finder* library framework for the Julia Language.
 
-The main idea is to create versatile module that enables apply different implemented algorithm to DNA sequences. See the BioAlignment implementation of different sequence alignment algorithms (local, global, edit-distance).
+The main goal of `GeneFinder` is to create a versatile module that enables apply different implemented algorithm to DNA sequences. See, for instance, BioAlignment implementations of different sequence alignment algorithms (local, global, edit-distance).
 
 ## Installation
 
