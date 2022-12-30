@@ -58,6 +58,7 @@ struct Protein <: Gene
     sequence::LongAA
 end
 
+# const START_CODON_MATRIX = PWMSearchQuery([dna"ATG", dna"GTG", dna"TTG"], 1.0)
 const STOP_CODONS = [dna"TAG", dna"TAA", dna"TGA"]
 
 
