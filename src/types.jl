@@ -58,7 +58,7 @@ struct Protein <: Gene
     sequence::LongAA
 end
 
-const stopcodons = [dna"TAG", dna"TAA", dna"TGA"]
+const STOP_CODONS = [dna"TAG", dna"TAA", dna"TGA"]
 
 
 # # The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/

@@ -11,23 +11,23 @@ The simplefinder function takes a LongDNA sequence and returns a Vector{ORF} con
     This function has not ORFs size and overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
 function simplefinder(sequence::LongDNA)
+    orf = nothing
     orfs = Vector{ORF}()
+    startcodon = ExactSearchQuery(dna"ATG", iscompatible)
+    seqbound = length(sequence) - 3
+
     for strand in ['+', '-']
         seq = strand == '-' ? reverse_complement(sequence) : sequence
 
-        start_codon = ExactSearchQuery(dna"ATG", iscompatible)
-        start_codon_indices = findall(start_codon, seq)
+        start_codon_indices = findall(startcodon, seq)
 
-        orf = nothing
         for i in start_codon_indices
-            j = i.start
-            while j < length(seq) - 3
-                if seq[j:j+2] ∈ stopcodons
+            for j in i.start:3:seqbound
+                if seq[j:j+2] ∈ STOP_CODONS
                     push!(orfs, orf)
                     break
                 end
                 orf = ORF(i.start:j+5, strand)
-                j += 3
             end
         end
     end
