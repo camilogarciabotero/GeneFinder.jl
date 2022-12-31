@@ -59,7 +59,7 @@ struct Protein <: Gene
 end
 
 # const START_CODON_MATRIX = PWMSearchQuery([dna"ATG", dna"GTG", dna"TTG"], 1.0)
-const STOP_CODONS = [dna"TAG", dna"TAA", dna"TGA"]
+const stopcodons = [dna"TAG", dna"TAA", dna"TGA"]
 
 
 # # The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/

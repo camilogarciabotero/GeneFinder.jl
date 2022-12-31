@@ -23,7 +23,7 @@ function simplefinder(sequence::LongDNA)
 
         for i in start_codon_indices
             for j in i.start:3:seqbound
-                if seq[j:j+2] ∈ STOP_CODONS
+                if seq[j:j+2] ∈ stopcodons
                     push!(orfs, orf)
                     break
                 end
@@ -79,19 +79,17 @@ function findcds(sequence::LongDNA)
     return seqs
 end
 
-
 @testitem "findcds test" default_imports = true begin
     using BioSequences
 
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
     cds01 = findcds(seq01)
-    
+
     # @test findcds(seq01) == [CDS(ORF(1:33, '+'), dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(ORF(4:33, '+'), dna"ATGCATGCATGCATGCTAGTAACTAGCTAG"), CDS(ORF(8:22, '+'), dna"ATGCATGCATGCTAG"), CDS(ORF(12:29, '+'), dna"ATGCATGCTAGTAACTAG"), CDS(ORF(16:33), '+', dna"ATGCTAGTAACTAGCTAG")]
     @test length(cds01) == 5
     @test cds01[1].orf == ORF(1:33, '+')
     @test cds01[1].sequence == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
 end
-
 
 """
     findproteins(sequence::LongDNA)
@@ -110,7 +108,6 @@ function findproteins(sequence::LongDNA)
     end
     return proteins
 end
-
 
 @testitem "findproteins test" default_imports = true begin
     using BioSequences
