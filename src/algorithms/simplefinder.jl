@@ -13,7 +13,7 @@ The simplefinder function takes a LongDNA sequence and returns a Vector{ORF} con
 function simplefinder(sequence::LongDNA)
     orf = nothing
     orfs = Vector{ORF}()
-    startcodon = ExactSearchQuery(dna"ATG", iscompatible)
+    startcodon = ExactSearchQuery(Codon("ATG"), iscompatible)
     seqbound = length(sequence) - 3
 
     for strand in ['+', '-']
