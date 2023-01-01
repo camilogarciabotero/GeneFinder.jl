@@ -7,6 +7,6 @@ include("algorithms/simplefinder.jl")
 export simplefinder, findcds, findproteins
 
 include("types.jl")
-export ORF, CDS, Protein, stopcodons
+export ORF, Codon, CDS, Protein, stopcodons
 
 end
