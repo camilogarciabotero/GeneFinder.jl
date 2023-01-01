@@ -1,4 +1,4 @@
-
+```@raw html
 <p align="center">
 <img src="../assets/logo.svg" height="150"><br/> <i>A Gene Finder
 framework for Julia.</i><br/><br/>
@@ -14,7 +14,7 @@ framework for Julia.</i><br/><br/>
 <a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE">
 <img src="https://img.shields.io/badge/license-MIT-green.svg"> </a> </a>
 </p>
-
+```
 ------------------------------------------------------------------------
 
 ## Overview
