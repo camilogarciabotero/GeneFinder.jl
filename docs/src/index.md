@@ -1,6 +1,6 @@
 ```@raw html
 <p align="center">
-<img src="../assets/logo.svg" height="150"><br/> <i>A Gene Finder
+<img src="docs/assets/logo.svg" height="150"><br/> <i>A Gene Finder
 framework for Julia.</i><br/><br/>
 <a href="https://www.repostatus.org/#wip">
 <img src="https://www.repostatus.org/badges/latest/wip.svg"> </a>
