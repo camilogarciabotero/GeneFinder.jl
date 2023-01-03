@@ -1,3 +1,25 @@
+include("types.jl")
+
+function hasprematurestop(sequence::LongDNA)::Bool
+    stop_codon_count = 0
+    seqbound = length(sequence)
+    @inbounds for i in 1:3:seqbound
+        if i+2 <= seqbound
+            codon = sequence[i:i+2]
+            if codon ∈ stopcodons # == dna"TAA" || codon == dna"TAG" || codon == dna"TGA"
+                stop_codon_count += 1
+            end
+        end
+    end
+    stop_codon_count > 1
+end
+
+
+# function hasprematurestop02(sequence::LongDNA)
+#     stop_codon_count = count(stopcodons, sequence[1:end-2])
+#     stop_codon_count > 1
+# end
+
 # function _create_pairs(starts::Vector, stops::Vector)
 #     combination = Vector{UnitRange}()
 #     for i in starts
@@ -32,20 +54,6 @@
 #         end
 #     end
 #     codons
-# end
-
-
-# function hasprematurestop(seq::LongDNA)
-#     stop_codon_count = 0
-#     for i in 1:3:length(seq)
-#         if i+2 <= length(seq)
-#             codon = seq[i:i+2]
-#             if codon == dna"TAA" || codon == dna"TAG" || codon == dna"TGA"
-#                 stop_codon_count += 1
-#             end
-#         end
-#     end
-#     stop_codon_count > 1
 # end
 
 
