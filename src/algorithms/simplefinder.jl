@@ -1,6 +1,7 @@
 using BioSequences
 using TestItems
 include("../types.jl")
+include("../helpers.jl")
 
 """
     simplefinder(sequence::LongDNA)
@@ -34,103 +35,71 @@ function simplefinder(sequence::LongDNA)
     return orfs
 end
 
-@testitem "simplefinder test" default_imports = true begin
+@testitem "simplefinder test" begin
     using BioSequences
 
+    # A random seq to start
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
     orfs01 = simplefinder(seq01)
 
     @test simplefinder(seq01) == [ORF(1:33, '+'), ORF(4:33, '+'), ORF(8:22, '+'), ORF(12:29, '+'), ORF(16:33, '+')]
     @test length(orfs01) == 5
 
-    seq02 = dna"GATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+    # > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
+    seq02 = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
     orfs02 = simplefinder(seq02)
 
-    @test simplefinder(seq02) == [ORF(2:34, '+'), ORF(5:34, '+'), ORF(9:23, '+'), ORF(13:30, '+'), ORF(17:34, '+')]
-    @test length(orfs02) == 5
+    @test length(orfs02) == 12
+    @test simplefinder(seq02) == [ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')]
 end
 
-
 """
-    findcds(sequence::LongDNA)
+    cdsgenerator(sequence::LongDNA)
 
 A function to generete CDSs sequence out of a DNA sequence.
 
-The `findcds` is a generator function that takes a `LongDNA` sequence and returns an iterator over the given sequence,
+The `cdsgenerator` is a generator function that takes a `LongDNA` sequence and returns an iterator over the given sequence,
     containing the coding sequences (CDSs) found in the sequence and the ORF. 
     It uses the `simplefinder` function to find open reading frames (ORFs) in the sequence, 
     and then it extracts the actual CDS sequence from each ORF. 
     The function also searches the reverse complement of the sequence, so it finds CDSs on both strands.
 """
-function findcds(sequence::LongDNA)
+function cdsgenerator(sequence::LongDNA)
     orfs = simplefinder(sequence)
     reversedseq = reverse_complement(sequence)
-    cds = (i.strand == '+' ? sequence[i.location] : reversedseq[i.location] for i in orfs)
-    return collect(cds)
+    return(i.strand == '+' ? sequence[i.location] : reversedseq[i.location] for i in orfs)
 end
 
-# function findcds(sequence::LongDNA)
 
-#     orfs = simplefinder(sequence)
-#     seqs = Vector{CDS}()
-
-#     @simd for i in orfs
-#         if i.strand == '-'
-#             reversedsequence = reverse_complement(sequence)
-#             seq = reversedsequence[i.location]
-#         else
-#             seq = sequence[i.location]
-#         end
-#         cds = CDS(i, seq)
-#         push!(seqs, cds)
-#     end
-#     return seqs
-# end
-
-@testitem "findcds test" default_imports = true begin
+@testitem "cdsgenerator test" begin
     using BioSequences
 
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-    cds01 = findcds(seq01)
+    cds01 = collect(cdsgenerator(seq01))
 
     @test length(cds01) == 5
     @test cds01 == [dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG", dna"ATGCATGCATGCATGCTAGTAACTAGCTAG", dna"ATGCATGCATGCTAG", dna"ATGCATGCTAGTAACTAG", dna"ATGCTAGTAACTAGCTAG"]
-    @test cds01[1] == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
 end
 
 """
-    findproteins(sequence::LongDNA)
+    proteingenerator(sequence::LongDNA)
 
-As its name suggest this function generate the possible proteins directly from a DNA sequence. 
-    The `findcds` function takes a `LongDNA` sequence and returns a `Vector{CDS}` containing the 
+As its name suggest this generator function that iterates over the sequence to find proteins directly from a DNA sequence. 
+    The `cdsgenerator` function takes a `LongDNA` sequence and returns a `Vector{CDS}` containing the 
     coding sequences (CDSs) found in the sequence. 
 """
-function findproteins(sequence::LongDNA)
+function proteingenerator(sequence::LongDNA)
     orfs = simplefinder(sequence)
     reversedseq = reverse_complement(sequence)
-    protein = (i.strand == '+' ? translate(sequence[i.location]) : translate(reversedseq[i.location]) for i in orfs)
-    return collect(protein)
+    return(i.strand == '+' ? translate(sequence[i.location]) : translate(reversedseq[i.location]) for i in orfs)
 end
 
-# function findproteins(sequence::LongDNA)
-#     cds = findcds(sequence)
-#     proteins = Vector{Protein}()
-#     @simd for i in cds
-#         proteinseq = translate(i.sequence)
-#         protein = Protein(i.orf, proteinseq)
-#         push!(proteins, protein)
-#     end
-#     return proteins
-# end
-
-@testitem "findproteins test" default_imports = true begin
+@testitem "proteingenerator test" begin
     using BioSequences
 
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-    proteins01 = findproteins(seq01)
+    proteins01 = collect(proteingenerator(seq01))
     
     @test length(proteins01) == 5
     @test proteins01 == [aa"MMHACMLVTS*", aa"MHACMLVTS*", aa"MHAC*", aa"MHASN*", aa"MLVTS*"]
-    @test proteins01[1] == aa"MMHACMLVTS*"
-
 end

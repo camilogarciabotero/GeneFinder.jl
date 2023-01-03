@@ -24,8 +24,7 @@ The ORF struct represents an open reading frame in a DNA sequence. It has two fi
 struct ORF <: Gene
     location::UnitRange{Int64} # Note that it is also called position for gene struct in GenomicAnotations
     strand::Char
-
-    ORF(location, strand) = new(location, strand)
+    # ORF(location, strand) = new(location, strand)
 end
 
 # # The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/
@@ -45,17 +44,15 @@ function Codon(iterable)
     length(iterable) == 3 || error("Must have length 3")
     x = zero(UInt)
     for (i, nt) in enumerate(iterable)
-        x |= BioSequences.encode(Alphabet(Codon), convert(DNA, nt)) << (6-2i)
+        x |= BioSequences.encode(Alphabet(Codon), convert(DNA, nt)) << (6 - 2i)
     end
     Codon(x % UInt8)
 end
 
-
 Base.length(::Codon) = 3
 
-
 function BioSequences.extract_encoded_element(x::Codon, i::Int)
-    ((x.x >>> (6-2i)) & 3) % UInt
+    ((x.x >>> (6 - 2i)) & 3) % UInt
 end
 
 Base.copy(seq::Codon) = Codon(seq.x)
@@ -64,6 +61,16 @@ BioSequences.has_interface(BioSequence, Codon, [DNA_C, DNA_T, DNA_G], false)
 
 
 const stopcodons = [Codon("TAG"), Codon("TAA"), Codon("TGA")]
+
+Base.count(codon::Codon, sequence::LongDNA) = count(String(codon), String(sequence))
+
+function Base.count(codons::Vector{Codon}, sequence::LongDNA)
+    a = 0
+    @inbounds for i in codons
+        a += count(i, sequence)
+    end
+    return a
+end
 
 # const START_CODON_MATRIX = PWMSearchQuery([dna"ATG", dna"GTG", dna"TTG"], 1.0)
 
