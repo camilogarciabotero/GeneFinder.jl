@@ -67,11 +67,10 @@ simplefinder(seq)
  ORF(581:601, '+')
  ORF(695:706, '+')
 ```
-
-Two other functions (`findcds` and `findproteins`) pass the sequence to `simplefinder` take the ORFs to index search the CDS and traslate into Protein: 
+Two other functions (`cdsgenerator` and `proteingenerator`) pass the sequence to `simplefinder` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or `write`en into a file more conviniently using the `FASTX` IO system:
 
 ```julia
-findcds(seq)
+cdsgenerator(seq); collect(ans)
 
 12-element Vector{CDS}:
  CDS(ORF(29:40, '+'), ATGCAACCCTGA)
@@ -89,7 +88,7 @@ findcds(seq)
 ```
 
 ```julia
-findproteins(seq)
+proteingenerator(seq); collect(ans)
 
 12-element Vector{Protein}:
  Protein(ORF(29:40, '+'), MQP*)

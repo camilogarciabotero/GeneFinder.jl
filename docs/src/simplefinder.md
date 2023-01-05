@@ -35,42 +35,63 @@ simplefinder(seq)
      ORF(581:601, '+')
      ORF(695:706, '+')
 
-Two other functions (`findcds` and `findproteins`) pass the sequence to
-`simplefinder` take the ORFs to index search the CDS and traslate into
-Protein:
+Two other functions (`cdsgenerator` and `proteingenerator`) pass the
+sequence to `simplefinder` take the ORFs and act as generators of the
+sequence, so this way the can be `collect`ed in the REPL as an standard
+output or `write`en into a file more conviniently using the `FASTX` IO
+system:
 
 ``` julia
-findcds(seq)
+cds = cdsgenerator(seq)
 ```
 
-    12-element Vector{CDS}:
-     CDS(ORF(29:40, '+'), ATGCAACCCTGA)
-     CDS(ORF(137:145, '+'), ATGCGCTGA)
-     CDS(ORF(164:184, '+'), ATGCGTCGAATGGCACGGTGA)
-     CDS(ORF(173:184, '+'), ATGGCACGGTGA)
-     CDS(ORF(236:241, '+'), ATGTGA)
-     CDS(ORF(248:268, '+'), ATGTGTCCAACGGCAGTCTGA)
-     CDS(ORF(362:373, '+'), ATGCAACCCTGA)
-     CDS(ORF(470:496, '+'), ATGCACTGGCTGGTCCTGTCAATCTGA)
-     CDS(ORF(551:574, '+'), ATGTCACCGCACAAGGCAATGTGA)
-     CDS(ORF(569:574, '+'), ATGTGA)
-     CDS(ORF(581:601, '+'), ATGTGTCCAACGGCAGCCTGA)
-     CDS(ORF(695:706, '+'), ATGCAACCCTGA)
+Line 1  
+We actually need to collect the `Generator` to see the CDSs in the
+stdout. Other way to to is simply by array comprenhension
+`[for cds in cdsgenerator(seq)]`
+
+<!-- -->
+
+    Base.Generator{Vector{ORF}, GeneFinder.var"#1#2"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}}(GeneFinder.var"#1#2"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}(AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC, GCTCAGGTTACCGCCGGCAGTCAGGGTTGCATTGCCCGC…CAGGGTTGCATTGCCCGCGGTACTGATATTGCCCTGGTT), ORF[ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')])
 
 ``` julia
-findproteins(seq)
+collect(cds)
 ```
 
-    12-element Vector{Protein}:
-     Protein(ORF(29:40, '+'), MQP*)
-     Protein(ORF(137:145, '+'), MR*)
-     Protein(ORF(164:184, '+'), MRRMAR*)
-     Protein(ORF(173:184, '+'), MAR*)
-     Protein(ORF(236:241, '+'), M*)
-     Protein(ORF(248:268, '+'), MCPTAV*)
-     Protein(ORF(362:373, '+'), MQP*)
-     Protein(ORF(470:496, '+'), MHWLVLSI*)
-     Protein(ORF(551:574, '+'), MSPHKAM*)
-     Protein(ORF(569:574, '+'), M*)
-     Protein(ORF(581:601, '+'), MCPTAA*)
-     Protein(ORF(695:706, '+'), MQP*)
+    12-element Vector{LongSequence{DNAAlphabet{4}}}:
+     ATGCAACCCTGA
+     ATGCGCTGA
+     ATGCGTCGAATGGCACGGTGA
+     ATGGCACGGTGA
+     ATGTGA
+     ATGTGTCCAACGGCAGTCTGA
+     ATGCAACCCTGA
+     ATGCACTGGCTGGTCCTGTCAATCTGA
+     ATGTCACCGCACAAGGCAATGTGA
+     ATGTGA
+     ATGTGTCCAACGGCAGCCTGA
+     ATGCAACCCTGA
+
+``` julia
+protein = proteingenerator(seq)
+```
+
+    Base.Generator{Vector{ORF}, GeneFinder.var"#3#4"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}}(GeneFinder.var"#3#4"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}(AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC, GCTCAGGTTACCGCCGGCAGTCAGGGTTGCATTGCCCGC…CAGGGTTGCATTGCCCGCGGTACTGATATTGCCCTGGTT), ORF[ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')])
+
+``` julia
+collect(protein)
+```
+
+    12-element Vector{LongAA}:
+     MQP*
+     MR*
+     MRRMAR*
+     MAR*
+     M*
+     MCPTAV*
+     MQP*
+     MHWLVLSI*
+     MSPHKAM*
+     M*
+     MCPTAA*
+     MQP*
