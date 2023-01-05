@@ -1,7 +1,7 @@
-```@raw html
+![]("/docs/assets/logo.svg")
+
 <p align="center">
-<img src="docs/assets/logo.svg" height="150"><br/> <i>A Gene Finder
-framework for Julia.</i><br/><br/>
+<i>A Gene Finder framework for Julia.</i><br/><br/>
 <a href="https://www.repostatus.org/#wip">
 <img src="https://www.repostatus.org/badges/latest/wip.svg"> </a>
 <a href="https://camilogarciabotero.github.io/GeneFinder.jl/dev/">
@@ -14,7 +14,7 @@ framework for Julia.</i><br/><br/>
 <a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE">
 <img src="https://img.shields.io/badge/license-MIT-green.svg"> </a> </a>
 </p>
-```
+
 ------------------------------------------------------------------------
 
 ## Overview

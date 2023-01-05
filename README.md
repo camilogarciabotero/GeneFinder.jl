@@ -72,37 +72,37 @@ Two other functions (`cdsgenerator` and `proteingenerator`) pass the sequence to
 ```julia
 cdsgenerator(seq); collect(ans)
 
-12-element Vector{CDS}:
- CDS(ORF(29:40, '+'), ATGCAACCCTGA)
- CDS(ORF(137:145, '+'), ATGCGCTGA)
- CDS(ORF(164:184, '+'), ATGCGTCGAATGGCACGGTGA)
- CDS(ORF(173:184, '+'), ATGGCACGGTGA)
- CDS(ORF(236:241, '+'), ATGTGA)
- CDS(ORF(248:268, '+'), ATGTGTCCAACGGCAGTCTGA)
- CDS(ORF(362:373, '+'), ATGCAACCCTGA)
- CDS(ORF(470:496, '+'), ATGCACTGGCTGGTCCTGTCAATCTGA)
- CDS(ORF(551:574, '+'), ATGTCACCGCACAAGGCAATGTGA)
- CDS(ORF(569:574, '+'), ATGTGA)
- CDS(ORF(581:601, '+'), ATGTGTCCAACGGCAGCCTGA)
- CDS(ORF(695:706, '+'), ATGCAACCCTGA)
+12-element Vector{LongSequence{DNAAlphabet{4}}}:
+ ATGCAACCCTGA
+ ATGCGCTGA
+ ATGCGTCGAATGGCACGGTGA
+ ATGGCACGGTGA
+ ATGTGA
+ ATGTGTCCAACGGCAGTCTGA
+ ATGCAACCCTGA
+ ATGCACTGGCTGGTCCTGTCAATCTGA
+ ATGTCACCGCACAAGGCAATGTGA
+ ATGTGA
+ ATGTGTCCAACGGCAGCCTGA
+ ATGCAACCCTGA
 ```
 
 ```julia
 proteingenerator(seq); collect(ans)
 
-12-element Vector{Protein}:
- Protein(ORF(29:40, '+'), MQP*)
- Protein(ORF(137:145, '+'), MR*)
- Protein(ORF(164:184, '+'), MRRMAR*)
- Protein(ORF(173:184, '+'), MAR*)
- Protein(ORF(236:241, '+'), M*)
- Protein(ORF(248:268, '+'), MCPTAV*)
- Protein(ORF(362:373, '+'), MQP*)
- Protein(ORF(470:496, '+'), MHWLVLSI*)
- Protein(ORF(551:574, '+'), MSPHKAM*)
- Protein(ORF(569:574, '+'), M*)
- Protein(ORF(581:601, '+'), MCPTAA*)
- Protein(ORF(695:706, '+'), MQP*)
+12-element Vector{LongAA}:
+ MQP*
+ MR*
+ MRRMAR*
+ MAR*
+ M*
+ MCPTAV*
+ MQP*
+ MHWLVLSI*
+ MSPHKAM*
+ M*
+ MCPTAA*
+ MQP*
 ```
 
 ## Algorithms

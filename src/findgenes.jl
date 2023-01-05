@@ -42,7 +42,7 @@ Returns:
 function orfgenerator(sequence::LongDNA)
     reversedseq = reverse_complement(sequence)
     @inbounds begin
-        orfs = (ORF(l, s) for s in ['+', '-'] for l in locationgenerator(s == '+' ? sequence : reversedseq))
+        orfs = (ORF(location, strand) for strand in ['+', '-'] for location in locationgenerator(s == '+' ? sequence : reversedseq))
     end
     return orfs
 end
