@@ -8,9 +8,13 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [0.0.5]
 
-- Changes in the internals of `simplefinder`
-- Added a new logo
-- Improve tests and docs
+- Changed in the internals of `simplefinder`.
+- Added a new logo.
+- Improved tests and docs.
+- Added generators `orfgenerator` and `locationgenerator`.
+- Included some helper functions.
+- The `findcds` and `findproteins` turned into generators (`cdsgenerator` and `proteingenerator`).
+- Add the Codon type and clean others.
 
 ## [0.0.4]
 
