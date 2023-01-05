@@ -10,7 +10,7 @@ include("types.jl")
 export ORF, Codon, stopcodons
 
 include("helpers.jl")
-export hasprematurestop
+export eachcodon, hasprematurestop
 
 include("findgenes.jl")
 export locationgenerator, orfgenerator

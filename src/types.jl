@@ -59,7 +59,6 @@ Base.copy(seq::Codon) = Codon(seq.x)
 
 BioSequences.has_interface(BioSequence, Codon, [DNA_C, DNA_T, DNA_G], false)
 
-
 const stopcodons = [Codon("TAG"), Codon("TAA"), Codon("TGA")]
 
 Base.count(codon::Codon, sequence::LongDNA) = count(String(codon), String(sequence))
