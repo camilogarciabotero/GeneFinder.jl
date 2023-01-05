@@ -15,7 +15,7 @@ function simplefinder(sequence::LongDNA)
     orf = nothing
     orfs = Vector{ORF}()
     startcodon = ExactSearchQuery(Codon("ATG"), iscompatible)
-    seqbound = length(sequence) - 3
+    seqbound = length(sequence) - 2 #3
 
     for strand in ['+', '-']
         seq = strand == '-' ? reverse_complement(sequence) : sequence
