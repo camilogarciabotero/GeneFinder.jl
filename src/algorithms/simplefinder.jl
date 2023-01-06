@@ -70,6 +70,12 @@ function cdsgenerator(sequence::LongDNA)
     return(i.strand == '+' ? sequence[i.location] : reversedseq[i.location] for i in orfs)
 end
 
+function cdsgenerator(sequence::String)
+    sequence = LongDNA{4}(sequence)
+    orfs = simplefinder(sequence)
+    reversedseq = reverse_complement(sequence)
+    return(i.strand == '+' ? sequence[i.location] : reversedseq[i.location] for i in orfs)
+end
 
 @testitem "cdsgenerator test" begin
     using BioSequences
@@ -89,6 +95,13 @@ As its name suggest this generator function that iterates over the sequence to f
     coding sequences (CDSs) found in the sequence. 
 """
 function proteingenerator(sequence::LongDNA)
+    orfs = simplefinder(sequence)
+    reversedseq = reverse_complement(sequence)
+    return(i.strand == '+' ? translate(sequence[i.location]) : translate(reversedseq[i.location]) for i in orfs)
+end
+
+function proteingenerator(sequence::String)
+    sequence = LongDNA{4}(sequence)
     orfs = simplefinder(sequence)
     reversedseq = reverse_complement(sequence)
     return(i.strand == '+' ? translate(sequence[i.location]) : translate(reversedseq[i.location]) for i in orfs)
