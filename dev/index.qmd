@@ -1,7 +1,10 @@
 ---
 engine: knitr
 cache: refresh
+format: gfm
 ---
+
+![]("../assets/logo.svg"){fig-align="center"}
 
 <p align="center">
   <i>A Gene Finder framework for Julia.</i><br/><br/>

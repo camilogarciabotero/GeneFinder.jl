@@ -40,3 +40,21 @@ collect(cds) # <1>
 protein = proteingenerator(seq)
 collect(protein)
 ```
+
+# Combining `FASTX` to read a `fasta` record
+
+```{julia}
+using FASTX
+
+filename = "../../test/data/KK037166.fna"
+
+rdr = FASTA.Reader(open(filename))
+
+record = first(rdr)
+
+seq = sequence(record)
+
+dnaseq = LongDNA{4}(seq)
+
+collect(proteingenerator(dnaseq))
+```
