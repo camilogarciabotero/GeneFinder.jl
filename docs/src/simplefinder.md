@@ -17,6 +17,8 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
     726nt DNA Sequence:
     AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC
 
+## Finding all ORFs
+
 ``` julia
 simplefinder(seq)
 ```
@@ -40,6 +42,8 @@ sequence to `simplefinder` take the ORFs and act as generators of the
 sequence, so this way the can be `collect`ed in the REPL as an standard
 output or `write`en into a file more conviniently using the `FASTX` IO
 system:
+
+## Generting the cds and proteins associated with ORFs
 
 ``` julia
 cds = cdsgenerator(seq)
@@ -96,7 +100,7 @@ collect(protein)
      MCPTAA*
      MQP*
 
-# Combining `FASTX` to read a `fasta` record
+## Combining `FASTX` to read a fasta record
 
 ``` julia
 using FASTX
@@ -107,7 +111,6 @@ filename = "../../test/data/KK037166.fna"
     "../../test/data/KK037166.fna"
 
 ``` julia
-
 rdr = FASTA.Reader(open(filename))
 ```
 
@@ -116,7 +119,6 @@ rdr = FASTA.Reader(open(filename))
          sequence: "", true)
 
 ``` julia
-
 record = first(rdr)
 ```
 
@@ -125,14 +127,12 @@ record = first(rdr)
          sequence: "GCAGGTCGCCGTCCAGTGTCACGATGATGCCGTAATGCC…"
 
 ``` julia
-
 seq = sequence(record)
 ```
 
     "GCAGGTCGCCGTCCAGTGTCACGATGATGCCGTAATGCCGGCGACGGGTGCTGACCTGTGACCACAACTCGGTGAAGGCGATGCCGTGCAGAGTGGCCAGTCTGGCGAGGTAGGAGACCGCGAGCTCGTTGTGCGCGGGCCGCAGGCGGATCGGCAGCCGGGAGACCATCAGGCGCTGGCCTGCTTGGTCGCTGCCCGTGCTCGCGGCCGCCGAGCCGCGGTCGACCGTTCGGCGGCGAAGTCGACCGGGACCAGGTCGAGCAGGTCTCG" ⋯ 19461 bytes ⋯ "CGTCCACCGTGGTCGAACTGGGGTGCAGCCGGCGGAGCCAGCCAGGCTGGCCCCACCGCTGGTGACCAGCAGCATTACCACGCTCGGTTGGCGTCGCTGCTGGCGCTGCCGCCGACCGGGCTGGCGGGCGGATCGGCGATAGGCGACCAGACAGGTCAACTCGAGGGGCCTGTCAGCGTCGAGTTCCCTACTTGCGACCTGTTAACTCAAGACGACACCGACCACGTGCAGCGCATCGGTGATCACATACCGCTTCCGTGAGCATGGGG"
 
 ``` julia
-
 dnaseq = LongDNA{4}(seq)
 ```
 
@@ -140,7 +140,6 @@ dnaseq = LongDNA{4}(seq)
     GCAGGTCGCCGTCCAGTGTCACGATGATGCCGTAATGCC…GCGCATCGGTGATCACATACCGCTTCCGTGAGCATGGGG
 
 ``` julia
-
 collect(proteingenerator(dnaseq))
 ```
 

@@ -22,12 +22,15 @@ using BioSequences, GeneFinder
 seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
 ```
 
+## Finding all ORFs
 ```{julia}
 #| eval: true
 simplefinder(seq)
 ```
 
 Two other functions (`cdsgenerator` and `proteingenerator`) pass the sequence to `simplefinder` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or `write`en into a file more conviniently using the `FASTX` IO system:
+
+## Generting the cds and proteins associated with ORFs
 
 ```{julia}
 cds = cdsgenerator(seq)
@@ -41,20 +44,15 @@ protein = proteingenerator(seq)
 collect(protein)
 ```
 
-# Combining `FASTX` to read a `fasta` record
+## Combining `FASTX` to read a fasta record
 
 ```{julia}
 using FASTX
 
 filename = "../../test/data/KK037166.fna"
-
 rdr = FASTA.Reader(open(filename))
-
 record = first(rdr)
-
 seq = sequence(record)
-
 dnaseq = LongDNA{4}(seq)
-
 collect(proteingenerator(dnaseq))
 ```
