@@ -1,4 +1,3 @@
-![]("/docs/assets/logo.svg")
 
 <p align="center">
 <i>A Gene Finder framework for Julia.</i><br/><br/>
