@@ -1,4 +1,6 @@
 
+<img src="../assets/logo.svg" data-fig-align="center"/>
+
 <p align="center">
 <i>A Gene Finder framework for Julia.</i><br/><br/>
 <a href="https://www.repostatus.org/#wip">
