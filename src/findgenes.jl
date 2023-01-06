@@ -1,5 +1,6 @@
 # # this will be the main functions taking all the algorithms
 using BioSequences
+using TestItems
 
 include("types.jl")
 include("helpers.jl")
