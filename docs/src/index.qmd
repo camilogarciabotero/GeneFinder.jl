@@ -1,7 +1,6 @@
 ---
 engine: knitr
-cache: refresh
-format: gfm
+cache: false
 ---
 
 ![]("../assets/logo.svg"){fig-align="center"}
