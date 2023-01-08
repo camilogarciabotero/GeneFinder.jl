@@ -1,6 +1,7 @@
 module GeneFinder
 
 using BioSequences  #standard_genetic_code
+import BioSequences: GeneticCode
 using TestItems: @testitem
 
 include("algorithms/simplefinder.jl")

@@ -25,7 +25,7 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
 ## Finding all ORFs
 ```{julia}
 #| eval: true
-simplefinder(seq)
+simplefind(seq)
 ```
 
 Two other functions (`cdsgenerator` and `proteingenerator`) pass the sequence to `simplefinder` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or `write`en into a file more conviniently using the `FASTX` IO system:
@@ -33,20 +33,21 @@ Two other functions (`cdsgenerator` and `proteingenerator`) pass the sequence to
 ## Generting the cds and proteins associated with ORFs
 
 ```{julia}
-cds = cdsgenerator(seq)
+cds = simplecds_generator(seq)
 collect(cds) # <1>
 ```
 
 1. We actually need to collect the `Generator` to see the CDSs in the stdout. Other way to to is simply by array comprenhension `[for cds in cdsgenerator(seq)]`
 
 ```{julia}
-protein = proteingenerator(seq)
+protein = simpleprot_generator(seq)
 collect(protein)
 ```
 
 ## Combining `FASTX` to read a fasta record
 
 ```{julia}
+#|eval: false
 using FASTX
 
 filename = "../../test/data/KK037166.fna"
@@ -54,5 +55,9 @@ rdr = FASTA.Reader(open(filename))
 record = first(rdr)
 seq = sequence(record)
 dnaseq = LongDNA{4}(seq)
-collect(proteingenerator(dnaseq))
+```
+
+
+```{julia}
+collect(simpleprot_generator(dnaseq))
 ```

@@ -20,7 +20,7 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
 ## Finding all ORFs
 
 ``` julia
-simplefinder(seq)
+simplefind(seq)
 ```
 
     12-element Vector{ORF}:
@@ -46,7 +46,7 @@ system:
 ## Generting the cds and proteins associated with ORFs
 
 ``` julia
-cds = cdsgenerator(seq)
+cds = simplecds_generator(seq)
 ```
 
 Line 1  
@@ -56,7 +56,7 @@ stdout. Other way to to is simply by array comprenhension
 
 <!-- -->
 
-    Base.Generator{Vector{ORF}, GeneFinder.var"#3#4"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}}(GeneFinder.var"#3#4"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}(AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC, GCTCAGGTTACCGCCGGCAGTCAGGGTTGCATTGCCCGC…CAGGGTTGCATTGCCCGCGGTACTGATATTGCCCTGGTT), ORF[ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')])
+    Base.Generator{Vector{ORF}, GeneFinder.var"#2#3"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}}(GeneFinder.var"#2#3"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}(AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC, GCTCAGGTTACCGCCGGCAGTCAGGGTTGCATTGCCCGC…CAGGGTTGCATTGCCCGCGGTACTGATATTGCCCTGGTT), ORF[ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')])
 
 ``` julia
 collect(cds)
@@ -77,10 +77,10 @@ collect(cds)
      ATGCAACCCTGA
 
 ``` julia
-protein = proteingenerator(seq)
+protein = simpleprot_generator(seq)
 ```
 
-    Base.Generator{Vector{ORF}, GeneFinder.var"#7#8"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}}(GeneFinder.var"#7#8"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}(AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC, GCTCAGGTTACCGCCGGCAGTCAGGGTTGCATTGCCCGC…CAGGGTTGCATTGCCCGCGGTACTGATATTGCCCTGGTT), ORF[ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')])
+    Base.Generator{Vector{ORF}, GeneFinder.var"#8#9"{BioSequences.GeneticCode, LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}}(GeneFinder.var"#8#9"{BioSequences.GeneticCode, LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}(The Standard Code, AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC, GCTCAGGTTACCGCCGGCAGTCAGGGTTGCATTGCCCGC…CAGGGTTGCATTGCCCGCGGTACTGATATTGCCCTGGTT), ORF[ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')])
 
 ``` julia
 collect(protein)
@@ -103,6 +103,7 @@ collect(protein)
 ## Combining `FASTX` to read a fasta record
 
 ``` julia
+#|eval: false
 using FASTX
 
 filename = "../../test/data/KK037166.fna"
@@ -140,7 +141,7 @@ dnaseq = LongDNA{4}(seq)
     GCAGGTCGCCGTCCAGTGTCACGATGATGCCGTAATGCC…GCGCATCGGTGATCACATACCGCTTCCGTGAGCATGGGG
 
 ``` julia
-collect(proteingenerator(dnaseq))
+collect(simpleprot_generator(dnaseq))
 ```
 
     1573-element Vector{LongAA}:

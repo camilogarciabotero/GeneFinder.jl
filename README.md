@@ -51,7 +51,7 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
 ```
 
 ```julia
-simplefinder(seq)
+simplefind(seq)
 
 12-element Vector{ORF}:
  ORF(29:40, '+')
@@ -67,10 +67,10 @@ simplefinder(seq)
  ORF(581:601, '+')
  ORF(695:706, '+')
 ```
-Two other functions (`cdsgenerator` and `proteingenerator`) pass the sequence to `simplefinder` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or `write`en into a file more conviniently using the `FASTX` IO system:
+Two other functions (`simplecds_generator` and `simpleprot_generator`) pass the sequence to `simplefinder` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or `write`en into a file more conviniently using the `FASTX` IO system:
 
 ```julia
-cdsgenerator(seq); collect(ans)
+simplecds_generator(seq); collect(ans)
 
 12-element Vector{LongSequence{DNAAlphabet{4}}}:
  ATGCAACCCTGA
@@ -88,7 +88,7 @@ cdsgenerator(seq); collect(ans)
 ```
 
 ```julia
-proteingenerator(seq); collect(ans)
+simpleprot_generator(seq); collect(ans)
 
 12-element Vector{LongAA}:
  MQP*
