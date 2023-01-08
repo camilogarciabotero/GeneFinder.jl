@@ -1,8 +1,3 @@
-using BioSequences
-using TestItems
-include("../types.jl")
-include("../helpers.jl")
-
 """
     simplefinder(sequence::LongDNA)
 
@@ -14,7 +9,6 @@ The simplefinder function takes a LongDNA sequence and returns a Vector{ORF} con
 function simplefinder(sequence::LongDNA)
     orf = nothing
     orfs = Vector{ORF}()
-    startcodon = ExactSearchQuery(Codon("ATG"), iscompatible)
     seqbound = length(sequence) - 2 #3
 
     for strand in ['+', '-']
@@ -53,8 +47,39 @@ end
     @test simplefinder(seq02) == [ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')]
 end
 
+
 """
-    cdsgenerator(sequence::LongDNA)
+    simplefinderextended(sequence::LongDNA)
+
+Similar to `simplefinder` implementation that finds ORFs in a DNA sequence, but extending the starting codons search to include ATG, GTG, and TTG.
+    In E. coli (K-12 strain), ATG is used in about 83 % of its genes, GTG in 14 % and TTG in 3 % of the cases @ref[axelson-fisk_comparative_2015]
+
+"""
+function simplefinderextended(sequence::LongDNA)
+    orf = nothing
+    orfs = Vector{ORF}()
+    seqbound = length(sequence) - 2 #3
+
+    for strand in ['+', '-']
+        seq = strand == '-' ? reverse_complement(sequence) : sequence
+
+        start_codon_indices = findall(extended_startcodons, seq01)
+
+        for i in start_codon_indices
+            for j in i:3:seqbound
+                if seq[j:j+2] ∈ stopcodons
+                    push!(orfs, orf)
+                    break
+                end
+                orf = ORF(i:j+5, strand)
+            end
+        end
+    end
+    return orfs
+end
+
+"""
+    cdsgenerator(sequence::LongDNA; extended::Bool=false)
 
 A function to generete CDSs sequence out of a DNA sequence.
 
@@ -64,15 +89,15 @@ The `cdsgenerator` is a generator function that takes a `LongDNA` sequence and r
     and then it extracts the actual CDS sequence from each ORF. 
     The function also searches the reverse complement of the sequence, so it finds CDSs on both strands.
 """
-function cdsgenerator(sequence::LongDNA)
-    orfs = simplefinder(sequence)
+function cdsgenerator(sequence::LongDNA; extended=false)
+    orfs = extended == false ? simplefinder(sequence) : simplefinderextended(sequence)
     reversedseq = reverse_complement(sequence)
     return(i.strand == '+' ? sequence[i.location] : reversedseq[i.location] for i in orfs)
 end
 
-function cdsgenerator(sequence::String)
+function cdsgenerator(sequence::String; extended::Bool=false)
     sequence = LongDNA{4}(sequence)
-    orfs = simplefinder(sequence)
+    orfs = extended == false ? simplefinder(sequence) : simplefinderextended(sequence)
     reversedseq = reverse_complement(sequence)
     return(i.strand == '+' ? sequence[i.location] : reversedseq[i.location] for i in orfs)
 end
@@ -88,21 +113,21 @@ end
 end
 
 """
-    proteingenerator(sequence::LongDNA)
+    proteingenerator(sequence::LongDNA; extended::Bool=false)
 
 As its name suggest this generator function that iterates over the sequence to find proteins directly from a DNA sequence. 
     The `cdsgenerator` function takes a `LongDNA` sequence and returns a `Vector{CDS}` containing the 
     coding sequences (CDSs) found in the sequence. 
 """
-function proteingenerator(sequence::LongDNA)
-    orfs = simplefinder(sequence)
+function proteingenerator(sequence::LongDNA; extended::Bool=false)
+    orfs = extended == false ? simplefinder(sequence) : simplefinderextended(sequence)
     reversedseq = reverse_complement(sequence)
     return(i.strand == '+' ? translate(sequence[i.location]) : translate(reversedseq[i.location]) for i in orfs)
 end
 
-function proteingenerator(sequence::String)
+function proteingenerator(sequence::String; extended::Bool=false)
     sequence = LongDNA{4}(sequence)
-    orfs = simplefinder(sequence)
+    orfs = extended == false ? simplefinder(sequence) : simplefinderextended(sequence)
     reversedseq = reverse_complement(sequence)
     return(i.strand == '+' ? translate(sequence[i.location]) : translate(reversedseq[i.location]) for i in orfs)
 end

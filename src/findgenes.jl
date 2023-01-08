@@ -1,9 +1,4 @@
 # # this will be the main functions taking all the algorithms
-using BioSequences
-using TestItems
-
-include("types.jl")
-include("helpers.jl")
 
 """
     locationgenerator(sequence::LongDNA)
@@ -19,7 +14,6 @@ Returns:
     A generator expression that yields ranges of indices corresponding to the locations of ORFs in the `sequence`.
 """
 function locationgenerator(sequence::LongDNA)
-    startcodon = ExactSearchQuery(Codon("ATG"), iscompatible)
     seqbound = length(sequence) - 2
     start_codon_indices = findall(startcodon, sequence)
     @inbounds begin
@@ -48,7 +42,6 @@ function orfgenerator(sequence::LongDNA)
     return orfs
 end
 
-
 @testitem "orfgenerator test" begin
     using BioSequences
 
@@ -66,7 +59,6 @@ end
     @test length(orfs02) == 12
     @test collect(orfgenerator(seq02)) == [ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')]
 end
-
 
 # """
 # FindGene struct

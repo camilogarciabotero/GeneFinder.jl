@@ -4,7 +4,7 @@ using BioSequences
 using TestItems: @testitem
 
 include("algorithms/simplefinder.jl")
-export simplefinder, cdsgenerator, proteingenerator
+export simplefinder, simplefinderextended, cdsgenerator, proteingenerator
 
 include("types.jl")
 export ORF, Codon, stopcodons

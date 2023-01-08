@@ -1,7 +1,5 @@
 # Structs associated with gene models 
 # using GenomicFeatures
-using BioSequences
-
 abstract type Gene end
 
 # abstract type exon end
@@ -39,7 +37,6 @@ struct Codon <: BioSequence{DNAAlphabet{2}}
     x::UInt8
 end
 
-
 function Codon(iterable)
     length(iterable) == 3 || error("Must have length 3")
     x = zero(UInt)
@@ -59,9 +56,7 @@ Base.copy(seq::Codon) = Codon(seq.x)
 
 BioSequences.has_interface(BioSequence, Codon, [DNA_C, DNA_T, DNA_G], false)
 
-const stopcodons = [Codon("TAG"), Codon("TAA"), Codon("TGA")]
-
-Base.count(codon::Codon, sequence::LongDNA) = count(String(codon), String(sequence))
+Base.count(codon::Codon, sequence::LongDNA) = count(codon, sequence)
 
 function Base.count(codons::Vector{Codon}, sequence::LongDNA)
     a = 0
@@ -71,7 +66,11 @@ function Base.count(codons::Vector{Codon}, sequence::LongDNA)
     return a
 end
 
-# const START_CODON_MATRIX = PWMSearchQuery([dna"ATG", dna"GTG", dna"TTG"], 1.0)
+const stopcodons = [Codon("TAG"), Codon("TAA"), Codon("TGA")]
+
+const startcodon = ExactSearchQuery(Codon("ATG"), iscompatible)
+
+const extended_startcodons = PWMSearchQuery([Codon("ATG"), Codon("GTG"), Codon("TTG")], 1.0)
 
 # """
 #     struct CDS
