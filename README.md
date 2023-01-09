@@ -49,6 +49,7 @@ using BioSequences, GeneFinder
 # > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
 seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
 ```
+### Finding all ORFs
 
 ```julia
 simplefind(seq)
@@ -70,7 +71,7 @@ simplefind(seq)
 Two other functions (`simplecds_generator` and `simpleprot_generator`) pass the sequence to `simplefinder` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or `write`en into a file more conviniently using the `FASTX` IO system:
 
 ```julia
-simplecds_generator(seq); collect(ans)
+simplecds_generator(seq); [i.sequence for i in ans]
 
 12-element Vector{LongSequence{DNAAlphabet{4}}}:
  ATGCAACCCTGA
@@ -88,7 +89,7 @@ simplecds_generator(seq); collect(ans)
 ```
 
 ```julia
-simpleprot_generator(seq); collect(ans)
+simpleprot_generator(seq); [i.sequence for i in ans]
 
 12-element Vector{LongAA}:
  MQP*
@@ -103,6 +104,90 @@ simpleprot_generator(seq); collect(ans)
  M*
  MCPTAA*
  MQP*
+```
+### Combining `FASTX` to read a fasta record
+
+```julia
+using FASTX
+
+filename = "../../test/data/KK037166.fna"
+rdr = FASTA.Reader(open(filename))
+record = first(rdr)
+seq = sequence(record)
+dnaseq = LongDNA{4}(seq)
+```
+
+```{julia}
+[i.sequence for i in simpleprot_generator(dnaseq)]
+```
+
+
+### Writting cds and proteins fastas
+
+```julia
+write_cds("cds.fasta", seq)
+```
+
+```bash
+cat cds.fasta
+
+>locus=29:40 strand=+
+ATGCAACCCTGA
+>locus=137:145 strand=+
+ATGCGCTGA
+>locus=164:184 strand=+
+ATGCGTCGAATGGCACGGTGA
+>locus=173:184 strand=+
+ATGGCACGGTGA
+>locus=236:241 strand=+
+ATGTGA
+>locus=248:268 strand=+
+ATGTGTCCAACGGCAGTCTGA
+>locus=362:373 strand=+
+ATGCAACCCTGA
+>locus=470:496 strand=+
+ATGCACTGGCTGGTCCTGTCAATCTGA
+>locus=551:574 strand=+
+ATGTCACCGCACAAGGCAATGTGA
+>locus=569:574 strand=+
+ATGTGA
+>locus=581:601 strand=+
+ATGTGTCCAACGGCAGCCTGA
+>locus=695:706 strand=+
+ATGCAACCCTGA
+```
+
+```julia
+write_proteins("proteins.fasta", seq)
+```
+
+```bash
+cat proteins.fasta
+
+>locus=29:40 strand=+
+MQP*
+>locus=137:145 strand=+
+MR*
+>locus=164:184 strand=+
+MRRMAR*
+>locus=173:184 strand=+
+MAR*
+>locus=236:241 strand=+
+M*
+>locus=248:268 strand=+
+MCPTAV*
+>locus=362:373 strand=+
+MQP*
+>locus=470:496 strand=+
+MHWLVLSI*
+>locus=551:574 strand=+
+MSPHKAM*
+>locus=569:574 strand=+
+M*
+>locus=581:601 strand=+
+MCPTAA*
+>locus=695:706 strand=+
+MQP*
 ```
 
 ## Algorithms

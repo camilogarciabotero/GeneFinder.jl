@@ -43,23 +43,16 @@ sequence, so this way the can be `collect`ed in the REPL as an standard
 output or `write`en into a file more conviniently using the `FASTX` IO
 system:
 
-## Generting the cds and proteins associated with ORFs
+## Generting cds and proteins with its ORF
 
 ``` julia
 cds = simplecds_generator(seq)
 ```
 
-Line 1  
-We actually need to collect the `Generator` to see the CDSs in the
-stdout. Other way to to is simply by array comprenhension
-`[for cds in cdsgenerator(seq)]`
-
-<!-- -->
-
-    Base.Generator{Vector{ORF}, GeneFinder.var"#2#3"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}}(GeneFinder.var"#2#3"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}(AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC, GCTCAGGTTACCGCCGGCAGTCAGGGTTGCATTGCCCGC…CAGGGTTGCATTGCCCGCGGTACTGATATTGCCCTGGTT), ORF[ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')])
+    Base.Generator{Base.Iterators.Filter{GeneFinder.var"#4#6"{Int64}, Vector{ORF}}, GeneFinder.var"#3#5"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}}(GeneFinder.var"#3#5"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}(AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC, GCTCAGGTTACCGCCGGCAGTCAGGGTTGCATTGCCCGC…CAGGGTTGCATTGCCCGCGGTACTGATATTGCCCTGGTT), Base.Iterators.Filter{GeneFinder.var"#4#6"{Int64}, Vector{ORF}}(GeneFinder.var"#4#6"{Int64}(6), ORF[ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')]))
 
 ``` julia
-collect(cds)
+[i.sequence for i in cds]
 ```
 
     12-element Vector{LongSequence{DNAAlphabet{4}}}:
@@ -80,10 +73,10 @@ collect(cds)
 protein = simpleprot_generator(seq)
 ```
 
-    Base.Generator{Vector{ORF}, GeneFinder.var"#8#9"{BioSequences.GeneticCode, LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}}(GeneFinder.var"#8#9"{BioSequences.GeneticCode, LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}(The Standard Code, AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC, GCTCAGGTTACCGCCGGCAGTCAGGGTTGCATTGCCCGC…CAGGGTTGCATTGCCCGCGGTACTGATATTGCCCTGGTT), ORF[ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')])
+    Base.Generator{Base.Iterators.Filter{GeneFinder.var"#14#16"{Int64}, Vector{ORF}}, GeneFinder.var"#13#15"{Bool, BioSequences.GeneticCode, LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}}(GeneFinder.var"#13#15"{Bool, BioSequences.GeneticCode, LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}(false, The Standard Code, AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC, GCTCAGGTTACCGCCGGCAGTCAGGGTTGCATTGCCCGC…CAGGGTTGCATTGCCCGCGGTACTGATATTGCCCTGGTT), Base.Iterators.Filter{GeneFinder.var"#14#16"{Int64}, Vector{ORF}}(GeneFinder.var"#14#16"{Int64}(6), ORF[ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')]))
 
 ``` julia
-collect(protein)
+[i.sequence for i in protein]
 ```
 
     12-element Vector{LongAA}:
@@ -103,65 +96,78 @@ collect(protein)
 ## Combining `FASTX` to read a fasta record
 
 ``` julia
-#|eval: false
 using FASTX
 
 filename = "../../test/data/KK037166.fna"
-```
-
-    "../../test/data/KK037166.fna"
-
-``` julia
 rdr = FASTA.Reader(open(filename))
-```
-
-    FASTX.FASTA.Reader{TranscodingStreams.NoopStream{IOStream}}(TranscodingStreams.NoopStream{IOStream}(<mode=idle>), 1, 1, nothing, FASTX.FASTA.Record:
-      description: ""
-         sequence: "", true)
-
-``` julia
 record = first(rdr)
-```
-
-    FASTX.FASTA.Record:
-      description: "KK037166.1 Kutzneria sp. 744 genomic scaffold supercontig 1.1, whole genome shotgun sequence"
-         sequence: "GCAGGTCGCCGTCCAGTGTCACGATGATGCCGTAATGCC…"
-
-``` julia
 seq = sequence(record)
-```
-
-    "GCAGGTCGCCGTCCAGTGTCACGATGATGCCGTAATGCCGGCGACGGGTGCTGACCTGTGACCACAACTCGGTGAAGGCGATGCCGTGCAGAGTGGCCAGTCTGGCGAGGTAGGAGACCGCGAGCTCGTTGTGCGCGGGCCGCAGGCGGATCGGCAGCCGGGAGACCATCAGGCGCTGGCCTGCTTGGTCGCTGCCCGTGCTCGCGGCCGCCGAGCCGCGGTCGACCGTTCGGCGGCGAAGTCGACCGGGACCAGGTCGAGCAGGTCTCG" ⋯ 19461 bytes ⋯ "CGTCCACCGTGGTCGAACTGGGGTGCAGCCGGCGGAGCCAGCCAGGCTGGCCCCACCGCTGGTGACCAGCAGCATTACCACGCTCGGTTGGCGTCGCTGCTGGCGCTGCCGCCGACCGGGCTGGCGGGCGGATCGGCGATAGGCGACCAGACAGGTCAACTCGAGGGGCCTGTCAGCGTCGAGTTCCCTACTTGCGACCTGTTAACTCAAGACGACACCGACCACGTGCAGCGCATCGGTGATCACATACCGCTTCCGTGAGCATGGGG"
-
-``` julia
 dnaseq = LongDNA{4}(seq)
+[i.sequence for i in simpleprot_generator(dnaseq)]
 ```
 
-    20000nt DNA Sequence:
-    GCAGGTCGCCGTCCAGTGTCACGATGATGCCGTAATGCC…GCGCATCGGTGATCACATACCGCTTCCGTGAGCATGGGG
+## Writting cds and proteins fastas
 
 ``` julia
-collect(simpleprot_generator(dnaseq))
+write_cds("cds.fasta", seq)
 ```
 
-    1573-element Vector{LongAA}:
-     MMP*
-     MP*
-     MPATGADL*
-     MPCRVASLAR*
-     MRSLPSSMARIAPPRTSWDRLPIMPPVRWNRYSARPTRVPASWLCRRRVDSRVATSPAQLSR*
-     MARIAPPRTSWDRLPIMPPVRWNRYSARPTRVPASWLCRRRVDSRVATSPAQLSR*
-     MPPVRWNRYSARPTRVPASWLCRRRVDSRVATSPAQLSR*
-     MPA*
-     MTGNRFCPARPGCRRRTASSWVRPSWVRAVVLPVPDAPETIRPRRAETWRWLSWTSSRPVVMTCRITGVCASGSCAW*
-     MPASDREFVGSAELGQGGGLAGARRAGDDQAPARGDLAV…LPDHRRVRERELRVVVPSRLVQAEPLGIRQGQQIGVGR*
-     ⋮
-     MRPGWADALRMSASRLPHQRLLAIDARMREAAARPVIVP…AEIALAQEIPAPTAAPGQHTDVIPFGVFDADAEAERWL*
-     MSASRLPHQRLLAIDARMREAAARPVIVPDQVVIDHGKV…AEIALAQEIPAPTAAPGQHTDVIPFGVFDADAEAERWL*
-     MREAAARPVIVPDQVVIDHGKVFVSDTFTRACERLGISI…AEIALAQEIPAPTAAPGQHTDVIPFGVFDADAEAERWL*
-     MVSAPFADFTWRHARRLAAESGSDATEAEVARILHALLT…AEIALAQEIPAPTAAPGQHTDVIPFGVFDADAEAERWL*
-     MTRRPRPQQVPARPVEEVLPVIEEPLTTKEGWHRFVDHQ…SERITRDLLDLVPVDFAAERSTAARRPRARAATKQASA*
-     MPSGSAWTRRDGTTTRSSRSRTRR*
-     MTTGRLLVQLNHRQVSARRGLIVSGASGTGKTTALTQLG…SERITRDLLDLVPVDFAAERSTAARRPRARAATKQASA*
-     MLAAEFARFLGLEFNPRANLPEIVNAVCTTAAATHVELV…SERITRDLLDLVPVDFAAERSTAARRPRARAATKQASA*
-     MIGSLSQLVRGGAILAIEDGSERITRDLLDLVPVDFAAERSTAARRPRARAATKQASA*
+``` bash
+cat cds.fasta
+>locus=29:40 strand=+
+ATGCAACCCTGA
+>locus=137:145 strand=+
+ATGCGCTGA
+>locus=164:184 strand=+
+ATGCGTCGAATGGCACGGTGA
+>locus=173:184 strand=+
+ATGGCACGGTGA
+>locus=236:241 strand=+
+ATGTGA
+>locus=248:268 strand=+
+ATGTGTCCAACGGCAGTCTGA
+>locus=362:373 strand=+
+ATGCAACCCTGA
+>locus=470:496 strand=+
+ATGCACTGGCTGGTCCTGTCAATCTGA
+>locus=551:574 strand=+
+ATGTCACCGCACAAGGCAATGTGA
+>locus=569:574 strand=+
+ATGTGA
+>locus=581:601 strand=+
+ATGTGTCCAACGGCAGCCTGA
+>locus=695:706 strand=+
+ATGCAACCCTGA
+```
+
+``` julia
+write_proteins("proteins.fasta", seq)
+```
+
+``` bash
+cat proteins.fasta
+>locus=29:40 strand=+
+MQP*
+>locus=137:145 strand=+
+MR*
+>locus=164:184 strand=+
+MRRMAR*
+>locus=173:184 strand=+
+MAR*
+>locus=236:241 strand=+
+M*
+>locus=248:268 strand=+
+MCPTAV*
+>locus=362:373 strand=+
+MQP*
+>locus=470:496 strand=+
+MHWLVLSI*
+>locus=551:574 strand=+
+MSPHKAM*
+>locus=569:574 strand=+
+M*
+>locus=581:601 strand=+
+MCPTAA*
+>locus=695:706 strand=+
+MQP*
+```
