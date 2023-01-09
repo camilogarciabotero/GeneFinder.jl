@@ -7,6 +7,9 @@
   <a href="https://camilogarciabotero.github.io/GeneFinder.jl/dev/">
     <img src="https://img.shields.io/badge/documentation-online-blue.svg?logo=Julia&logoColor=white">
   </a>
+  <a href="https://github.com/camilogarciaboter/GeneFinder.jl/releases/latest"> 
+  <img src="https://img.shields.io/github/release/camilogarciabotero/GeneFinder.jl.svg">
+  </a>
   <a href="https://app.travis-ci.com/camilogarciabotero/GeneFinder.jl">
     <img src="https://app.travis-ci.com/camilogarciabotero/GeneFinder.jl.svg?branch=main">
    <a href="https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml">
@@ -16,7 +19,6 @@
   </a>
   </a>
 </p>
-
 
 ***
 
