@@ -1,26 +1,21 @@
 
-<img src="../assets/logo.svg" data-fig-align="center" />
-
 <p align="center">
-  <i>A Gene Finder framework for Julia.</i><br/><br/>
-  <a href="https://www.repostatus.org/#wip">
-    <img src="https://www.repostatus.org/badges/latest/wip.svg">
-  </a>
-  <a href="https://camilogarciabotero.github.io/GeneFinder.jl/dev/">
-    <img src="https://img.shields.io/badge/documentation-online-blue.svg?logo=Julia&logoColor=white">
-  </a>
-  <a href="https://app.travis-ci.com/camilogarciabotero/GeneFinder.jl">
-    <img src="https://app.travis-ci.com/camilogarciabotero/GeneFinder.jl.svg?branch=main">
-   <a href="https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml">
-    <img src="https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml/badge.svg">
-  <a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-green.svg">
-  </a>
-  </a>
+    <img src="../assets/logo.svg" data-fig-align="center" />
+</p>
+<p align="center">
+<i>A Gene Finder framework for Julia.</i><br/><br/>
 </p>
 
-------------------------------------------------------------------------
+[![](https://img.shields.io/github/release/camilogarciabotero/GeneFinder.jl.svg)](https://github.com/camilogarciaboter/GeneFinder.jl/releases/latest)
+[![](https://app.travis-ci.com/camilogarciabotero/GeneFinder.jl.svg?branch=main)](https://app.travis-ci.com/camilogarciabotero/GeneFinder.jl)
+[![](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml)
+[![MIT
+license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE)
+[![Documentation](https://img.shields.io/badge/documentation-online-blue.svg?logo=Julia&logoColor=white)](https://camilogarciabotero.github.io/GeneFinder.jl/dev/)
+[![Pkg
+Status](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
+***
 ## Overview
 
 > This is a species-agnostic, algorithm extensible, sequence-anonymous
