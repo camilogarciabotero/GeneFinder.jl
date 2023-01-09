@@ -8,7 +8,7 @@ include("algorithms/simplefinder.jl")
 export simplefind, simplefind_extended, simplecds_generator, simpleprot_generator
 
 include("types.jl")
-export ORF, Codon, stopcodons, startcodon, extended_startcodons
+export ORF, Codon, CDS, Protein, stopcodons, startcodon, extended_startcodons
 
 include("helpers.jl")
 export eachcodon, hasprematurestop
