@@ -41,10 +41,10 @@ This function generates ORFs from the forward and reverse complement strands of 
 Returns:
     A generator expression that yields `ORF` objects corresponding to the ORFs in the `sequence`.
 """
-function orfgenerator(sequence::LongDNA; alternative_start::Bool=false)
+function orfgenerator(sequence::LongDNA; alternative_start::Bool=false, min_len = 6)
     revseq = reverse_complement(sequence)
     @inbounds begin
-        orfs = (ORF(location, strand) for strand in ['+', '-'] for location in locationgenerator(strand == '+' ? sequence : revseq; alternative_start))
+        orfs = (ORF(location, strand) for strand in ['+', '-'] for location in locationgenerator(strand == '+' ? sequence : revseq; alternative_start) if length(location) >= min_len)
     end
     return orfs
 end
@@ -67,18 +67,36 @@ end
     @test collect(orfgenerator(seq02)) == [ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')]
 end
 
-function cdsgenerator(sequence::LongDNA; alternative_start::Bool=false)
+function cdsgenerator(sequence::LongDNA; alternative_start::Bool=false, min_len=6)
     revseq = reverse_complement(sequence)
     @inbounds begin
-        cds = (i.strand == '+' ? sequence[i.location] : revseq[i.location] for i in orfgenerator(sequence; alternative_start))
+        cds = (i.strand == '+' ? sequence[i.location] : revseq[i.location] for i in orfgenerator(sequence; alternative_start, min_len))
     end
     return cds
 end
 
-function proteingenerator(sequence::LongDNA; alternative_start::Bool=false, code::GeneticCode = BioSequences.standard_genetic_code)
+function cdsgenerator(sequence::String; alternative_start::Bool=false, min_len=6)
+    sequence = LongDNA{4}(sequence)
     revseq = reverse_complement(sequence)
     @inbounds begin
-        proteins = (i.strand == '+' ? translate(sequence[i.location]; alternative_start, code) : translate(revseq[i.location]; alternative_start, code) for i in orfgenerator(sequence; alternative_start))
+        cds = (i.strand == '+' ? sequence[i.location] : revseq[i.location] for i in orfgenerator(sequence; alternative_start, min_len))
+    end
+    return cds
+end
+
+function proteingenerator(sequence::LongDNA; alternative_start::Bool=false, code::GeneticCode = BioSequences.standard_genetic_code, min_len=6)
+    revseq = reverse_complement(sequence)
+    @inbounds begin
+        proteins = (i.strand == '+' ? translate(sequence[i.location]; alternative_start, code) : translate(revseq[i.location]; alternative_start, code) for i in orfgenerator(sequence; alternative_start, min_len))
+    end
+    return proteins
+end
+
+function proteingenerator(sequence::String; alternative_start::Bool=false, code::GeneticCode = BioSequences.standard_genetic_code, min_len=6)
+    sequence = LongDNA{4}(sequence)
+    revseq = reverse_complement(sequence)
+    @inbounds begin
+        proteins = (i.strand == '+' ? translate(sequence[i.location]; alternative_start, code) : translate(revseq[i.location]; alternative_start, code) for i in orfgenerator(sequence; alternative_start, min_len))
     end
     return proteins
 end
