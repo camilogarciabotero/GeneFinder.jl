@@ -1,6 +1,6 @@
 module GeneFinder
 
-using BioSequences  #standard_genetic_code
+using BioSequences
 import BioSequences: GeneticCode
 using TestItems: @testitem
 
@@ -15,5 +15,8 @@ export eachcodon, hasprematurestop
 
 include("findgenes.jl")
 export locationgenerator, locationgenerator_extended, orfgenerator, cdsgenerator, proteingenerator
+
+include("io.jl")
+export write_cds, write_proteins
 
 end
