@@ -1,10 +1,5 @@
 
-<p align="center">
-    <img src="../assets/logo.svg" data-fig-align="center" />
-</p>
-<p align="center">
-<i>A Gene Finder framework for Julia.</i><br/><br/>
-</p>
+![]("../assets/logo.svg")
 
 [![](https://img.shields.io/github/release/camilogarciabotero/GeneFinder.jl.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/releases/latest)
 [![](https://app.travis-ci.com/camilogarciabotero/GeneFinder.jl.svg?branch=main)](https://app.travis-ci.com/camilogarciabotero/GeneFinder.jl)
