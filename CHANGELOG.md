@@ -8,7 +8,9 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [0.0.6]
 
-- Work on extended start codon for generators
+- Work on extended start codon for generators.
+- `simplefind` and its generators now can be fine tuned with alternative codons and orf length.
+- Work on the IO system
 - More on Docs
 
 ## [0.0.5]
