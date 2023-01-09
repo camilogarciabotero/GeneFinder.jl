@@ -72,6 +72,52 @@ const startcodon = ExactSearchQuery(Codon("ATG"), iscompatible)
 
 const extended_startcodons = PWMSearchQuery([Codon("ATG"), Codon("GTG"), Codon("TTG")], 1.0)
 
+
+# """
+
+"""
+    struct CDS
+        orf::ORF
+        sequence::LongDNA
+    end
+
+The `CDS` struct represents a coding sequence in a DNA sequence. It has three fields:
+
+- `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) displaying the location of the ORF and the associate strand: forward ('+') or reverse ('-')
+- `sequence`: a `LongDNA` sequence representing the actual sequence of the CDS
+"""
+struct CDS
+    sequence::LongDNA
+    orf::ORF
+end
+
+"""
+Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein sequence in a DNA sequence. 
+    It has three fields:
+
+- `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) of the sequence
+- `sequence`: a `LongSequence` sequence representing the actual translated sequence of the CDS
+"""
+struct Protein
+    sequence::LongSequence
+    orf::ORF
+end
+
+
+
+
+# Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein sequence in a DNA sequence. 
+#     It has three fields:
+
+# - `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) of the sequence
+# - `sequence`: a `LongAA` sequence representing the actual translated sequence of the CDS
+# """
+# struct Protein <: Gene
+#     orf::ORF
+#     sequence::LongAA
+# end
+
+
 # """
 #     struct CDS
 #         orf::ORF
@@ -86,22 +132,4 @@ const extended_startcodons = PWMSearchQuery([Codon("ATG"), Codon("GTG"), Codon("
 # struct CDS <: Gene
 #     orf::ORF
 #     sequence::LongDNA
-# end
-
-# """
-#     struct Protein
-#         orf::ORF
-#         sequence::LongDNA
-#     end
-
-
-# Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein sequence in a DNA sequence. 
-#     It has three fields:
-
-# - `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) of the sequence
-# - `sequence`: a `LongAA` sequence representing the actual translated sequence of the CDS
-# """
-# struct Protein <: Gene
-#     orf::ORF
-#     sequence::LongAA
 # end
