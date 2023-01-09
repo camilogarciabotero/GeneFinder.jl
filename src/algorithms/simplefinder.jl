@@ -69,7 +69,7 @@ end
 
 
 """
-    simplecds_generator(sequence::LongDNA; alternative_start::Bool=false)
+    simplecds_generator(sequence::LongDNA; alternative_start::Bool=false, min_len = 6)
 
 A function to generete CDSs sequence out of a DNA sequence.
 
@@ -108,7 +108,7 @@ end
 end
 
 """
-    simpleprot_generator(sequence::LongDNA; alternative_start::Bool=false)
+    simpleprot_generator(sequence::LongDNA; alternative_start::Bool=false, code::GeneticCode=BioSequences.standard_genetic_code, min_len = 6)
 
 As its name suggest this generator function that iterates over the sequence to find proteins directly from a DNA sequence. 
     The `simpleprot_generator` function takes a `LongDNA` sequence and returns a `Vector{CDS}` containing the 
