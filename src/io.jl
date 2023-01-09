@@ -1,4 +1,16 @@
+"""
+   write_cds(file::String, seq::LongDNA; alternative_start=false, min_len = 6)
 
+Write a file containing the coding sequences (CDSs) of a given DNA sequence to the specified file.
+
+## Parameters
+- `file`: A string representing the file path and name where the CDSs should be written.
+- `seq`: A `LongDNA` object representing the DNA sequence from which the CDSs should be extracted.
+
+## Keyword Arguments
+- `alternative_start`: A boolean value indicating whether alternative start codons should be used when identifying CDSs. Default is `false`.
+- `min_len`: An integer representing the minimum length that a CDS must have in order to be included in the output file. Default is `6`.
+"""
 function write_cds(file::String, seq::LongDNA; alternative_start=false, min_len = 6)
     open(file, "w") do f
        for i in simplecds_generator(seq; alternative_start, min_len)
@@ -7,6 +19,21 @@ function write_cds(file::String, seq::LongDNA; alternative_start=false, min_len 
     end
 end
 
+
+"""
+   write_proteins(file::String, seq::LongDNA; alternative_start = false, code::GeneticCode = BioSequences.standard_genetic_code, min_len = 6)
+
+Write a file containing the protein sequences encoded by the coding sequences (CDSs) of a given DNA sequence to the specified file.
+
+## Parameters
+- `file`: A string representing the file path and name where the protein sequences should be written.
+- `seq`: A `LongDNA` object representing the DNA sequence from which the CDSs and protein sequences should be extracted.
+
+## Keyword Arguments
+- `alternative_start`: A boolean value indicating whether alternative start codons should be used when identifying CDSs and translating them into protein sequences. Default is `false`.
+- `code`: A `GeneticCode` object representing the genetic code that should be used to translate the CDSs into protein sequences. Default is the standard genetic code.
+- `min_len`: An integer representing the minimum length that a protein sequence must have in order to be included in the output file. Default is `6`.
+"""
 function write_proteins(file::String, seq::LongDNA; alternative_start = false, code::GeneticCode = BioSequences.standard_genetic_code, min_len = 6)
    open(file, "w") do f
       for i in simpleprot_generator(seq; alternative_start, code, min_len)
