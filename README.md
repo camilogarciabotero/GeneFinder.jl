@@ -54,7 +54,7 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
 ### Finding all ORFs
 
 ```julia
-simplefind(seq)
+orf_finder(seq)
 
 12-element Vector{ORF}:
  ORF(29:40, '+')
@@ -73,7 +73,7 @@ simplefind(seq)
 Two other functions (`simplecds_generator` and `simpleprot_generator`) pass the sequence to `simplefinder` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or `write`en into a file more conviniently using the `FASTX` IO system:
 
 ```julia
-simplecds_generator(seq); [i.sequence for i in ans]
+get_cds(seq)
 
 12-element Vector{LongSequence{DNAAlphabet{4}}}:
  ATGCAACCCTGA
@@ -91,7 +91,7 @@ simplecds_generator(seq); [i.sequence for i in ans]
 ```
 
 ```julia
-simpleprot_generator(seq); [i.sequence for i in ans]
+get_proteins(seq)
 
 12-element Vector{LongAA}:
  MQP*
@@ -119,10 +119,9 @@ seq = sequence(record)
 dnaseq = LongDNA{4}(seq)
 ```
 
-```{julia}
-[i.sequence for i in simpleprot_generator(dnaseq)]
+```julia
+get_proteins(seq)
 ```
-
 
 ### Writting cds and proteins fastas
 
