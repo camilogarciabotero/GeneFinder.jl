@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
-## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.5...main)
+## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.6...main)
+
+## [0.0.7]
+
+- Clean up comments.
+- New `write_bed` function.
+- Document methods.
+- Add Zenodo badge.
 
 ## [0.0.6]
 
