@@ -14,10 +14,10 @@ include("helpers.jl")
 export eachcodon, hasprematurestop
 
 include("algorithms/simplefinder.jl")
-export simplefind, simplefind_extended, simplecds_generator, simpleprot_generator
+export orf_finder, cds_generator, protein_generator, get_cds, get_proteins
 
 include("findgenes.jl")
-export locationgenerator, locationgenerator_extended, orfgenerator, cdsgenerator, proteingenerator
+export locationgenerator, orfgenerator, cdsgenerator, proteingenerator
 
 include("io.jl")
 export write_cds, write_proteins, write_bed

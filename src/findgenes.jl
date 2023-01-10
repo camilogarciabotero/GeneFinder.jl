@@ -13,19 +13,14 @@ This function searches the sequence for start codons, and generates ranges of in
 Returns:
     A generator expression that yields ranges of indices corresponding to the locations of ORFs in the `sequence`.
 """
-function locationgenerator(sequence::LongDNA; alternative_start::Bool=false)
+function locationgenerator(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
     seqbound = length(sequence) - 2
-    if alternative_start == false
-        start_codon_indices = findall(STARTCODON, sequence)
-        @inbounds begin
-            (i.start:j+2 for i in start_codon_indices for j in i.start:3:seqbound if sequence[j:j+2] ∈ STOPCODONS && !hasprematurestop(sequence[i.start:j+2]))
-        end
-    else
-        start_codon_indices = findall(EXTENDED_STARTCODONS, sequence)
-        @inbounds begin
-            (i:j+2 for i in start_codon_indices for j in i:3:seqbound if sequence[j:j+2] ∈ STOPCODONS && !hasprematurestop(sequence[i:j+2]))
-        end
+    startcodons = alternative_start ? EXTENDED_STARTCODONS : STARTCODON
+    start_codon_indices = findall(startcodons, sequence)
+    @inbounds begin
+        location = (i.start:j+2 for i in start_codon_indices for j in i.start:3:seqbound if sequence[j:j+2] ∈ STOPCODONS && !hasprematurestop(sequence[i.start:j+2]) && length(i.start:j+2) >= min_len)
     end
+    return location
 end
 
 """
@@ -44,7 +39,7 @@ Returns:
 function orfgenerator(sequence::LongDNA; alternative_start::Bool=false, min_len = 6)
     revseq = reverse_complement(sequence)
     @inbounds begin
-        orfs = (ORF(location, strand) for strand in ['+', '-'] for location in locationgenerator(strand == '+' ? sequence : revseq; alternative_start) if length(location) >= min_len)
+        orfs = (ORF(location, strand) for strand in ['+', '-'] for location in locationgenerator(strand == '+' ? sequence : revseq; alternative_start, min_len)) # if length(location) >= min_len
     end
     return orfs
 end
