@@ -2,15 +2,11 @@
 
 abstract type Gene end
 
-# abstract type exon end
-# abstract type intron end
-
 """
     struct ORF
         location::UnitRange{Int64}
         strand::Char
-
-        ORF(location, strand) = new(location, strand)
+        
     end
 
 The ORF struct represents an open reading frame in a DNA sequence. It has two fields: 
@@ -21,10 +17,42 @@ The ORF struct represents an open reading frame in a DNA sequence. It has two fi
 struct ORF <: Gene
     location::UnitRange{Int64} # Note that it is also called position for gene struct in GenomicAnotations
     strand::Char
-    # ORF(location, strand) = new(location, strand)
 end
 
-# # The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/
+"""
+    struct CDS
+        orf::ORF
+        sequence::LongDNA
+    end
+
+The `CDS` struct represents a coding sequence in a DNA sequence. It has three fields:
+
+- `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) displaying the location of the ORF and the associate strand: forward ('+') or reverse ('-')
+- `sequence`: a `LongDNA` sequence representing the actual sequence of the CDS
+"""
+struct CDS
+    sequence::LongDNA
+    orf::ORF
+end
+
+"""
+    struct Protein
+        sequence::LongSequence
+        orf::ORF
+    end
+    
+Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein sequence in a DNA sequence. 
+    It has three fields:
+
+- `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) of the sequence
+- `sequence`: a `LongSequence` sequence representing the actual translated sequence of the CDS
+"""
+struct Protein
+    sequence::LongSequence
+    orf::ORF
+end
+
+##### The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/ #####
 """
     Codon <: BioSequence{DNAAlphabet{2}}
 
@@ -65,65 +93,4 @@ function Base.count(codons::Vector{Codon}, sequence::LongDNA)
     return a
 end
 
-# """
-
-"""
-    struct CDS
-        orf::ORF
-        sequence::LongDNA
-    end
-
-The `CDS` struct represents a coding sequence in a DNA sequence. It has three fields:
-
-- `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) displaying the location of the ORF and the associate strand: forward ('+') or reverse ('-')
-- `sequence`: a `LongDNA` sequence representing the actual sequence of the CDS
-"""
-struct CDS
-    sequence::LongDNA
-    orf::ORF
-end
-
-"""
-    struct Protein
-        sequence::LongSequence
-        orf::ORF
-    end
-    
-Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein sequence in a DNA sequence. 
-    It has three fields:
-
-- `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) of the sequence
-- `sequence`: a `LongSequence` sequence representing the actual translated sequence of the CDS
-"""
-struct Protein
-    sequence::LongSequence
-    orf::ORF
-end
-
-# Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein sequence in a DNA sequence. 
-#     It has three fields:
-
-# - `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) of the sequence
-# - `sequence`: a `LongAA` sequence representing the actual translated sequence of the CDS
-# """
-# struct Protein <: Gene
-#     orf::ORF
-#     sequence::LongAA
-# end
-
-
-# """
-#     struct CDS
-#         orf::ORF
-#         sequence::LongDNA
-#     end
-
-# The `CDS` struct represents a coding sequence in a DNA sequence. It has three fields:
-
-# - `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) displaying the location of the ORF and the associate strand: forward ('+') or reverse ('-')
-# - `sequence`: a `LongDNA` sequence representing the actual sequence of the CDS
-# """
-# struct CDS <: Gene
-#     orf::ORF
-#     sequence::LongDNA
-# end
+##### ---------------------------------------- #####

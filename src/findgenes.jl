@@ -1,7 +1,7 @@
 # # this will be the main functions taking all the algorithms
 
 """
-    locationgenerator(sequence::LongDNA)
+    locationgenerator(sequence::LongDNA; alternative_start::Bool=false)
 
 Generate the locations of ORFs in the given DNA `sequence`.
 
@@ -29,7 +29,7 @@ function locationgenerator(sequence::LongDNA; alternative_start::Bool=false)
 end
 
 """
-    orfgenerator(sequence::LongDNA; alternative_start::Bool=false)
+    orfgenerator(sequence::LongDNA; alternative_start::Bool=false, min_len = 6)
 
 Generate ORFs from the given DNA `sequence`.
 
@@ -113,6 +113,4 @@ end
 # function findgenes(::SimpleFinder, sequence::LongDNA) # type::GeneticCode
 #     orfs = simplefinder(sequence)
 #     seqs = Vector{CDS}()
-
-
 # end
