@@ -12,37 +12,19 @@ function simplefind(sequence::LongDNA; alternative_start::Bool=false)
     orf = nothing
     orfs = Vector{ORF}()
     seqbound = length(sequence) - 2 #3
-    if alternative_start == false
-        for strand in ['+', '-']
-            seq = strand == '-' ? reverse_complement(sequence) : sequence
+    startcodons = alternative_start ? EXTENDED_STARTCODONS : STARTCODON
 
-            start_codon_indices = findall(STARTCODON, seq)
+    for strand in ['+', '-']
+        seq = strand == '-' ? reverse_complement(sequence) : sequence
+        start_codon_indices = findall(startcodons, seq)
 
-            for i in start_codon_indices
-                for j in i.start:3:seqbound
-                    if seq[j:j+2] ∈ STOPCODONS
-                        push!(orfs, orf)
-                        break
-                    end
-                    orf = ORF(i.start:j+5, strand)
+        for i in start_codon_indices
+            for j in i.start:3:seqbound
+                if seq[j:j+2] ∈ STOPCODONS
+                    push!(orfs, orf)
+                    break
                 end
-            end
-        end
-    else
-        # using the extended start codon matrix 
-        for strand in ['+', '-']
-            seq = strand == '-' ? reverse_complement(sequence) : sequence
-    
-            start_codon_indices = findall(EXTENDED_STARTCODONS, seq)
-    
-            for i in start_codon_indices
-                for j in i:3:seqbound
-                    if seq[j:j+2] ∈ STOPCODONS
-                        push!(orfs, orf)
-                        break
-                    end
-                    orf = ORF(i:j+5, strand)
-                end
+                orf = ORF(i.start:j+5, strand)
             end
         end
     end
@@ -80,18 +62,18 @@ The `simplecds_generator` is a generator function that takes a `LongDNA` sequenc
     and then it extracts the actual CDS sequence from each ORF. 
     The function also searches the reverse complement of the sequence, so it finds CDSs on both strands.
 """
-function simplecds_generator(sequence::LongDNA; alternative_start::Bool = false, min_len = 6)
+function simplecds_generator(sequence::LongDNA; alternative_start::Bool=false, min_len=6)
     orfs = simplefind(sequence; alternative_start)
     reversedseq = reverse_complement(sequence)
-    cds = (i.strand == '+' ? CDS(sequence[i.location],i) : CDS(reversedseq[i.location],i) for i in orfs if length(i.location) >= min_len)
+    cds = (i.strand == '+' ? CDS(sequence[i.location], i) : CDS(reversedseq[i.location], i) for i in orfs if length(i.location) >= min_len)
     return cds
 end
 
-function simplecds_generator(sequence::String; alternative_start::Bool=false, min_len = 6)
+function simplecds_generator(sequence::String; alternative_start::Bool=false, min_len=6)
     sequence = LongDNA{4}(sequence)
     orfs = simplefind(sequence; alternative_start)
     reversedseq = reverse_complement(sequence)
-    cds = (i.strand == '+' ? CDS(sequence[i.location],i) : CDS(reversedseq[i.location],i) for i in orfs if length(i.location) >= min_len)
+    cds = (i.strand == '+' ? CDS(sequence[i.location], i) : CDS(reversedseq[i.location], i) for i in orfs if length(i.location) >= min_len)
     return cds
 end
 
@@ -116,14 +98,14 @@ As its name suggest this generator function that iterates over the sequence to f
     The `simpleprot_generator` function takes a `LongDNA` sequence and returns a `Vector{CDS}` containing the 
     coding sequences (CDSs) found in the sequence. 
 """
-function simpleprot_generator(sequence::LongDNA; alternative_start::Bool=false, code::GeneticCode=BioSequences.standard_genetic_code, min_len = 6)
+function simpleprot_generator(sequence::LongDNA; alternative_start::Bool=false, code::GeneticCode=BioSequences.standard_genetic_code, min_len=6)
     orfs = simplefind(sequence; alternative_start)
     reversedseq = reverse_complement(sequence)
     proteins = (i.strand == '+' ? Protein(translate(sequence[i.location]; alternative_start, code), i) : Protein(translate(reversedseq[i.location]; alternative_start, code), i) for i in orfs if length(i.location) >= min_len)
     return proteins
 end
 
-function simpleprot_generator(sequence::String; alternative_start::Bool = false, code::GeneticCode = BioSequences.standard_genetic_code, min_len = 6)
+function simpleprot_generator(sequence::String; alternative_start::Bool=false, code::GeneticCode=BioSequences.standard_genetic_code, min_len=6)
     sequence = LongDNA{4}(sequence)
     orfs = simplefind(sequence; alternative_start)
     reversedseq = reverse_complement(sequence)
@@ -136,7 +118,7 @@ end
 
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
     proteins01 = collect(simpleprot_generator(seq01))
-    
+
     @test length(proteins01) == 5
     # @test proteins01 == [aa"MMHACMLVTS*", aa"MHACMLVTS*", aa"MHAC*", aa"MHASN*", aa"MLVTS*"]
 
