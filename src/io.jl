@@ -9,10 +9,10 @@ Parameters:
 - alternative_start: boolean (optional); default is `false`
 
 """
-function write_bed(file::String, seq::LongDNA; alternative_start=false)
+function write_bed(file::String, seq::LongDNA; alternative_start=false, min_len=6)
    open(file, "w") do f
-      @simd for i in simplefind(seq; alternative_start)
-         write(f, "$(i.location.start)\t$(i.location.start)\t$(i.strand)\n")
+      @simd for i in simplefind(seq; alternative_start, min_len)
+         write(f, "$(i.location.start)\t$(i.location.stop)\t$(i.strand)\n")
       end
    end
 end
