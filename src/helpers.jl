@@ -1,7 +1,3 @@
-using BioSequences
-using TestItems
-include("types.jl")
-
 """
     eachcodon(sequence::LongDNA)
 
@@ -32,7 +28,7 @@ Returns a boolean indicating whether the `sequence` has more than one stop codon
 function hasprematurestop(sequence::LongDNA)::Bool
     stop_codon_count = 0
     @inbounds for codon in eachcodon(sequence)
-        if codon ∈ stopcodons
+        if codon ∈ STOPCODONS
             stop_codon_count += 1
         end
     end

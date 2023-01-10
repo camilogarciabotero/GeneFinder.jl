@@ -16,14 +16,14 @@ Returns:
 function locationgenerator(sequence::LongDNA; alternative_start::Bool=false)
     seqbound = length(sequence) - 2
     if alternative_start == false
-        start_codon_indices = findall(startcodon, sequence)
+        start_codon_indices = findall(STARTCODON, sequence)
         @inbounds begin
-            (i.start:j+2 for i in start_codon_indices for j in i.start:3:seqbound if sequence[j:j+2] ∈ stopcodons && !hasprematurestop(sequence[i.start:j+2]))
+            (i.start:j+2 for i in start_codon_indices for j in i.start:3:seqbound if sequence[j:j+2] ∈ STOPCODONS && !hasprematurestop(sequence[i.start:j+2]))
         end
     else
-        start_codon_indices = findall(extended_startcodons, sequence)
+        start_codon_indices = findall(EXTENDED_STARTCODONS, sequence)
         @inbounds begin
-            (i:j+2 for i in start_codon_indices for j in i:3:seqbound if sequence[j:j+2] ∈ stopcodons && !hasprematurestop(sequence[i:j+2]))
+            (i:j+2 for i in start_codon_indices for j in i:3:seqbound if sequence[j:j+2] ∈ STOPCODONS && !hasprematurestop(sequence[i:j+2]))
         end
     end
 end

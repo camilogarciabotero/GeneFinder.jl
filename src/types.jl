@@ -1,9 +1,8 @@
 # Structs associated with gene models 
-# using GenomicFeatures
+
 abstract type Gene end
 
 # abstract type exon end
-
 # abstract type intron end
 
 """
@@ -66,13 +65,6 @@ function Base.count(codons::Vector{Codon}, sequence::LongDNA)
     return a
 end
 
-const stopcodons = [Codon("TAG"), Codon("TAA"), Codon("TGA")]
-
-const startcodon = ExactSearchQuery(Codon("ATG"), iscompatible)
-
-const extended_startcodons = PWMSearchQuery([Codon("ATG"), Codon("GTG"), Codon("TTG")], 1.0)
-
-
 # """
 
 """
@@ -92,6 +84,11 @@ struct CDS
 end
 
 """
+    struct Protein
+        sequence::LongSequence
+        orf::ORF
+    end
+    
 Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein sequence in a DNA sequence. 
     It has three fields:
 
@@ -102,9 +99,6 @@ struct Protein
     sequence::LongSequence
     orf::ORF
 end
-
-
-
 
 # Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein sequence in a DNA sequence. 
 #     It has three fields:

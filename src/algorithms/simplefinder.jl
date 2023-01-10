@@ -16,11 +16,11 @@ function simplefind(sequence::LongDNA; alternative_start::Bool=false)
         for strand in ['+', '-']
             seq = strand == '-' ? reverse_complement(sequence) : sequence
 
-            start_codon_indices = findall(startcodon, seq)
+            start_codon_indices = findall(STARTCODON, seq)
 
             for i in start_codon_indices
                 for j in i.start:3:seqbound
-                    if seq[j:j+2] ∈ stopcodons
+                    if seq[j:j+2] ∈ STOPCODONS
                         push!(orfs, orf)
                         break
                     end
@@ -33,11 +33,11 @@ function simplefind(sequence::LongDNA; alternative_start::Bool=false)
         for strand in ['+', '-']
             seq = strand == '-' ? reverse_complement(sequence) : sequence
     
-            start_codon_indices = findall(extended_startcodons, seq)
+            start_codon_indices = findall(EXTENDED_STARTCODONS, seq)
     
             for i in start_codon_indices
                 for j in i:3:seqbound
-                    if seq[j:j+2] ∈ stopcodons
+                    if seq[j:j+2] ∈ STOPCODONS
                         push!(orfs, orf)
                         break
                     end
