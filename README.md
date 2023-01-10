@@ -142,7 +142,7 @@ get_proteins(dnaseq)
  MTTWSGTMTGRAAASRIRASMASSRWCGSRDADIRRASA…XXXXXXXXXXXYSTVRSATPSSAALARCRCARLVVAGS*
  ⋮
 ```
-### Writting cds and proteins fastas
+### Writting cds, proteins fastas and bed file
 
 ```julia
 write_cds("cds.fasta", seq)
@@ -208,6 +208,23 @@ M*
 MCPTAA*
 >locus=695:706 strand=+
 MQP*
+```
+```julia
+write_bed("cds.bed", seq)
+
+29	40	+
+137	145	+
+164	184	+
+173	184	+
+236	241	+
+248	268	+
+362	373	+
+470	496	+
+551	574	+
+569	574	+
+581	601	+
+695	706	+
+
 ```
 
 ## Algorithms
