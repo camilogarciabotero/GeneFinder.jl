@@ -1,7 +1,7 @@
 
 # A simple algorithm
 
-The first implemented function is `simplefinder` a very non-restrictive
+The first implemented function is `orf_finder` a very non-restrictive
 ORF finder function that will catch all ORFs in a dedicated structure.
 Note that this will catch random ORFs not necesarily genes since it has
 no ORFs size or overlapping condition contraints. Thus it might consider
@@ -20,7 +20,7 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
 ## Finding all ORFs
 
 ``` julia
-simplefind(seq)
+orf_finder(seq)
 ```
 
     12-element Vector{ORF}:
@@ -37,22 +37,15 @@ simplefind(seq)
      ORF(581:601, '+')
      ORF(695:706, '+')
 
-Two other functions (`cdsgenerator` and `proteingenerator`) pass the
-sequence to `simplefinder` take the ORFs and act as generators of the
-sequence, so this way the can be `collect`ed in the REPL as an standard
-output or `write`en into a file more conviniently using the `FASTX` IO
-system:
+Two other functions (`get_cds` and `get_proteins`) pass the sequence to
+`orf_finder` take the ORFs and act as generators of the sequence, so
+this way the can be `collect`ed in the REPL as an standard output or
+written into a file more conviniently using the `FASTX` IO system:
 
 ## Generting cds and proteins with its ORF
 
 ``` julia
-cds = simplecds_generator(seq)
-```
-
-    Base.Generator{Base.Iterators.Filter{GeneFinder.var"#4#6"{Int64}, Vector{ORF}}, GeneFinder.var"#3#5"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}}(GeneFinder.var"#3#5"{LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}(AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC, GCTCAGGTTACCGCCGGCAGTCAGGGTTGCATTGCCCGC…CAGGGTTGCATTGCCCGCGGTACTGATATTGCCCTGGTT), Base.Iterators.Filter{GeneFinder.var"#4#6"{Int64}, Vector{ORF}}(GeneFinder.var"#4#6"{Int64}(6), ORF[ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')]))
-
-``` julia
-[i.sequence for i in cds]
+get_cds(seq)
 ```
 
     12-element Vector{LongSequence{DNAAlphabet{4}}}:
@@ -70,13 +63,7 @@ cds = simplecds_generator(seq)
      ATGCAACCCTGA
 
 ``` julia
-protein = simpleprot_generator(seq)
-```
-
-    Base.Generator{Base.Iterators.Filter{GeneFinder.var"#14#16"{Int64}, Vector{ORF}}, GeneFinder.var"#13#15"{Bool, BioSequences.GeneticCode, LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}}(GeneFinder.var"#13#15"{Bool, BioSequences.GeneticCode, LongSequence{DNAAlphabet{4}}, LongSequence{DNAAlphabet{4}}}(false, The Standard Code, AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC, GCTCAGGTTACCGCCGGCAGTCAGGGTTGCATTGCCCGC…CAGGGTTGCATTGCCCGCGGTACTGATATTGCCCTGGTT), Base.Iterators.Filter{GeneFinder.var"#14#16"{Int64}, Vector{ORF}}(GeneFinder.var"#14#16"{Int64}(6), ORF[ORF(29:40, '+'), ORF(137:145, '+'), ORF(164:184, '+'), ORF(173:184, '+'), ORF(236:241, '+'), ORF(248:268, '+'), ORF(362:373, '+'), ORF(470:496, '+'), ORF(551:574, '+'), ORF(569:574, '+'), ORF(581:601, '+'), ORF(695:706, '+')]))
-
-``` julia
-[i.sequence for i in protein]
+get_proteins(seq)
 ```
 
     12-element Vector{LongAA}:
