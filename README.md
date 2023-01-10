@@ -211,6 +211,9 @@ MQP*
 ```
 ```julia
 write_bed("cds.bed", seq)
+```
+```
+cat cds.bed
 
 29	40	+
 137	145	+
@@ -224,7 +227,6 @@ write_bed("cds.bed", seq)
 569	574	+
 581	601	+
 695	706	+
-
 ```
 
 ## Algorithms
