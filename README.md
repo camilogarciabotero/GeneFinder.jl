@@ -43,7 +43,7 @@ the master branch to try new features before release.
 
 ## Example
 
-The first implemented function is `simplefinder` a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
+The first implemented function is `orf_finder` a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
 
 ```julia
 using BioSequences, GeneFinder
@@ -51,7 +51,7 @@ using BioSequences, GeneFinder
 # > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
 seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
 ```
-### Finding all ORFs
+### Finding all ORFs, the CDS and Proteins
 
 ```julia
 orf_finder(seq)
@@ -70,7 +70,8 @@ orf_finder(seq)
  ORF(581:601, '+')
  ORF(695:706, '+')
 ```
-Two other functions (`simplecds_generator` and `simpleprot_generator`) pass the sequence to `simplefinder` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or `write`en into a file more conviniently using the `FASTX` IO system:
+
+Two other functions (`get_cds` and `get_proteins`) pass the sequence to `orf_finder` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or writteen into a file more conviniently using the `FASTX` IO system:
 
 ```julia
 get_cds(seq)
@@ -142,6 +143,7 @@ get_proteins(dnaseq)
  MTTWSGTMTGRAAASRIRASMASSRWCGSRDADIRRASA…XXXXXXXXXXXYSTVRSATPSSAALARCRCARLVVAGS*
  ⋮
 ```
+
 ### Writting cds, proteins fastas and bed file
 
 ```julia
@@ -209,9 +211,11 @@ MCPTAA*
 >locus=695:706 strand=+
 MQP*
 ```
+
 ```julia
 write_bed("cds.bed", seq)
 ```
+
 ```
 cat cds.bed
 
