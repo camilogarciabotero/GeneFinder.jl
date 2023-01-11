@@ -6,6 +6,11 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.6...main)
 
+## [0.0.8]
+
+- Renaming functions in simple finder implementation
+- Better docs following some BluStyle guidelines
+
 ## [0.0.7]
 
 - Clean up comments.
