@@ -41,20 +41,29 @@ get_cds(seq)
 get_proteins(seq)
 ```
 
-## Combining `FASTX` to read a fasta record
+## Combining `FASTX` for reading and writing a fasta record
 
 ```{julia}
 #| eval: false
 using FASTX
 
-filename = "../../test/data/KK037166.fna"
-rdr = FASTA.Reader(open(filename))
-record = first(rdr)
-seq = sequence(record)
-dnaseq = LongDNA{4}(seq)
-[i.sequence for i in simpleprot_generator(dnaseq)]
+write_proteins("../../test/data/NC_001884.fasta", "proteins.fasta")
 ```
 
+```bash
+head proteins.fasta
+
+>locus=75:113 strand=+
+MKLNLRIGVISN*
+>locus=144:215 strand=+
+MLTITSFKTILNSSFFFSELDSM*
+>locus=210:215 strand=+
+M*
+>locus=237:374 strand=+
+MLFLTVLLSISDCVSCNPLSSFFAFWSSLNSSSNAAFLFKKSSSL*
+>locus=337:402 strand=+
+MQLFSSKKVHHCKCHFHIYRR*
+```
 
 ## Writting cds and proteins fastas
 
