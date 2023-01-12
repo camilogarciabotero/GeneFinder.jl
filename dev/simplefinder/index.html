@@ -42,61 +42,61 @@ AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAG
  MQP*</code></pre><h2 id="Combining-FASTX-for-reading-and-writing-a-fasta-record"><a class="docs-heading-anchor" href="#Combining-FASTX-for-reading-and-writing-a-fasta-record">Combining <code>FASTX</code> for reading and writing a fasta record</a><a id="Combining-FASTX-for-reading-and-writing-a-fasta-record-1"></a><a class="docs-heading-anchor-permalink" href="#Combining-FASTX-for-reading-and-writing-a-fasta-record" title="Permalink"></a></h2><pre><code class="language-julia hljs">using FASTX
 
 write_proteins(&quot;../../test/data/NC_001884.fasta&quot;, &quot;proteins.fasta&quot;)</code></pre><pre><code class="language-bash hljs">head proteins.fasta
-&gt;locus=75:113 strand=+
+&gt;location=75:113 strand=+
 MKLNLRIGVISN*
-&gt;locus=144:215 strand=+
+&gt;location=144:215 strand=+
 MLTITSFKTILNSSFFFSELDSM*
-&gt;locus=210:215 strand=+
+&gt;location=210:215 strand=+
 M*
-&gt;locus=237:374 strand=+
+&gt;location=237:374 strand=+
 MLFLTVLLSISDCVSCNPLSSFFAFWSSLNSSSNAAFLFKKSSSL*
-&gt;locus=337:402 strand=+
+&gt;location=337:402 strand=+
 MQLFSSKKVHHCKCHFHIYRR*</code></pre><h2 id="Writting-cds-and-proteins-fastas"><a class="docs-heading-anchor" href="#Writting-cds-and-proteins-fastas">Writting cds and proteins fastas</a><a id="Writting-cds-and-proteins-fastas-1"></a><a class="docs-heading-anchor-permalink" href="#Writting-cds-and-proteins-fastas" title="Permalink"></a></h2><pre><code class="language-julia hljs">write_cds(&quot;cds.fasta&quot;, seq)</code></pre><pre><code class="language-bash hljs">cat cds.fasta
-&gt;locus=29:40 strand=+
+&gt;location=29:40 strand=+
 ATGCAACCCTGA
-&gt;locus=137:145 strand=+
+&gt;location=137:145 strand=+
 ATGCGCTGA
-&gt;locus=164:184 strand=+
+&gt;location=164:184 strand=+
 ATGCGTCGAATGGCACGGTGA
-&gt;locus=173:184 strand=+
+&gt;location=173:184 strand=+
 ATGGCACGGTGA
-&gt;locus=236:241 strand=+
+&gt;location=236:241 strand=+
 ATGTGA
-&gt;locus=248:268 strand=+
+&gt;location=248:268 strand=+
 ATGTGTCCAACGGCAGTCTGA
-&gt;locus=362:373 strand=+
+&gt;location=362:373 strand=+
 ATGCAACCCTGA
-&gt;locus=470:496 strand=+
+&gt;location=470:496 strand=+
 ATGCACTGGCTGGTCCTGTCAATCTGA
-&gt;locus=551:574 strand=+
+&gt;location=551:574 strand=+
 ATGTCACCGCACAAGGCAATGTGA
-&gt;locus=569:574 strand=+
+&gt;location=569:574 strand=+
 ATGTGA
-&gt;locus=581:601 strand=+
+&gt;location=581:601 strand=+
 ATGTGTCCAACGGCAGCCTGA
-&gt;locus=695:706 strand=+
+&gt;location=695:706 strand=+
 ATGCAACCCTGA</code></pre><pre><code class="language-julia hljs">write_proteins(&quot;proteins.fasta&quot;, seq)</code></pre><pre><code class="language-bash hljs">cat proteins.fasta
-&gt;locus=29:40 strand=+
+&gt;location=29:40 strand=+
 MQP*
-&gt;locus=137:145 strand=+
+&gt;location=137:145 strand=+
 MR*
-&gt;locus=164:184 strand=+
+&gt;location=164:184 strand=+
 MRRMAR*
-&gt;locus=173:184 strand=+
+&gt;location=173:184 strand=+
 MAR*
-&gt;locus=236:241 strand=+
+&gt;location=236:241 strand=+
 M*
-&gt;locus=248:268 strand=+
+&gt;location=248:268 strand=+
 MCPTAV*
-&gt;locus=362:373 strand=+
+&gt;location=362:373 strand=+
 MQP*
-&gt;locus=470:496 strand=+
+&gt;location=470:496 strand=+
 MHWLVLSI*
-&gt;locus=551:574 strand=+
+&gt;location=551:574 strand=+
 MSPHKAM*
-&gt;locus=569:574 strand=+
+&gt;location=569:574 strand=+
 M*
-&gt;locus=581:601 strand=+
+&gt;location=581:601 strand=+
 MCPTAA*
-&gt;locus=695:706 strand=+
-MQP*</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Thursday 12 January 2023 18:16">Thursday 12 January 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+&gt;location=695:706 strand=+
+MQP*</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Thursday 12 January 2023 18:23">Thursday 12 January 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
