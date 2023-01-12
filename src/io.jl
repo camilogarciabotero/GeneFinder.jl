@@ -1,5 +1,6 @@
 """
-   write_bed(file::String, seq::LongDNA; kwargs...)
+   write_bed(input::LongDNA, output::String; kwargs...)
+   write_bed(input::String, output::String; kwargs...)
 
 Write BED data to a file.
 
@@ -8,16 +9,30 @@ Write BED data to a file.
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
-function write_bed(file::String, seq::LongDNA; alternative_start=false, min_len=6)
-   open(file, "w") do f
-      @simd for i in orf_finder(seq; alternative_start, min_len)
+function write_bed(input::LongDNA, output::String; alternative_start=false, min_len=6)
+   open(output, "w") do f
+      @simd for i in orf_finder(input; alternative_start, min_len)
+         write(f, "$(i.location.start)\t$(i.location.stop)\t$(i.strand)\n")
+      end
+   end
+end
+
+function write_bed(input::String, output::String; alternative_start=false, min_len=6)
+   rdr = FASTA.Reader(open(input))
+   record = first(rdr)
+   seq = sequence(record)
+   dnaseq = LongDNA{4}(seq)
+
+   open(output, "w") do f
+      @simd for i in orf_finder(dnaseq; alternative_start, min_len)
          write(f, "$(i.location.start)\t$(i.location.stop)\t$(i.strand)\n")
       end
    end
 end
 
 """
-   write_cds(file::String, seq::LongDNA; kwargs...)
+   write_cds(input::LongDNA, output::String; kwargs...)
+   write_cds(input::String, output::String; kwargs...)
 
 Write a file containing the coding sequences (CDSs) of a given DNA sequence to the specified file.
 
@@ -26,16 +41,29 @@ Write a file containing the coding sequences (CDSs) of a given DNA sequence to t
 - `alternative_start`: A boolean value indicating whether alternative start codons should be used when identifying CDSs. Default is `false`.
 - `min_len`: An integer representing the minimum length that a CDS must have in order to be included in the output file. Default is `6`.
 """
-function write_cds(file::String, seq::LongDNA; alternative_start=false, min_len=6)
-   open(file, "w") do f
-      for i in cds_generator(seq; alternative_start, min_len)
+function write_cds(input::LongDNA, output::String; alternative_start=false, min_len=6)
+   open(output, "w") do f
+      for i in cds_generator(input; alternative_start, min_len)
+         write(f, ">locus=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
+      end
+   end
+end
+
+function write_cds(input::String, output::String; alternative_start=false, min_len=6)
+   rdr = FASTA.Reader(open(input))
+   record = first(rdr)
+   seq = sequence(record)
+   dnaseq = LongDNA{4}(seq)
+
+   open(output, "w") do f
+      for i in cds_generator(dnaseq; alternative_start, min_len)
          write(f, ">locus=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
       end
    end
 end
 
 """
-   write_proteins(file::String, seq::LongDNA; kwargs...)
+   write_proteins(input::LongDNA, output::String; kwargs...)
 
 Write the protein sequences encoded by the coding sequences (CDSs) of a given DNA sequence to the specified file.
 
@@ -45,9 +73,22 @@ Write the protein sequences encoded by the coding sequences (CDSs) of a given DN
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
-function write_proteins(file::String, seq::LongDNA; alternative_start=false, code::GeneticCode=BioSequences.standard_genetic_code, min_len=6)
-   open(file, "w") do f
-      for i in cds_generator(seq; alternative_start, code, min_len)
+function write_proteins(input::LongDNA ,output::String; alternative_start=false, code::GeneticCode=BioSequences.standard_genetic_code, min_len=6)
+   open(output, "w") do f
+      for i in protein_generator(input; alternative_start, code, min_len)
+         write(f, ">locus=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
+      end
+   end
+end
+
+function write_proteins(input::String, output::String; alternative_start=false, min_len=6)
+   rdr = FASTA.Reader(open(input))
+   record = first(rdr)
+   seq = sequence(record)
+   dnaseq = LongDNA{4}(seq)
+
+   open(output, "w") do f
+      for i in protein_generator(dnaseq; alternative_start, min_len)
          write(f, ">locus=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
       end
    end

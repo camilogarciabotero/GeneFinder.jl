@@ -22,22 +22,24 @@ function orf_finder(sequence::LongDNA; alternative_start::Bool=false, min_len::I
 
     for strand in ['+', '-']
         seq = strand == '-' ? reverse_complement(sequence) : sequence
-        start_codon_indices = findall(startcodons, seq)
 
-        for i in start_codon_indices
+        i = findfirst(startcodons, seq)
+        while i != nothing
             for j in i.start:3:seqbound
                 if seq[j:j+2] ∈ STOPCODONS
+                     min_len
                     push!(orfs, orf)
                     break
                 end
                 orf = ORF(i.start:j+5, strand)
             end
+            i = findnext(startcodons, seq, i.start+1)
         end
     end
     return filter(i -> length(i.location) >= min_len, orfs)
 end
 
-function orf_finder(sequence::String; alternative_start::Bool=false, min_len::Int64=6)
+function orf_finder(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
     sequence = LongDNA{4}(sequence)
     orf = nothing
     orfs = Vector{ORF}()
@@ -46,16 +48,18 @@ function orf_finder(sequence::String; alternative_start::Bool=false, min_len::In
 
     for strand in ['+', '-']
         seq = strand == '-' ? reverse_complement(sequence) : sequence
-        start_codon_indices = findall(startcodons, seq)
 
-        for i in start_codon_indices
+        i = findfirst(startcodons, seq)
+        while i != nothing
             for j in i.start:3:seqbound
                 if seq[j:j+2] ∈ STOPCODONS
+                     min_len
                     push!(orfs, orf)
                     break
                 end
                 orf = ORF(i.start:j+5, strand)
             end
+            i = findnext(startcodons, seq, i.start+1)
         end
     end
     return filter(i -> length(i.location) >= min_len, orfs)
