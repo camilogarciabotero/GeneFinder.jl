@@ -44,7 +44,7 @@ Write a file containing the coding sequences (CDSs) of a given DNA sequence to t
 function write_cds(input::LongDNA, output::String; alternative_start=false, min_len=6)
    open(output, "w") do f
       for i in cds_generator(input; alternative_start, min_len)
-         write(f, ">locus=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
+         write(f, ">location=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
       end
    end
 end
@@ -57,7 +57,7 @@ function write_cds(input::String, output::String; alternative_start=false, min_l
 
    open(output, "w") do f
       for i in cds_generator(dnaseq; alternative_start, min_len)
-         write(f, ">locus=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
+         write(f, ">location=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
       end
    end
 end
@@ -76,7 +76,7 @@ Write the protein sequences encoded by the coding sequences (CDSs) of a given DN
 function write_proteins(input::LongDNA ,output::String; alternative_start=false, code::GeneticCode=BioSequences.standard_genetic_code, min_len=6)
    open(output, "w") do f
       for i in protein_generator(input; alternative_start, code, min_len)
-         write(f, ">locus=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
+         write(f, ">location=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
       end
    end
 end
@@ -89,7 +89,7 @@ function write_proteins(input::String, output::String; alternative_start=false, 
 
    open(output, "w") do f
       for i in protein_generator(dnaseq; alternative_start, min_len)
-         write(f, ">locus=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
+         write(f, ">location=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
       end
    end
 end

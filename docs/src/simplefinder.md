@@ -90,15 +90,15 @@ write_proteins("../../test/data/NC_001884.fasta", "proteins.fasta")
 
 ``` bash
 head proteins.fasta
->locus=75:113 strand=+
+>location=75:113 strand=+
 MKLNLRIGVISN*
->locus=144:215 strand=+
+>location=144:215 strand=+
 MLTITSFKTILNSSFFFSELDSM*
->locus=210:215 strand=+
+>location=210:215 strand=+
 M*
->locus=237:374 strand=+
+>location=237:374 strand=+
 MLFLTVLLSISDCVSCNPLSSFFAFWSSLNSSSNAAFLFKKSSSL*
->locus=337:402 strand=+
+>location=337:402 strand=+
 MQLFSSKKVHHCKCHFHIYRR*
 ```
 
@@ -110,29 +110,29 @@ write_cds("cds.fasta", seq)
 
 ``` bash
 cat cds.fasta
->locus=29:40 strand=+
+>location=29:40 strand=+
 ATGCAACCCTGA
->locus=137:145 strand=+
+>location=137:145 strand=+
 ATGCGCTGA
->locus=164:184 strand=+
+>location=164:184 strand=+
 ATGCGTCGAATGGCACGGTGA
->locus=173:184 strand=+
+>location=173:184 strand=+
 ATGGCACGGTGA
->locus=236:241 strand=+
+>location=236:241 strand=+
 ATGTGA
->locus=248:268 strand=+
+>location=248:268 strand=+
 ATGTGTCCAACGGCAGTCTGA
->locus=362:373 strand=+
+>location=362:373 strand=+
 ATGCAACCCTGA
->locus=470:496 strand=+
+>location=470:496 strand=+
 ATGCACTGGCTGGTCCTGTCAATCTGA
->locus=551:574 strand=+
+>location=551:574 strand=+
 ATGTCACCGCACAAGGCAATGTGA
->locus=569:574 strand=+
+>location=569:574 strand=+
 ATGTGA
->locus=581:601 strand=+
+>location=581:601 strand=+
 ATGTGTCCAACGGCAGCCTGA
->locus=695:706 strand=+
+>location=695:706 strand=+
 ATGCAACCCTGA
 ```
 
@@ -142,28 +142,28 @@ write_proteins("proteins.fasta", seq)
 
 ``` bash
 cat proteins.fasta
->locus=29:40 strand=+
+>location=29:40 strand=+
 MQP*
->locus=137:145 strand=+
+>location=137:145 strand=+
 MR*
->locus=164:184 strand=+
+>location=164:184 strand=+
 MRRMAR*
->locus=173:184 strand=+
+>location=173:184 strand=+
 MAR*
->locus=236:241 strand=+
+>location=236:241 strand=+
 M*
->locus=248:268 strand=+
+>location=248:268 strand=+
 MCPTAV*
->locus=362:373 strand=+
+>location=362:373 strand=+
 MQP*
->locus=470:496 strand=+
+>location=470:496 strand=+
 MHWLVLSI*
->locus=551:574 strand=+
+>location=551:574 strand=+
 MSPHKAM*
->locus=569:574 strand=+
+>location=569:574 strand=+
 M*
->locus=581:601 strand=+
+>location=581:601 strand=+
 MCPTAA*
->locus=695:706 strand=+
+>location=695:706 strand=+
 MQP*
 ```
