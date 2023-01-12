@@ -113,12 +113,24 @@ get_proteins(seq)
 ```julia
 using FASTX
 
-filename = "test/data/KK037166.fna"
-rdr = FASTA.Reader(open(filename))
-record = first(rdr)
-seq = sequence(record)
-dnaseq = LongDNA{4}(seq)
+write_proteins("test/data/NC_001884.fasta", "proteins.fasta")
 ```
+
+```bash
+head proteins.fasta
+
+>locus=75:113 strand=+
+MKLNLRIGVISN*
+>locus=144:215 strand=+
+MLTITSFKTILNSSFFFSELDSM*
+>locus=210:215 strand=+
+M*
+>locus=237:374 strand=+
+MLFLTVLLSISDCVSCNPLSSFFAFWSSLNSSSNAAFLFKKSSSL*
+>locus=337:402 strand=+
+MQLFSSKKVHHCKCHFHIYRR*
+```
+
 
 ```julia
 get_proteins(dnaseq)
