@@ -7,8 +7,7 @@
 [![](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE)
 [![](https://img.shields.io/badge/documentation-online-blue.svg?logo=Julia&logoColor=white)](https://camilogarciabotero.github.io/GeneFinder.jl/dev/)
 [![](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![](https://zenodo.org/badge/DOI/10.5281/zenodo.7519184.svg)](https://doi.org/10.5281/zenodo.7519185)
-
+[![](https://zenodo.org/badge/DOI/10.5281/zenodo.7519184.svg)](https://doi.org/10.5281/zenodo.7519184)
 
 
 ***
@@ -36,8 +35,7 @@ check out the master branch to try new features before release.
 
 ### Coding genes (CDS - ORFs)
 
--   ☒ [Simple
-    finder](https://camilogarciabotero.github.io/GeneFinder.jl/dev/simplefinder/)
+-   ☒ [Simple finder](https://camilogarciabotero.github.io/GeneFinder.jl/dev/simplefinder/)
 -   ☐ EasyGene
 -   ☐ GLIMMER
 -   ☐ Prodigal - Pyrodigal
@@ -54,6 +52,8 @@ check out the master branch to try new features before release.
 
 -   ☐ parallelism SIMD ?
 -   ☐ memory management (?)
+-   ☐ incorporate Ribosime Binding Sites (RBS)
+-   ☐ incorporate Programmed Reading Frame Shifting (PRFS)
 -   ☐ specialized types
     -   ☒ Gene
     -   ☒ ORF
@@ -61,7 +61,6 @@ check out the master branch to try new features before release.
     -   ☒ CDS
     -   ☐ EukaryoticGene (?)
     -   ☐ ProkaryoticGene (?)
-    -   ☐ Codon
     -   ☐ Intron
     -   ☐ Exon
     -   ☐ GFF –\> See other packages
@@ -77,11 +76,10 @@ Must interact with or extend:
 -   GenomicFeatures.jl
 -   FASTX.jl
 -   Kmers.jl
+- Graphs..jl
 
 ## Contributing
 
 ## Citing
 
 See [`CITATION.bib`](CITATION.bib) for the relevant reference(s).
-
-*Logo: gene analysis by Vector Points from the Noun Project*

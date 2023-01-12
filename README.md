@@ -6,7 +6,7 @@
   </a>
   <a href="https://github.com/camilogarciabotero/GeneFinder.jl/releases/latest"> 
   <img src="https://img.shields.io/github/release/camilogarciabotero/GeneFinder.jl.svg">
-    <a href="https://doi.org/10.5281/zenodo.7519185"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7519185.svg" alt="DOI"></a>
+    <a href="https://doi.org/10.5281/zenodo.7519184"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7519184.svg" alt="DOI"></a>
   </a>
   <a href="https://app.travis-ci.com/camilogarciabotero/GeneFinder.jl">
     <img src="https://app.travis-ci.com/camilogarciabotero/GeneFinder.jl.svg?branch=main">
