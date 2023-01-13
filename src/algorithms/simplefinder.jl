@@ -40,7 +40,7 @@ function orf_finder(sequence::LongDNA; alternative_start::Bool=false, min_len::I
     return filter(i -> length(i.location) >= min_len, orfs)::Vector{ORF}
 end
 
-function orf_finder(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
+function orf_finder(sequence::String; alternative_start::Bool=false, min_len::Int64=6)
     sequence = LongDNA{4}(sequence)
     orf = nothing
     orfs = Vector{ORF}()
