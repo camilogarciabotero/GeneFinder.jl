@@ -5,10 +5,11 @@
 The simplest algorithm that finds ORFs in a DNA sequence.
 
 The `orf_finder` function takes a LongDNA sequence and returns a Vector{ORF} containing the ORFs found in the sequence. It searches the sequence for start codons (ATG) and stops when it finds a stop codon (TAG, TAA, or TGA), adding each ORF it finds to the vector. The function also searches the reverse complement of the sequence, so it finds ORFs on both strands.
-    This function has not ORFs size and overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
         Extending the starting codons with the `alternative_start = true` will search for ATG, GTG, and TTG.
     Some studies have shown that in *E. coli* (K-12 strain), ATG, GTG and TTG are used 83 %, 14 % and 3 % respectively.
-
+!!! note
+    This function has not ORFs overlapping condition contraints or scoring scheme. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
+    
 # Keywords
 
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
@@ -24,7 +25,7 @@ function orf_finder(sequence::LongDNA; alternative_start::Bool=false, min_len::I
         seq = strand == '-' ? reverse_complement(sequence) : sequence
 
         i = findfirst(startcodons, seq)
-        while i != nothing
+        while i !== nothing
             for j in i.start:3:seqbound
                 if seq[j:j+2] ∈ STOPCODONS
                      min_len
@@ -36,7 +37,7 @@ function orf_finder(sequence::LongDNA; alternative_start::Bool=false, min_len::I
             i = findnext(startcodons, seq, i.start+1)
         end
     end
-    return filter(i -> length(i.location) >= min_len, orfs)
+    return filter(i -> length(i.location) >= min_len, orfs)::Vector{ORF}
 end
 
 function orf_finder(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
@@ -50,7 +51,7 @@ function orf_finder(sequence::LongDNA; alternative_start::Bool=false, min_len::I
         seq = strand == '-' ? reverse_complement(sequence) : sequence
 
         i = findfirst(startcodons, seq)
-        while i != nothing
+        while i !== nothing
             for j in i.start:3:seqbound
                 if seq[j:j+2] ∈ STOPCODONS
                      min_len
