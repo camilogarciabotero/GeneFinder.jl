@@ -1,7 +1,7 @@
 
 # A simple algorithm
 
-The first implemented function is `orf_finder` a very non-restrictive
+The first implemented function is `findorfs` a very non-restrictive
 ORF finder function that will catch all ORFs in a dedicated structure.
 Note that this will catch random ORFs not necesarily genes since it has
 no ORFs size or overlapping condition contraints. Thus it might consider
@@ -20,7 +20,7 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
 ## Finding all ORFs
 
 ``` julia
-orf_finder(seq)
+findorfs(seq)
 ```
 
     12-element Vector{ORF}:
@@ -38,7 +38,7 @@ orf_finder(seq)
      ORF(695:706, '+')
 
 Two other functions (`get_cds` and `get_proteins`) pass the sequence to
-`orf_finder` take the ORFs and act as generators of the sequence, so
+`findorfs` take the ORFs and act as generators of the sequence, so
 this way the can be `collect`ed in the REPL as an standard output or
 written into a file more conviniently using the `FASTX` IO system:
 

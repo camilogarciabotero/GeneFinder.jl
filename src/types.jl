@@ -6,7 +6,6 @@ abstract type Gene end
     struct ORF
         location::UnitRange{Int64}
         strand::Char
-        
     end
 
 The ORF struct represents an open reading frame in a DNA sequence. It has two fields: 

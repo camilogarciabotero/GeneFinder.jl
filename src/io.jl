@@ -11,7 +11,7 @@ Write BED data to a file.
 """
 function write_bed(input::LongDNA, output::String; alternative_start=false, min_len=6)
    open(output, "w") do f
-      @simd for i in orf_finder(input; alternative_start, min_len)
+      @simd for i in findorfs(input; alternative_start, min_len)
          write(f, "$(i.location.start)\t$(i.location.stop)\t$(i.strand)\n")
       end
    end
@@ -24,7 +24,7 @@ function write_bed(input::String, output::String; alternative_start=false, min_l
    dnaseq = LongDNA{4}(seq)
 
    open(output, "w") do f
-      @simd for i in orf_finder(dnaseq; alternative_start, min_len)
+      @simd for i in findorfs(dnaseq; alternative_start, min_len)
          write(f, "$(i.location.start)\t$(i.location.stop)\t$(i.strand)\n")
       end
    end

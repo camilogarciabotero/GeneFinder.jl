@@ -12,7 +12,7 @@ makedocs(;
         prettyurls=get(ENV, "CI", "false") == "true",
         canonical="https://camilogarciabotero.github.io/GeneFinder.jl",
         edit_link="main",
-        assets=String[],
+        assets=String["assets/logo.svg"],
     ),
     pages=[
         "Home" => "index.md",
