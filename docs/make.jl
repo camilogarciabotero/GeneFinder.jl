@@ -11,8 +11,7 @@ makedocs(;
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
         canonical="https://camilogarciabotero.github.io/GeneFinder.jl",
-        edit_link="main",
-        assets=String["assets/logo.svg"],
+        edit_link="main"
     ),
     pages=[
         "Home" => "index.md",
