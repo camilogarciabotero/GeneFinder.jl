@@ -6,6 +6,10 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.10...main)
 
+## [0.0.11]
+
+- Fix a bug wit `@view`
+- improve `cdsgenerator` and `get_cds`
 ## [0.0.10]
 
 - Fix a bug in `get_cds`
