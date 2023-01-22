@@ -21,7 +21,7 @@ end
 """
     struct CDS
         orf::ORF
-        sequence::LongDNA
+        sequence::LongSubSeq{DNAAlphabet{4}}
     end
 
 The `CDS` struct represents a coding sequence in a DNA sequence. It has three fields:
@@ -30,7 +30,7 @@ The `CDS` struct represents a coding sequence in a DNA sequence. It has three fi
 - `sequence`: a `LongDNA` sequence representing the actual sequence of the CDS
 """
 struct CDS
-    sequence::LongDNA
+    sequence::LongSubSeq{DNAAlphabet{4}} #LongDNA
     orf::ORF
 end
 
@@ -47,7 +47,7 @@ Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein
 - `sequence`: a `LongSequence` sequence representing the actual translated sequence of the CDS
 """
 struct Protein
-    sequence::LongSequence
+    sequence::LongSubSeq{AminoAcidAlphabet}
     orf::ORF
 end
 
