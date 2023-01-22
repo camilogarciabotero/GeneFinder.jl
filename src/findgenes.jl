@@ -46,7 +46,7 @@ end
 end
 
 function get_cds(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
-    orfs = orfiterator(sequence; alternative_start, min_len)
+    orfs = findorfs(sequence; alternative_start, min_len)
     revseq = reverse_complement(sequence)
     cds = [i.strand == '+' ? StringView(@view sequence[i.location]) : StringView(@view revseq[i.location]) for i in orfs]
     return cds
@@ -96,7 +96,7 @@ end
 
 
 function get_proteins(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
-    orfs = orfiterator(sequence; alternative_start, min_len)
+    orfs = findorfs(sequence; alternative_start, min_len)
     revseq = reverse_complement(sequence)
     proteins = [i.strand == '+' ? translate(sequence[i.location]) : translate(revseq[i.location]) for i in orfs]
     return proteins
