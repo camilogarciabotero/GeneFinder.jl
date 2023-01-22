@@ -8,8 +8,8 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [0.0.11]
 
-- Fix a bug wit `@view`
-- improve `cdsgenerator` and `get_cds`
+- Fix a bug with `@view`
+- Improve `cdsgenerator` and `get_cds`
 ## [0.0.10]
 
 - Fix a bug in `get_cds`
