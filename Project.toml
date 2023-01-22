@@ -1,7 +1,7 @@
 name = "GeneFinder"
 uuid = "2bc6ee46-2158-4f5a-a720-91cb2d7cee64"
 authors = ["Camilo García"]
-version = "0.0.8"
+version = "0.0.9"
 
 [deps]
 BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
