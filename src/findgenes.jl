@@ -70,7 +70,7 @@ As its name suggest this generator function iterates over the sequence to find p
 function proteingenerator(sequence::LongDNA; alternative_start::Bool=false, code::GeneticCode=BioSequences.standard_genetic_code, min_len::Int64=6)
     orfs = findorfs(sequence; alternative_start, min_len)
     reversedseq = reverse_complement(sequence)
-    proteins = (i.strand == '+' ? Protein(translate(sequence[i.location]; alternative_start, code), i) : Protein(translate(reversedseq[i.location]; alternative_start, code), i) for i in orfs)
+    proteins = (i.strand == '+' ? Protein(translate(@view(sequence[i.location]); alternative_start, code), i) : Protein(translate(@view(reversedseq[i.location]); alternative_start, code), i) for i in orfs)
     return proteins
 end
 
@@ -78,14 +78,9 @@ function proteingenerator(sequence::String; alternative_start::Bool=false, code:
     sequence = LongDNA{4}(sequence)
     orfs = findorfs(sequence; alternative_start, min_len)
     reversedseq = reverse_complement(sequence)
-    proteins = (i.strand == '+' ? Protein(translate(sequence[i.location]; alternative_start, code), i) : Protein(translate(reversedseq[i.location]; alternative_start, code), i) for i in orfs)
+    proteins = (i.strand == '+' ? Protein(translate(@view(sequence[i.location]); alternative_start, code), i) : Protein(translate(@view(reversedseq[i.location]); alternative_start, code), i) for i in orfs)
     return proteins
 end
-
-import BioSequences: translate
-
-import BioSequences: standard_genetic_code
-BioSequences.translate(ntseq::LongSubSeq{DNAAlphabet{4}}) = translate(ntseq)
 
 @testitem "proteingenerator test" begin
     using BioSequences

@@ -93,3 +93,11 @@ function Base.count(codons::Vector{Codon}, sequence::LongDNA)
 end
 
 ##### ---------------------------------------- #####
+
+function BioSequences.translate(ntseq::LongSubSeq{DNAAlphabet{4}}; 
+    code::GeneticCode=BioSequences.standard_genetic_code, 
+    allow_ambiguous_codons=true, 
+    alternative_start=false)
+ntseq = copy(ntseq)
+translate(ntseq; code, allow_ambiguous_codons, alternative_start)
+end

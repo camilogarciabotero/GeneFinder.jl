@@ -10,6 +10,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 - Fix a bug with `@view`
 - Improve `cdsgenerator` and `get_cds`
+
 ## [0.0.10]
 
 - Fix a bug in `get_cds`
