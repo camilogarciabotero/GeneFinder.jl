@@ -117,7 +117,6 @@ function get_proteins(sequence::LongDNA; alternative_start::Bool=false, min_len:
     return proteins
 end
 
-
 function get_proteins(sequence::String; alternative_start::Bool=false, min_len=6)
     rdr = FASTA.Reader(open(sequence))
     record = first(rdr)
