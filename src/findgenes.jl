@@ -47,11 +47,25 @@ end
 
 function get_cds(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
     cds = Vector{LongSubSeq{DNAAlphabet{4}}}()
-    for i in cdsgenerator(sequence)
+    for i in cdsgenerator(sequence; alternative_start, min_len)
         push!(cds, i.sequence)
     end
     return cds
 end
+
+function get_cds(sequence::String; alternative_start::Bool=false, min_len=6)
+    rdr = FASTA.Reader(open(sequence))
+    record = first(rdr)
+    seq = sequence(record)
+    dnaseq = LongDNA{4}(seq)
+
+    cds = Vector{LongSubSeq{DNAAlphabet{4}}}()
+    for i in cdsgenerator(dnaseq; alternative_start, min_len)
+        push!(cds, i.sequence)
+    end
+    return cds
+end
+
 
 """
     proteingenerator(sequence::LongDNA; kwargs...)
@@ -103,6 +117,18 @@ function get_proteins(sequence::LongDNA; alternative_start::Bool=false, min_len:
     return proteins
 end
 
+
+function get_proteins(sequence::String; alternative_start::Bool=false, min_len=6)
+    rdr = FASTA.Reader(open(sequence))
+    record = first(rdr)
+    seq = sequence(record)
+    dnaseq = LongDNA{4}(seq)
+
+    orfs = findorfs(dnaseq; alternative_start, min_len)
+    revseq = reverse_complement(dnaseq)
+    proteins = [i.strand == '+' ? translate(dnaseq[i.location]) : translate(revseq[i.location]) for i in orfs]
+    return proteins
+end
 
 # """
 # FindGene struct
