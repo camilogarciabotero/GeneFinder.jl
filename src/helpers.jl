@@ -1,3 +1,41 @@
+# function fasta_to_dna(input::String)
+#     dnaseq = LongDNA{4}() # do something with record
+#     FASTAReader(open(input)) do reader
+#         for record in reader
+#             seq = sequence(record)
+#             dnaseq = LongDNA{4}(seq) # do something with record
+#         end
+#         return dnaseq
+#     end
+# end
+
+# function fasta_to_dna(input::String)
+#     dnaseq = Vector{LongDNA{4}}()
+    
+#     try
+#         FASTAReader(open(input)) do reader
+#             for record in reader
+#                 seq = sequence(record)
+#                 push!(dnaseq, LongDNA{4}(seq))
+#             end
+#         end
+#     catch e
+#         error("Error reading input file: $(e)")
+#     end
+    
+#     return dnaseq
+# end
+"""
+    fasta_to_dna(input::String)
+
+Converts a FASTA formatted file (even if it is a multi-fasta) to an array of `LongDNA` objects.
+"""
+function fasta_to_dna(input::String)::Vector{LongDNA{4}}
+    FASTAReader(open(input)) do reader
+        return [LongDNA{4}(sequence(record)) for record in reader]
+    end
+end
+
 """
     eachcodon(sequence::LongDNA)
 
