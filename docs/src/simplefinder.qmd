@@ -28,17 +28,17 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
 findorfs(seq)
 ```
 
-Two other functions (`get_cds` and `get_proteins`) pass the sequence to `findorfs` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or written into a file more conviniently using the `FASTX` IO system:
+Two other functions (`getcds` and `getproteins`) pass the sequence to `findorfs` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or written into a file more conviniently using the `FASTX` IO system:
 
 ## Generting cds and proteins with its ORF
 
 ```{julia}
-get_cds(seq)
+getcds(seq)
 ```
 
 
 ```{julia}
-get_proteins(seq)
+getproteins(seq)
 ```
 
 ## Combining `FASTX` for reading and writing a fasta record

@@ -37,7 +37,7 @@ findorfs(seq)
      ORF(581:601, '+')
      ORF(695:706, '+')
 
-Two other functions (`get_cds` and `get_proteins`) pass the sequence to
+Two other functions (`getcds` and `getproteins`) pass the sequence to
 `findorfs` take the ORFs and act as generators of the sequence, so
 this way the can be `collect`ed in the REPL as an standard output or
 written into a file more conviniently using the `FASTX` IO system:
@@ -45,7 +45,7 @@ written into a file more conviniently using the `FASTX` IO system:
 ## Generting cds and proteins with its ORF
 
 ``` julia
-get_cds(seq)
+getcds(seq)
 ```
 
     12-element Vector{LongSequence{DNAAlphabet{4}}}:
@@ -63,7 +63,7 @@ get_cds(seq)
      ATGCAACCCTGA
 
 ``` julia
-get_proteins(seq)
+getproteins(seq)
 ```
 
     12-element Vector{LongAA}:

@@ -45,7 +45,7 @@ end
     @test cds01[1].orf == ORF(1:33, '+')
 end
 
-function get_cds(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
+function getcds(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
     cds = Vector{LongSubSeq{DNAAlphabet{4}}}()
     for i in cdsgenerator(sequence; alternative_start, min_len)
         push!(cds, i.sequence)
@@ -53,7 +53,7 @@ function get_cds(sequence::LongDNA; alternative_start::Bool=false, min_len::Int6
     return cds
 end
 
-function get_cds(sequence::String; alternative_start::Bool=false, min_len=6)
+function getcds(sequence::String; alternative_start::Bool=false, min_len=6)
     dnaseq = fasta_to_dna(sequence)[1]
     cds = Vector{LongSubSeq{DNAAlphabet{4}}}()
     for i in cdsgenerator(dnaseq; alternative_start, min_len)
@@ -106,14 +106,14 @@ end
 end
 
 
-function get_proteins(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
+function getproteins(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
     orfs = findorfs(sequence; alternative_start, min_len)
     revseq = reverse_complement(sequence)
     proteins = [i.strand == '+' ? translate(@view(sequence[i.location])) : translate(@view(revseq[i.location])) for i in orfs]
     return proteins
 end
 
-function get_proteins(sequence::String; alternative_start::Bool=false, min_len=6)
+function getproteins(sequence::String; alternative_start::Bool=false, min_len=6)
     dnaseq = fasta_to_dna(sequence)[1]
     orfs = findorfs(dnaseq; alternative_start, min_len)
     revseq = reverse_complement(dnaseq)

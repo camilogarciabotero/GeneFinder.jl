@@ -9,11 +9,11 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 ## [0.0.11]
 
 - Fix a bug with `@view`
-- Improve `cdsgenerator` and `get_cds`
+- Improve `cdsgenerator` and `getcds`
 
 ## [0.0.10]
 
-- Fix a bug in `get_cds`
+- Fix a bug in `getcds`
 
 ## [0.0.9]
 

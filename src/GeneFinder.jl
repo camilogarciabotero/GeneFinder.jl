@@ -13,7 +13,7 @@ include("algorithms/findorfs.jl")
 export locationiterator, findorfs
 
 include("findgenes.jl")
-export cdsgenerator, proteingenerator, get_cds, get_proteins
+export cdsgenerator, proteingenerator, getcds, getproteins
 
 include("io.jl")
 export write_cds, write_proteins, write_bed
