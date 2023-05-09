@@ -94,6 +94,15 @@ function write_proteins(input::String, output::String; alternative_start=false, 
    end
 end
 
+function write_gff(input::LongDNA, output::String; alternative_start=false, min_len=6)
+   open(output, "w") do f
+      @simd for i in findorfs(input; alternative_start, min_len)
+         id = string("ORF", rpad(i, 3, "0"))
+         write(f, "Chr\tGeneFinder\tORF\t$(i.location.start)\t$(i.location.stop)\t$(i.strand)\t.\tid=ORF$(id)\n")
+      end
+   end
+end
+
 # FASTA.Writer(open("some_file.fna", "w")) do writer
 #     write(writer, record) # a FASTA.Record
 # end
