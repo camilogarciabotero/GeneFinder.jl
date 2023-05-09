@@ -6,6 +6,10 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.10...main)
 
+## [0.0.12]
+
+- Add `write_gff` methods
+
 ## [0.0.11]
 
 - Fix a bug with `@view`
@@ -19,6 +23,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 - Improvements in `findorfs` (prev orf_finder). Main ideas: [Dan](https://discourse.julialang.org/u/dan/summary) also see this [Post](https://discourse.julialang.org/t/how-to-improve-a-generator-to-be-more-memory-efficient-when-it-is-collected/92932)
 - Update some docs
+
 ## [0.0.8]
 
 - Renaming functions in simple finder implementation
