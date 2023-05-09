@@ -3,6 +3,32 @@
 abstract type Gene end
 
 """
+    struct Gene
+        seqname::String
+        start::Int64
+        stop::Int64
+        score::Float64
+        strand::Char
+        frame::'.'
+        attribute::
+    end
+
+This is the main Gene struct, based on the fields that could be found in a GFF3, still needs to be defined correctly,
+    The idea is correct the frame and attributes that will have something like a possible list (id=Char;name=;locus_tag).
+    The `write` and `get` functions should have a dedicated method for this struct.
+"""
+struct Gene
+    seqname::String
+    start::Int64
+    stop::Int64
+    score::Float64
+    strand::Char
+    frame::String
+    attribute::String
+end
+
+
+"""
     struct ORF
         location::UnitRange{Int64}
         strand::Char
