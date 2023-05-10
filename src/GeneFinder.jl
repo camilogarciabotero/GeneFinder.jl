@@ -16,7 +16,7 @@ include("findgenes.jl")
 export cdsgenerator, proteingenerator, getcds, getproteins
 
 include("io.jl")
-export write_cds, write_proteins, write_bed
+export write_cds, write_proteins, write_bed, write_gff
 
 include("helpers.jl")
 export fasta_to_dna
