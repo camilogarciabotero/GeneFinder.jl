@@ -9,6 +9,7 @@ BioSymbols = "3c28c6f8-a34d-59c4-9654-267d177fcfa9"
 FASTX = "c2308a5c-f048-11e8-3e8a-31650f418d12"
 GenomicFeatures = "899a7d2d-5c61-547b-bef9-6698a8d05446"
 IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
+PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 TestItemRunner = "f8b46487-2199-4994-9208-9a1283c18c0a"
 TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
