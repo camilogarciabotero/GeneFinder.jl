@@ -1,8 +1,8 @@
 module GeneFinder
 
 using BioSequences
-import BioSequences: GeneticCode
-using FASTX
+using BioSequences: GeneticCode
+using FASTX: FASTA
 using IterTools
 using TestItems: @testitem
 
