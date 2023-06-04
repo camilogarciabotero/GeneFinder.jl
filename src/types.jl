@@ -78,45 +78,45 @@ struct Protein
 end
 
 ##### The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/ #####
-"""
-    Codon <: BioSequence{DNAAlphabet{2}}
+# """
+#     Codon <: BioSequence{DNAAlphabet{2}}
 
-A `Struct` representing a codon, which is a subtype of `BioSequence` with
-an `Alphabet` of type `DNAAlphabet{2}`. It has a single field `x` of type
-`UInt8`. This was implemente in The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/
-"""
-struct Codon <: BioSequence{DNAAlphabet{2}}
-    x::UInt8
-end
+# A `Struct` representing a codon, which is a subtype of `BioSequence` with
+# an `Alphabet` of type `DNAAlphabet{2}`. It has a single field `x` of type
+# `UInt8`. This was implemente in The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/
+# """
+# struct Codon <: BioSequence{DNAAlphabet{2}}
+#     x::UInt8
+# end
 
-function Codon(iterable)
-    length(iterable) == 3 || error("Must have length 3")
-    x = zero(UInt)
-    for (i, nt) in enumerate(iterable)
-        x |= BioSequences.encode(Alphabet(Codon), convert(DNA, nt)) << (6 - 2i)
-    end
-    Codon(x % UInt8)
-end
+# function Codon(iterable)
+#     length(iterable) == 3 || error("Must have length 3")
+#     x = zero(UInt)
+#     for (i, nt) in enumerate(iterable)
+#         x |= BioSequences.encode(Alphabet(Codon), convert(DNA, nt)) << (6 - 2i)
+#     end
+#     Codon(x % UInt8)
+# end
 
-Base.length(::Codon) = 3
+# Base.length(::Codon) = 3
 
-function BioSequences.extract_encoded_element(x::Codon, i::Int)
-    ((x.x >>> (6 - 2i)) & 3) % UInt
-end
+# function BioSequences.extract_encoded_element(x::Codon, i::Int)
+#     ((x.x >>> (6 - 2i)) & 3) % UInt
+# end
 
-Base.copy(seq::Codon) = Codon(seq.x)
+# Base.copy(seq::Codon) = Codon(seq.x)
 
-BioSequences.has_interface(BioSequence, Codon, [DNA_C, DNA_T, DNA_G], false)
+# BioSequences.has_interface(BioSequence, Codon, [DNA_C, DNA_T, DNA_G], false)
 
-Base.count(codon::Codon, sequence::LongDNA) = count(codon, sequence)
+# Base.count(codon::Codon, sequence::LongDNA) = count(codon, sequence)
 
-function Base.count(codons::Vector{Codon}, sequence::LongDNA)
-    a = 0
-    @inbounds for i in codons
-        a += count(i, sequence)
-    end
-    return a
-end
+# function Base.count(codons::Vector{Codon}, sequence::LongDNA)
+#     a = 0
+#     @inbounds for i in codons
+#         a += count(i, sequence)
+#     end
+#     return a
+# end
 
 ##### ---------------------------------------- #####
 

@@ -1,8 +1,8 @@
 module GeneFinder
 
 using BioSequences
-import BioSequences: GeneticCode
-using FASTX
+using BioSequences: GeneticCode
+using FASTX: FASTA
 using IterTools
 using TestItems: @testitem
 
@@ -19,6 +19,6 @@ include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 
 include("helpers.jl")
-export fasta_to_dna
+export fasta_to_dna, sort
 
 end

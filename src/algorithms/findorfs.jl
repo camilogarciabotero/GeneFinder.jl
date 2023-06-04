@@ -41,7 +41,7 @@ function findorfs(sequence::LongDNA; alternative_start::Bool=false, min_len::Int
             end
         end
     end
-    return orfs
+    return sort(orfs)
 end
 
 function findorfs(sequence::String; alternative_start::Bool=false, min_len::Int64 = 6)
@@ -57,7 +57,7 @@ function findorfs(sequence::String; alternative_start::Bool=false, min_len::Int6
             end
         end
     end
-    return orfs
+    return sort(orfs)
 end
 
 @testitem "findorfs test" begin
