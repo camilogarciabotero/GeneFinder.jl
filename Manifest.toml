@@ -2,7 +2,7 @@
 
 julia_version = "1.9.0"
 manifest_format = "2.0"
-project_hash = "82787476869d4e42c6f7240087a4c0ed9854653a"
+project_hash = "dca30f677b1be306640ba232a74fbe5db5afc724"
 
 [[deps.Automa]]
 deps = ["Printf", "ScanByte", "TranscodingStreams"]
