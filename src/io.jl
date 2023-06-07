@@ -1,6 +1,6 @@
 """
-   write_bed(input::LongDNA, output::String; kwargs...)
-   write_bed(input::String, output::String; kwargs...)
+	write_bed(input::LongDNA, output::String; kwargs...)
+	write_bed(input::String, output::String; kwargs...)
 
 Write BED data to a file.
 
@@ -31,8 +31,8 @@ function write_bed(input::String, output::String; alternative_start=false, min_l
 end
 
 """
-   write_cds(input::LongDNA, output::String; kwargs...)
-   write_cds(input::String, output::String; kwargs...)
+	write_cds(input::LongDNA, output::String; kwargs...)
+	write_cds(input::String, output::String; kwargs...)
 
 Write a file containing the coding sequences (CDSs) of a given DNA sequence to the specified file.
 
@@ -63,7 +63,7 @@ function write_cds(input::String, output::String; alternative_start=false, min_l
 end
 
 """
-   write_proteins(input::LongDNA, output::String; kwargs...)
+	write_proteins(input::LongDNA, output::String; kwargs...)
 
 Write the protein sequences encoded by the coding sequences (CDSs) of a given DNA sequence to the specified file.
 
@@ -95,8 +95,8 @@ function write_proteins(input::String, output::String; alternative_start=false, 
 end
 
 """
-   write_gff(input::LongDNA, output::String; kwargs...)
-   write_gff(input::String, output::String; kwargs...)
+	write_gff(input::LongDNA, output::String; kwargs...)
+	write_gff(input::String, output::String; kwargs...)
 
 Write GFF data to a file.
 

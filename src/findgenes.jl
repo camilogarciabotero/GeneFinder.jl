@@ -46,8 +46,8 @@ end
 end
 
 """
-   getcds(input::LongDNA, output::String; kwargs...)
-   getcds(input::String, output::String; kwargs...)
+    getcds(input::LongDNA, output::String; kwargs...)
+    getcds(input::String, output::String; kwargs...)
 
 This function will take a `LongDNA` or `String` sequence and by means of the `findorfs()` function will push `LongSubSeq{DNAAlphabet{4}}` into a `Vector{}`
 
@@ -116,10 +116,10 @@ end
 end
 
 """
-   getproteins(input::LongDNA, output::String; kwargs...)
-   getproteins(input::String, output::String; kwargs...)
+    getproteins(input::LongDNA, output::String; kwargs...)
+    getproteins(input::String, output::String; kwargs...)
 
-Similar to `getcds()` function it will take a `LongDNA` or `String` sequence and by means of the `findorfs()` and the `translate()` function will push `LongAA`s into a `Vector`
+Similar to `getcds()` function, it will take a `LongDNA` or `String` sequence and by means of the `findorfs()` and the `translate()` function will push `LongAA`s into a `Vector`
 
 # Keywords
 
