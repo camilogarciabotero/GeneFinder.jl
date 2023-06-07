@@ -94,6 +94,17 @@ function write_proteins(input::String, output::String; alternative_start=false, 
    end
 end
 
+"""
+   write_gff(input::LongDNA, output::String; kwargs...)
+   write_gff(input::String, output::String; kwargs...)
+
+Write GFF data to a file.
+
+# Keywords
+
+- `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
+- `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
+"""
 function write_gff(input::String, output::String; alternative_start=false, min_len=6)
    rdr = FASTA.Reader(open(input))
    record = first(rdr)
@@ -109,7 +120,6 @@ function write_gff(input::String, output::String; alternative_start=false, min_l
    end
 end
 
-
 function write_gff(input::LongDNA, output::String; alternative_start=false, min_len=6)
    open(output, "w") do f
       write(f, "##gff-version 3\n##sequence-region Chr 1 $(length(input))\n")
@@ -119,6 +129,3 @@ function write_gff(input::LongDNA, output::String; alternative_start=false, min_
       end
    end
 end
-# FASTA.Writer(open("some_file.fna", "w")) do writer
-#     write(writer, record) # a FASTA.Record
-# end

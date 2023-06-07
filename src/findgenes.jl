@@ -45,6 +45,17 @@ end
     @test cds01[1].orf == ORF(1:33, '+')
 end
 
+"""
+   getcds(input::LongDNA, output::String; kwargs...)
+   getcds(input::String, output::String; kwargs...)
+
+This function will take a `LongDNA` or `String` sequence and by means of the `findorfs()` function will push `LongSubSeq{DNAAlphabet{4}}` into a `Vector{}`
+
+# Keywords
+
+- `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
+- `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
+"""
 function getcds(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
     cds = Vector{LongSubSeq{DNAAlphabet{4}}}()
     for i in cdsgenerator(sequence; alternative_start, min_len)
@@ -61,7 +72,6 @@ function getcds(sequence::String; alternative_start::Bool=false, min_len=6)
     end
     return cds
 end
-
 
 """
     proteingenerator(sequence::LongDNA; kwargs...)
@@ -105,7 +115,17 @@ end
     @test proteins01[1].orf == ORF(1:33, '+')
 end
 
+"""
+   getproteins(input::LongDNA, output::String; kwargs...)
+   getproteins(input::String, output::String; kwargs...)
 
+Similar to `getcds()` function it will take a `LongDNA` or `String` sequence and by means of the `findorfs()` and the `translate()` function will push `LongAA`s into a `Vector`
+
+# Keywords
+
+- `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
+- `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
+"""
 function getproteins(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
     orfs = findorfs(sequence; alternative_start, min_len)
     revseq = reverse_complement(sequence)

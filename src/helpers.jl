@@ -145,7 +145,6 @@ end
 #     codons
 # end
 
-
 # function _reversecomplement(sequence::LongDNA)
 #     # create an empty string to hold the reverse complement
 #     revcomp = LongDNA{4}()
