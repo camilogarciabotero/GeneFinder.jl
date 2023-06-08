@@ -6,6 +6,15 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.10...main)
 
+## [0.0.16]
+
+- Fix a bug with importing `FASTX.sequence()` in `write` API
+ 
+## [0.0.15]
+
+- Add precompilation statement to `findorfs()` 
+- Clean src and update docs
+
 ## [0.0.14]
 
 - Implement a sorting method for the orfs  ([#16](https://github.com/camilogarciabotero/GeneFinder.jl/pull/16))
