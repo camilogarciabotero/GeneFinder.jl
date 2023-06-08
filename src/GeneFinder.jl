@@ -2,7 +2,7 @@ module GeneFinder
 
 using BioSequences
 using BioSequences: GeneticCode
-using FASTX: FASTA
+using FASTX: FASTA, sequence
 using IterTools
 using TestItems: @testitem
 using PrecompileTools
