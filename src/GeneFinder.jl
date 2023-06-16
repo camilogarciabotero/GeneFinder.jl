@@ -37,6 +37,8 @@ include("extended.jl")
         getcds(seq)
         getproteins(seq)
         dinucleotidetrans(seq)
+        transition_count_matrix(seq)
+        transition_probability_matrix(seq)
     end
 end
 
