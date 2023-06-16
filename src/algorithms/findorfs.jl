@@ -1,10 +1,10 @@
 """
-    locationiterator(sequence::LongDNA; alternative_start::Bool=false)
+    locationiterator(sequence::LongSequence{DNAAlphabet{4}}; alternative_start::Bool=false)
 
-This is an iterator function that uses regular expressions to search the entire CDS (instead of start and stop codons) in a `LongDNA` sequence.
+This is an iterator function that uses regular expressions to search the entire CDS (instead of start and stop codons) in a `LongSequence{DNAAlphabet{4}}` sequence.
     It uses an anonymous function that will find the first regularly expressed CDS. Then using this anonymous function it creates an iterator that will apply it until there is no other CDS.
 """
-function locationiterator(sequence::LongDNA; alternative_start::Bool = false)
+function locationiterator(sequence::LongSequence{DNAAlphabet{4}}; alternative_start::Bool = false)
     regcds =
         alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna :
         biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
@@ -14,12 +14,12 @@ function locationiterator(sequence::LongDNA; alternative_start::Bool = false)
 end
 
 """
-    findorfs(sequence::LongDNA; kwargs...)::Vector{ORF}
+    findorfs(sequence::LongSequence{DNAAlphabet{4}}; kwargs...)::Vector{ORF}
     findorfs(sequence::String; kwargs...)::Vector{ORF} 
 
 A simple implementation that finds ORFs in a DNA sequence.
 
-The `findorfs` function takes a LongDNA sequence and returns a Vector{ORF} containing the ORFs found in the sequence. 
+The `findorfs` function takes a LongSequence{DNAAlphabet{4}} sequence and returns a Vector{ORF} containing the ORFs found in the sequence. 
     It searches entire regularly expressed CDS, adding each ORF it finds to the vector. The function also searches the reverse complement of the sequence, so it finds ORFs on both strands.
         Extending the starting codons with the `alternative_start = true` will search for ATG, GTG, and TTG.
     Some studies have shown that in *E. coli* (K-12 strain), ATG, GTG and TTG are used 83 %, 14 % and 3 % respectively.
@@ -31,7 +31,7 @@ The `findorfs` function takes a LongDNA sequence and returns a Vector{ORF} conta
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
-function findorfs(sequence::LongDNA; alternative_start::Bool = false, min_len::Int64 = 6)
+function findorfs(sequence::LongSequence{DNAAlphabet{4}}; alternative_start::Bool = false, min_len::Int64 = 6)
     orfs = Vector{ORF}()
 
     for strand in ['+', '-']
@@ -47,7 +47,7 @@ function findorfs(sequence::LongDNA; alternative_start::Bool = false, min_len::I
 end
 
 function findorfs(sequence::String; alternative_start::Bool = false, min_len::Int64 = 6)
-    sequence = LongDNA{4}(sequence)
+    sequence = LongSequence{DNAAlphabet{4}}(sequence)
     orfs = Vector{ORF}()
 
     for strand in ['+', '-']

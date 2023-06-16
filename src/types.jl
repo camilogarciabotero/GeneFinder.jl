@@ -52,10 +52,10 @@ end
 The `CDS` struct represents a coding sequence in a DNA sequence. It has three fields:
 
 - `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) displaying the location of the ORF and the associate strand: forward ('+') or reverse ('-')
-- `sequence`: a `LongDNA` sequence representing the actual sequence of the CDS
+- `sequence`: a `LongSequence{DNAAlphabet{4}}` sequence representing the actual sequence of the CDS
 """
 struct CDS
-    sequence::LongSubSeq{DNAAlphabet{4}} #LongDNA
+    sequence::LongSubSeq{DNAAlphabet{4}} #LongSequence{DNAAlphabet{4}}
     orf::ORF
 end
 
@@ -164,9 +164,9 @@ end
 
 # BioSequences.has_interface(BioSequence, Codon, [DNA_C, DNA_T, DNA_G], false)
 
-# Base.count(codon::Codon, sequence::LongDNA) = count(codon, sequence)
+# Base.count(codon::Codon, sequence::LongSequence{DNAAlphabet{4}}) = count(codon, sequence)
 
-# function Base.count(codons::Vector{Codon}, sequence::LongDNA)
+# function Base.count(codons::Vector{Codon}, sequence::LongSequence{DNAAlphabet{4}})
 #     a = 0
 #     @inbounds for i in codons
 #         a += count(i, sequence)
