@@ -24,7 +24,7 @@ struct GeneFeatures
     score::Float64
     strand::Char
     frame::String
-    attribute::String
+    attribute::String # Should be a Dict perhaps
 end
 
 """
@@ -132,6 +132,11 @@ struct DTPM
     order::Dict{DNA,Int64}
     probabilities::Matrix{Float64}
 end
+
+const LongNucOrView{N} = Union{
+     LongSequence{<:NucleicAcidAlphabet{N}},
+     LongSubSeq{<:NucleicAcidAlphabet{N}}
+ }
 
 ##### The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/ #####
 # """
