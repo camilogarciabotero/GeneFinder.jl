@@ -1,36 +1,4 @@
-# function fasta_to_dna(input::String)
-#     dnaseq = LongDNA{4}() # do something with record
-#     FASTAReader(open(input)) do reader
-#         for record in reader
-#             seq = sequence(record)
-#             dnaseq = LongDNA{4}(seq) # do something with record
-#         end
-#         return dnaseq
-#     end
-# end
-
-# function fasta_to_dna(input::String)
-#     dnaseq = Vector{LongDNA{4}}()
-    
-#     try
-#         FASTAReader(open(input)) do reader
-#             for record in reader
-#                 seq = sequence(record)
-#                 push!(dnaseq, LongDNA{4}(seq))
-#             end
-#         end
-#     catch e
-#         error("Error reading input file: $(e)")
-#     end
-    
-#     return dnaseq
-# end
-Base.sort(v::Vector{<:ORF}) = sort(v, by = _orf_sort_key)
-
-function _orf_sort_key(orf::ORF)
-    return (orf.location, orf.strand)
-end
-
+# General purposes methods supporting main functions
 """
     fasta_to_dna(input::String)
 
@@ -89,50 +57,91 @@ end
 #     @test hasprematurestop(seq02) == true
 # end
 
+"""
+    nucleotidefreqs(sequence::LongDNA) -> Dict{DNA, Float64}
 
-# function hasprematurestop(sequence::LongDNA)::Bool
-#     stop_codon_count = 0
-#     seqbound = length(sequence)
-#     @inbounds for i in 1:3:seqbound
-#         if i+2 <= seqbound
-#             codon = sequence[i:i+2]
-#             if codon ∈ stopcodons
-#                 stop_codon_count += 1
-#             end
-#         end
+Calculate the frequency of each nucleotide in a DNA sequence.
+
+# Arguments
+- `sequence::LongDNA`: A `LongDNA` sequence.
+
+# Returns
+A dictionary with each nucleotide in the sequence as a key, and its frequency as a value.
+
+# Example
+```julia
+    
+    seq = dna"CCTCCCGGACCCTGGGCTCGGGAC"
+
+    nucleotidefreqs(seq)
+
+    Dict{DNA, Float64} with 4 entries:
+    DNA_T => 0.125
+    DNA_A => 0.0833333
+    DNA_G => 0.333333
+    DNA_C => 0.458333
+```
+"""
+function nucleotidefreqs(sequence::LongDNA)::Dict{DNA, Float64}
+    counts = countmap(sequence)
+    T = length(sequence)
+    F = Dict(i => counts[i] / T for i in keys(counts))
+    return F
+end
+
+function dinucleotidetrans(sequence::LongDNA)
+    alphabet = unique(sequence)
+    dinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2]) for n1 in alphabet, n2 in alphabet])
+    
+    pairsdict = Dict{LongDNA{4}, Int64}()
+    for pair in dinucleotides
+        instances = findall(ExactSearchQuery(pair), sequence)
+        pairsdict[pair] = length(instances)
+    end
+    return pairsdict
+end
+
+# dinucleotidetrans01(seq)
+
+# function dinucleotidetrans(sequence::LongDNA)
+#     transitions = Dict{LongDNA{4}, Int}()
+#     for i in 1:length(sequence)-1
+#         dinucleotides = LongSequence{DNAAlphabet{4}}([sequence[i], sequence[i+1]])
+#         transitions[dinucleotides] = get(transitions, dinucleotides, 0) + 1
 #     end
-#     stop_codon_count > 1
+#     return transitions
 # end
 
-# function hasprematurestop02(sequence::LongDNA)
-#     stop_codon_count = count(stopcodons, sequence[1:end-2])
-#     stop_codon_count > 1
-# end
+function transition_count_matrix(sequence::LongDNA)
+    alphabet = unique(sequence)
+    dtcm = DTCM(alphabet)
 
-# function _create_pairs(starts::Vector, stops::Vector)
-#     combination = Vector{UnitRange}()
-#     for i in starts
-#         for j in stops
-#             if i < j && length(i:j+2) % 3 == 0
-#                 push!(combination, UnitRange(i,j))
-#             end
-#         end
-#     end
-#     return combination
-# end
+    transitions = dinucleotidetrans(sequence)
 
-# This function create unique pairs while having all the starts fixed
-# function _create_pairs(starts::Vector, stops::Vector)
-#     combination = Dict{Int, UnitRange}()
-#     for i in starts
-#         for j in stops
-#             if i < j && !haskey(combination, i) && length(i:j+2) % 3 == 0
-#                 combination[i] = UnitRange(i,j)
-#             end
-#         end
-#     end
-#     return sort(collect(values(combination)), by=x -> x.start)
-# end
+    for (dinucleotide, count) in transitions
+        nucleotide1 = dinucleotide[1]
+        nucleotide2 = dinucleotide[2]
+        i = dtcm.order[nucleotide1]
+        j = dtcm.order[nucleotide2]
+        dtcm.counts[i, j] = count
+    end
+
+    return dtcm
+end
+
+transition_count_matrix(seq)
+
+function transition_probability_matrix(sequence::LongDNA)
+    dtcm = transition_count_matrix(sequence)
+    rowsums = sum(dtcm.counts, dims=2)
+    freqs = round.(dtcm.counts ./ rowsums, digits=3)
+    # freqsform = [ println("%.2f", freqs[i,j]) for i in 1:size(freqs,1), j in 1:size(freqs,2) ]
+
+    return DTPM(dtcm.order, freqs)
+end
+
+transition_probability_matrix(seq).probabilities
+
 
 # function count_codons(seq::LongDNA)
 #     codons = Vector{Codon}()
@@ -143,25 +152,4 @@ end
 #         end
 #     end
 #     codons
-# end
-
-# function _reversecomplement(sequence::LongDNA)
-#     # create an empty string to hold the reverse complement
-#     revcomp = LongDNA{4}()
-#     # iterate over the characters in the dna sequence in reverse order
-#     for base in reverse(sequence)
-#         push!(revcomp, complement(base))
-#     end
-    
-#     # return the reverse complement string
-#     return revcomp
-
-# end
-
-# function locations(seq::LongDNA)
-#     location = UnitRange[]
-#     for i in locationiterator(seq)
-#         push!(location, i)
-#     end
-#     return location
 # end
