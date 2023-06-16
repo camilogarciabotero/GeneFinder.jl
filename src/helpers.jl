@@ -89,6 +89,45 @@ function nucleotidefreqs(sequence::LongDNA)::Dict{DNA, Float64}
     return F
 end
 
+
+"""
+    dinucleotidetrans(sequence::LongDNA)
+
+Compute the transition counts of each dinucleotide in a given DNA sequence.
+
+# Arguments
+- `sequence::LongDNA`: a `LongDNA` object representing the DNA sequence.
+
+# Returns
+A dictionary with keys being `LongSequence{DNAAlphabet{4}}` objects representing
+the dinucleotides, and values being the number of occurrences of each dinucleotide
+in the sequence.
+
+# Example
+```julia
+    seq = dna"AGCTAGCTAGCT"
+
+    dinucleotidetrans(seq)
+
+    Dict{LongSequence{DNAAlphabet{4}}, Int64} with 16 entries:
+      GG => 0
+      TC => 0
+      GC => 3
+      CG => 0
+      CC => 0
+      AG => 3
+      TT => 0
+      AC => 0
+      TA => 2
+      GT => 0
+      GA => 0
+      CT => 3
+      CA => 0
+      AT => 0
+      AA => 0
+      TG => 0
+```
+"""
 function dinucleotidetrans(sequence::LongDNA)
     alphabet = unique(sequence)
     dinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2]) for n1 in alphabet, n2 in alphabet])
@@ -112,6 +151,33 @@ end
 #     return transitions
 # end
 
+
+"""
+    transition_count_matrix(sequence::LongDNA)
+
+Compute the transition count matrix (TCM) of a given DNA sequence.
+
+# Arguments
+- `sequence::LongDNA`: a `LongDNA` object representing the DNA sequence.
+
+# Returns
+A `DTCM` object representing the transition count matrix of the sequence.
+
+# Example
+```julia
+    seq = dna"AGCTAGCTAGCT"
+    
+    tcm = transition_count_matrix(seq)
+
+    tcm.counts
+
+    4×4 Matrix{Int64}:
+     0  0  3  0
+     0  0  0  3
+     0  3  0  0
+     2  0  0  0
+ ```
+ """
 function transition_count_matrix(sequence::LongDNA)
     alphabet = unique(sequence)
     dtcm = DTCM(alphabet)
@@ -129,6 +195,32 @@ function transition_count_matrix(sequence::LongDNA)
     return dtcm
 end
 
+"""
+    transition_probability_matrix(sequence::LongDNA)
+
+Compute the transition probability matrix (TPM) of a given DNA sequence.
+
+# Arguments
+- `sequence::LongDNA`: a `LongDNA` object representing the DNA sequence.
+
+# Returns
+A `DTPM` object representing the transition probability matrix of the sequence.
+
+# Example
+```julia
+    seq = dna"AGCTAGCTAGCT"
+
+    tpm = transition_probability_matrix(seq)
+
+    tpm.probs
+
+    4×4 Matrix{Float64}:
+    0.0  0.0  1.0  0.0
+    0.0  0.0  0.0  1.0
+    0.0  1.0  0.0  0.0
+    1.0  0.0  0.0  0.0
+```
+"""
 function transition_probability_matrix(sequence::LongDNA)
     dtcm = transition_count_matrix(sequence)
     rowsums = sum(dtcm.counts, dims=2)
@@ -138,7 +230,13 @@ function transition_probability_matrix(sequence::LongDNA)
     return DTPM(dtcm.order, freqs)
 end
 
+@testitem "tpm" begin
+    using BioSequences
+    seq = dna"CCTCCCGGACCCTGGGCTCGGGAC"
+    tpm = transition_probability_matrix(seq)
 
+    @test tpm.probabilities == [0.0 1.0 0.0 0.0; 0.0 0.5 0.2 0.3; 0.25 0.125 0.625 0.0; 0.0 0.667 0.333 0.0]
+end
 
 # function count_codons(seq::LongDNA)
 #     codons = Vector{Codon}()
