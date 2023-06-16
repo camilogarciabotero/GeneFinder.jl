@@ -27,7 +27,6 @@ struct GeneFeatures
     attribute::String
 end
 
-
 """
     struct ORF
         location::UnitRange{Int64}
@@ -77,6 +76,63 @@ struct Protein
     orf::ORF
 end
 
+
+"""
+    DTCM(alphabet::Vector{DNA})
+
+A data structure for storing a DNA Transition Count Matrix (DTCM). The DTCM is a square matrix where each row and column corresponds to a nucleotide in the given `alphabet`. The value at position (i, j) in the matrix represents the number of times that nucleotide i is immediately followed by nucleotide j in a DNA sequence. 
+
+Fields:
+- `order::Dict{DNA, Int64}`: A dictionary that maps each nucleotide in the `alphabet` to its corresponding index in the matrix.
+- `counts::Matrix{Int64}`: The actual matrix of counts.
+
+Internal function:
+- `DTCM(alphabet::Vector{DNA})`: Constructs a new `DTCM` object with the given `alphabet`. This function initializes the `order` field by creating a dictionary that maps each nucleotide in the `alphabet` to its corresponding index in the matrix. It also initializes the `counts` field to a matrix of zeros with dimensions `len x len`, where `len` is the length of the `alphabet`.
+
+Example usage:
+```julia
+alphabet = [DNA_A, DNA_C, DNA_G, DNA_T]
+dtcm = DTCM(alphabet)
+```
+"""
+struct DTCM
+    order::Dict{DNA, Int64}
+    counts::Matrix{Int64}
+
+    function DTCM(alphabet::Vector{DNA})
+
+        len = length(alphabet)
+
+        order = Dict{DNA, Int}()
+        for (i, nucleotide) in enumerate(sort(alphabet))
+            order[nucleotide] = i
+        end
+        counts = zeros(Int64, len, len)
+        new(order, counts)
+    end
+end
+
+
+"""
+    DTPM(alphabet::Vector{DNA})
+
+A data structure for storing a DNA Transition Probability Matrix (DTPM). The DTPM is a square matrix where each row and column corresponds to a nucleotide in the given `alphabet`. The value at position (i, j) in the matrix represents the probability of transitioning from nucleotide i to nucleotide j in a DNA sequence. 
+
+Fields:
+- `order::Dict{DNA, Int64}`: A dictionary that maps each nucleotide in the `alphabet` to its corresponding index in the matrix.
+- `probabilities::Matrix{Float64}`: The actual matrix of probabilities.
+
+Example usage:
+```julia
+alphabet = [DNA_A, DNA_C, DNA_G, DNA_T]
+dtpm = DTPM(alphabet)
+```
+"""
+struct DTPM
+    order::Dict{DNA, Int64}
+    probabilities::Matrix{Float64}
+end
+
 ##### The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/ #####
 # """
 #     Codon <: BioSequence{DNAAlphabet{2}}
@@ -119,11 +175,3 @@ end
 # end
 
 ##### ---------------------------------------- #####
-
-function BioSequences.translate(ntseq::LongSubSeq{DNAAlphabet{4}}; 
-    code::GeneticCode=BioSequences.standard_genetic_code, 
-    allow_ambiguous_codons=true, 
-    alternative_start=false)
-ntseq = copy(ntseq)
-translate(ntseq; code, allow_ambiguous_codons, alternative_start)
-end
