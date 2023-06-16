@@ -1,7 +1,15 @@
 module GeneFinder
 
-using BioSequences
-using BioSequences: GeneticCode
+using BioSequences:
+    DNA,
+    DNAAlphabet,
+    AminoAcidAlphabet,
+    LongDNA,
+    LongAA,
+    LongSubSeq,
+    @biore_str
+    GeneticCode
+
 using FASTX: FASTA, sequence
 using IterTools: takewhile, iterated
 using StatsBase: countmap

@@ -1,6 +1,7 @@
 # Methods from main packages that expand their fuctions to this package structs
-function BioSequences.translate(ntseq::LongSubSeq{DNAAlphabet{4}}; 
-    code::GeneticCode=BioSequences.standard_genetic_code, 
+import BioSequences: translate, standard_genetic_code
+function translate(ntseq::LongSubSeq{DNAAlphabet{4}}; 
+    code::GeneticCode=standard_genetic_code, 
     allow_ambiguous_codons=true, 
     alternative_start=false)
 ntseq = copy(ntseq)
