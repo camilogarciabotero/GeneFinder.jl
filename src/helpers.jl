@@ -129,8 +129,6 @@ function transition_count_matrix(sequence::LongDNA)
     return dtcm
 end
 
-transition_count_matrix(seq)
-
 function transition_probability_matrix(sequence::LongDNA)
     dtcm = transition_count_matrix(sequence)
     rowsums = sum(dtcm.counts, dims=2)
@@ -140,7 +138,6 @@ function transition_probability_matrix(sequence::LongDNA)
     return DTPM(dtcm.order, freqs)
 end
 
-transition_probability_matrix(seq).probabilities
 
 
 # function count_codons(seq::LongDNA)
