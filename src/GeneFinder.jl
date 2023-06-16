@@ -10,7 +10,7 @@ using TestItems: @testitem
 using PrecompileTools
 
 include("types.jl")
-export ORF, Codon, CDS, Protein, DTCM, DTPM
+export ORF, CDS, Protein, DTCM, DTPM
 
 include("algorithms/findorfs.jl")
 export locationiterator, findorfs
@@ -22,8 +22,7 @@ include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 
 include("helpers.jl")
-export fasta_to_dna,
-    dinucleotidetrans, transition_count_matrix, transition_probability_matrix
+export fasta_to_dna, dinucleotidetrans, transition_count_matrix, transition_probability_matrix
 
 include("extended.jl")
 
