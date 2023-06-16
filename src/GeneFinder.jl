@@ -4,6 +4,7 @@ using BioSequences
 using BioSequences: GeneticCode
 using FASTX: FASTA, sequence
 using IterTools
+using StatsBase: countmap
 using TestItems: @testitem
 using PrecompileTools
 
