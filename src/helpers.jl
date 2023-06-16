@@ -19,7 +19,7 @@ Returns an iterator yielding `Codon` objects for each codon in the `sequence`.
 """
 function eachcodon(sequence::LongDNA)
     seqbound = length(sequence) - 2
-    return(Codon(sequence[i:i+2]) for i in 1:3:seqbound)
+    return (Codon(sequence[i:i+2]) for i = 1:3:seqbound)
 end
 
 # @testitem "eachcodon test" begin
@@ -82,7 +82,7 @@ A dictionary with each nucleotide in the sequence as a key, and its frequency as
     DNA_C => 0.458333
 ```
 """
-function nucleotidefreqs(sequence::LongDNA)::Dict{DNA, Float64}
+function nucleotidefreqs(sequence::LongDNA)::Dict{DNA,Float64}
     counts = countmap(sequence)
     T = length(sequence)
     F = Dict(i => counts[i] / T for i in keys(counts))
@@ -130,9 +130,10 @@ in the sequence.
 """
 function dinucleotidetrans(sequence::LongDNA)
     alphabet = unique(sequence)
-    dinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2]) for n1 in alphabet, n2 in alphabet])
-    
-    pairsdict = Dict{LongDNA{4}, Int64}()
+    dinucleotides =
+        vec([LongSequence{DNAAlphabet{4}}([n1, n2]) for n1 in alphabet, n2 in alphabet])
+
+    pairsdict = Dict{LongDNA{4},Int64}()
     for pair in dinucleotides
         instances = findall(ExactSearchQuery(pair), sequence)
         pairsdict[pair] = length(instances)
@@ -223,8 +224,8 @@ A `DTPM` object representing the transition probability matrix of the sequence.
 """
 function transition_probability_matrix(sequence::LongDNA)
     dtcm = transition_count_matrix(sequence)
-    rowsums = sum(dtcm.counts, dims=2)
-    freqs = round.(dtcm.counts ./ rowsums, digits=3)
+    rowsums = sum(dtcm.counts, dims = 2)
+    freqs = round.(dtcm.counts ./ rowsums, digits = 3)
     # freqsform = [ println("%.2f", freqs[i,j]) for i in 1:size(freqs,1), j in 1:size(freqs,2) ]
 
     return DTPM(dtcm.order, freqs)
@@ -235,7 +236,8 @@ end
     seq = dna"CCTCCCGGACCCTGGGCTCGGGAC"
     tpm = transition_probability_matrix(seq)
 
-    @test tpm.probabilities == [0.0 1.0 0.0 0.0; 0.0 0.5 0.2 0.3; 0.25 0.125 0.625 0.0; 0.0 0.667 0.333 0.0]
+    @test tpm.probabilities ==
+          [0.0 1.0 0.0 0.0; 0.0 0.5 0.2 0.3; 0.25 0.125 0.625 0.0; 0.0 0.667 0.333 0.0]
 end
 
 # function count_codons(seq::LongDNA)

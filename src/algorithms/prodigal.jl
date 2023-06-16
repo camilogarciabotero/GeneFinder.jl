@@ -20,9 +20,3 @@ abstract type ProdigalPrediction{T<:GenomicFeature} end
 # Nodes
 
 # Genes, an object for classifying and sorting predictions
-
-
-
-
-
-

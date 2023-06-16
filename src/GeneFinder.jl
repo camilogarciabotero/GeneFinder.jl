@@ -1,14 +1,7 @@
 module GeneFinder
 
 using BioSequences:
-    DNA,
-    DNAAlphabet,
-    AminoAcidAlphabet,
-    LongDNA,
-    LongAA,
-    LongSubSeq,
-    @biore_str
-    GeneticCode
+    DNA, DNAAlphabet, AminoAcidAlphabet, LongDNA, LongAA, LongSubSeq, @biore_str, GeneticCode
 
 using FASTX: FASTA, sequence
 using IterTools: takewhile, iterated
@@ -29,7 +22,8 @@ include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 
 include("helpers.jl")
-export fasta_to_dna, dinucleotidetrans, transition_count_matrix, transition_probability_matrix
+export fasta_to_dna,
+    dinucleotidetrans, transition_count_matrix, transition_probability_matrix
 
 include("extended.jl")
 

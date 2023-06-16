@@ -96,14 +96,14 @@ dtcm = DTCM(alphabet)
 ```
 """
 struct DTCM
-    order::Dict{DNA, Int64}
+    order::Dict{DNA,Int64}
     counts::Matrix{Int64}
 
     function DTCM(alphabet::Vector{DNA})
 
         len = length(alphabet)
 
-        order = Dict{DNA, Int}()
+        order = Dict{DNA,Int}()
         for (i, nucleotide) in enumerate(sort(alphabet))
             order[nucleotide] = i
         end
@@ -129,7 +129,7 @@ dtpm = DTPM(alphabet)
 ```
 """
 struct DTPM
-    order::Dict{DNA, Int64}
+    order::Dict{DNA,Int64}
     probabilities::Matrix{Float64}
 end
 

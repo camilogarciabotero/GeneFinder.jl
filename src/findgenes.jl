@@ -17,18 +17,28 @@ The `cdsgenerator` is a generator function that takes a `LongDNA` sequence and r
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
-function cdsgenerator(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
+function cdsgenerator(
+    sequence::LongDNA;
+    alternative_start::Bool = false,
+    min_len::Int64 = 6,
+)
     orfs = findorfs(sequence; alternative_start, min_len)
     reversedseq = reverse_complement(sequence)
-    cds = (i.strand == '+' ? CDS(@view(sequence[i.location]), i) : CDS(@view(reversedseq[i.location]), i) for i in orfs)
+    cds = (
+        i.strand == '+' ? CDS(@view(sequence[i.location]), i) :
+        CDS(@view(reversedseq[i.location]), i) for i in orfs
+    )
     return cds
 end
 
-function cdsgenerator(sequence::String; alternative_start::Bool=false, min_len::Int64=6)
+function cdsgenerator(sequence::String; alternative_start::Bool = false, min_len::Int64 = 6)
     sequence = LongDNA{4}(sequence)
     orfs = findorfs(sequence; alternative_start, min_len)
     reversedseq = reverse_complement(sequence)
-    cds = (i.strand == '+' ? CDS(@view(sequence[i.location]), i) : CDS(@view(reversedseq[i.location]), i) for i in orfs)
+    cds = (
+        i.strand == '+' ? CDS(@view(sequence[i.location]), i) :
+        CDS(@view(reversedseq[i.location]), i) for i in orfs
+    )
     return cds
 end
 
@@ -56,7 +66,7 @@ This function will take a `LongDNA` or `String` sequence and by means of the `fi
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
-function getcds(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
+function getcds(sequence::LongDNA; alternative_start::Bool = false, min_len::Int64 = 6)
     cds = Vector{LongSubSeq{DNAAlphabet{4}}}()
     for i in cdsgenerator(sequence; alternative_start, min_len)
         push!(cds, i.sequence)
@@ -64,7 +74,7 @@ function getcds(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64
     return cds
 end
 
-function getcds(sequence::String; alternative_start::Bool=false, min_len=6)
+function getcds(sequence::String; alternative_start::Bool = false, min_len = 6)
     dnaseq = fasta_to_dna(sequence)[1]
     cds = Vector{LongSubSeq{DNAAlphabet{4}}}()
     for i in cdsgenerator(dnaseq; alternative_start, min_len)
@@ -87,18 +97,38 @@ As its name suggest this generator function iterates over the sequence to find p
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
-function proteingenerator(sequence::LongDNA; alternative_start::Bool=false, code::GeneticCode=BioSequences.standard_genetic_code, min_len::Int64=6)
+function proteingenerator(
+    sequence::LongDNA;
+    alternative_start::Bool = false,
+    code::GeneticCode = BioSequences.standard_genetic_code,
+    min_len::Int64 = 6,
+)
     orfs = findorfs(sequence; alternative_start, min_len)
     reversedseq = reverse_complement(sequence)
-    proteins = (i.strand == '+' ? Protein(translate(@view(sequence[i.location]); alternative_start, code), i) : Protein(translate(@view(reversedseq[i.location]); alternative_start, code), i) for i in orfs)
+    proteins = (
+        i.strand == '+' ?
+        Protein(translate(@view(sequence[i.location]); alternative_start, code), i) :
+        Protein(translate(@view(reversedseq[i.location]); alternative_start, code), i) for
+        i in orfs
+    )
     return proteins
 end
 
-function proteingenerator(sequence::String; alternative_start::Bool=false, code::GeneticCode=BioSequences.standard_genetic_code, min_len::Int64=6)
+function proteingenerator(
+    sequence::String;
+    alternative_start::Bool = false,
+    code::GeneticCode = BioSequences.standard_genetic_code,
+    min_len::Int64 = 6,
+)
     sequence = LongDNA{4}(sequence)
     orfs = findorfs(sequence; alternative_start, min_len)
     reversedseq = reverse_complement(sequence)
-    proteins = (i.strand == '+' ? Protein(translate(@view(sequence[i.location]); alternative_start, code), i) : Protein(translate(@view(reversedseq[i.location]); alternative_start, code), i) for i in orfs)
+    proteins = (
+        i.strand == '+' ?
+        Protein(translate(@view(sequence[i.location]); alternative_start, code), i) :
+        Protein(translate(@view(reversedseq[i.location]); alternative_start, code), i) for
+        i in orfs
+    )
     return proteins
 end
 
@@ -126,18 +156,24 @@ Similar to `getcds()` function, it will take a `LongDNA` or `String` sequence an
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
-function getproteins(sequence::LongDNA; alternative_start::Bool=false, min_len::Int64=6)
+function getproteins(sequence::LongDNA; alternative_start::Bool = false, min_len::Int64 = 6)
     orfs = findorfs(sequence; alternative_start, min_len)
     revseq = reverse_complement(sequence)
-    proteins = [i.strand == '+' ? translate(@view(sequence[i.location])) : translate(@view(revseq[i.location])) for i in orfs]
+    proteins = [
+        i.strand == '+' ? translate(@view(sequence[i.location])) :
+        translate(@view(revseq[i.location])) for i in orfs
+    ]
     return proteins
 end
 
-function getproteins(sequence::String; alternative_start::Bool=false, min_len=6)
+function getproteins(sequence::String; alternative_start::Bool = false, min_len = 6)
     dnaseq = fasta_to_dna(sequence)[1]
     orfs = findorfs(dnaseq; alternative_start, min_len)
     revseq = reverse_complement(dnaseq)
-    proteins = [i.strand == '+' ? translate(@view(sequence[i.location])) : translate(@view(revseq[i.location])) for i in orfs]
+    proteins = [
+        i.strand == '+' ? translate(@view(sequence[i.location])) :
+        translate(@view(revseq[i.location])) for i in orfs
+    ]
     return proteins
 end
 
