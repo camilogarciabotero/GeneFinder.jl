@@ -85,18 +85,40 @@ in the sequence.
 ```
 """
 function dinucleotidetrans(sequence::LongNucOrView{4}; extended_alphabet::Bool=false)
-    shrtpalph = [DNA_A, DNA_C, DNA_G, DNA_T] # unique(sequence)
-    extalph = collect(alphabet(DNA))
-    alph = extended_alphabet ? extalph : shrtpalph
+    alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
     dinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2]) for n1 in alph, n2 in alph])
-
-    pairsdict = Dict{LongSequence{DNAAlphabet{4}},Int64}()
-    for pair in dinucleotides
-        instances = findall(ExactSearchQuery(pair), sequence)
-        pairsdict[pair] = length(instances)
+    
+    counts = zeros(Int64, length(dinucleotides))
+    for (index, pair) in enumerate(dinucleotides)
+        count = 0
+        @inbounds for i in 1:length(sequence)-1
+            if sequence[i] == pair[1] && sequence[i+1] == pair[2]
+                count += 1
+            end
+        end
+        counts[index] = count
     end
+    
+    pairsdict = Dict{LongSequence{DNAAlphabet{4}}, Int64}()
+    for (index, pair) in enumerate(dinucleotides)
+        pairsdict[pair] = counts[index]
+    end
+    
     return pairsdict
 end
+
+# function dinucleotidetrans(sequence::LongNucOrView{4}; extended_alphabet::Bool=false)
+#     alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T] # unique(sequence)
+#     dinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2]) for n1 in alph, n2 in alph])
+
+#     pairsdict = Dict{LongSequence{DNAAlphabet{4}},Int64}()
+#     for pair in dinucleotides
+#         instances = findall(ExactSearchQuery(pair), sequence)
+#         pairsdict[pair] = length(instances)
+#     end
+#     return pairsdict
+# end
+
 
 """
     transition_count_matrix(sequence::LongSequence{DNAAlphabet{4}})
@@ -147,10 +169,14 @@ function transition_count_matrix(sequence::LongNucOrView{4}; extended_alphabet::
     return dtcm
 end
 
-"""
+@doc raw"""
     transition_probability_matrix(sequence::LongSequence{DNAAlphabet{4}})
 
-Compute the transition probability matrix (TPM) of a given DNA sequence.
+Compute the transition probability matrix (TPM) of a given DNA sequence. Formally it construct `` \hat{A}`` where: 
+```math
+\[a_{ij} = P(X_t = j \mid X_{t-1} = i) = \frac{{P(X_{t-1} = i, X_t = j)}}{{P(X_{t-1} = i)}}\]
+
+```
 
 # Arguments
 - `sequence::LongSequence{DNAAlphabet{4}}`: a `LongSequence{DNAAlphabet{4}}` object representing the DNA sequence.
@@ -189,11 +215,103 @@ function transition_probability_matrix(sequence::LongNucOrView{4}; extended_alph
 end
 
 @testitem "tpm" begin
-    using BioSequences
+    using BioSequences, GeneFinder
     seq = dna"CCTCCCGGACCCTGGGCTCGGGAC"
     tpm = transition_probability_matrix(seq)
 
     @test tpm.probabilities == [0.0 1.0 0.0 0.0; 0.0 0.5 0.2 0.3; 0.25 0.125 0.625 0.0; 0.0 0.667 0.333 0.0]
+end
+
+function initial_distribution(sequence::LongNucOrView{4}) ## π̂ estimates of the initial probabilies
+    initials = Vector{Float64}()
+    counts = transition_count_matrix(sequence).counts
+    initials = sum(counts, dims = 1) ./ sum(counts)
+    return initials
+end
+
+@doc raw"""
+    sequenceprobability(sequence::LongNucOrView{4}, tpm::Matrix{Float64}, initials=Vector{Float64})
+
+Compute the probability of a given sequence using a transition probability matrix and the initial probabilities distributions.
+
+```math
+P(X_1 = i_1, \ldots, X_T = i_T) = \pi_{i_1}^{T-1} \prod_{t=1}^{T-1} a_{i_t, i_{t+1}}
+```
+
+# Arguments
+- `sequence::LongNucOrView{4}`: The input sequence of nucleotides.
+- `tpm::Matrix{Float64}`: The transition probability matrix.
+- `initials=Vector{Float64}`: Optional initial state probabilities. Default is an empty vector.
+
+# Returns
+- `probability::Float64`: The probability of the input sequence.
+
+# Example
+```julia
+
+    tpm = transition_probability_matrix(dna"CCTCCCGGACCCTGGGCTCGGGAC")
+    tpm
+    4×4 Matrix{Float64}:
+    0.0   1.0    0.0    0.0
+    0.0   0.5    0.2    0.3
+    0.25  0.125  0.625  0.0
+    0.0   0.667  0.333  0.0
+
+    initials = initial_distribution(dna"CCTCCCGGACCCTGGGCTCGGGAC")
+    initials
+    1×4 Matrix{Float64}:
+    0.0869565  0.434783  0.347826  0.130435
+
+    sequence = dna"CCTG"
+    sequence
+    4nt DNA Sequence:
+    CCTG
+    
+    sequenceprobability(sequence, tpm, initials)
+    0.0217
+"""
+function sequenceprobability(sequence::LongNucOrView{4}, tpm::Matrix{Float64}, initials=Vector{Float64})
+    
+    nucleotideindexes = Dict(
+        DNA_A => 1,
+        DNA_C => 2,
+        DNA_G => 3,
+        DNA_T => 4
+    )
+
+    dinueclotideindexes = Dict(
+        dna"AA" => [1,1],
+        dna"AC" => [1,2],
+        dna"AG" => [1,3],
+        dna"AT" => [1,4],
+        dna"CA" => [2,1],
+        dna"CC" => [2,2],
+        dna"CG" => [2,3],
+        dna"CT" => [2,4],
+        dna"GA" => [3,1],
+        dna"GC" => [3,2],
+        dna"GG" => [3,3],
+        dna"GT" => [3,4],
+        dna"TA" => [4,1],
+        dna"TC" => [4,2],
+        dna"TG" => [4,3],
+        dna"TT" => [4,4]
+    )
+
+    init = initials[nucleotideindexes[sequence[1]]]
+
+    probability = init
+    
+    for t in 1:length(sequence)-1
+        
+        pair = LongSequence{DNAAlphabet{4}}([sequence[t], sequence[t+1]])
+
+        i = dinueclotideindexes[pair][1]
+        j = dinueclotideindexes[pair][2]
+
+        probability *= tpm[i,j]
+    end
+    return probability
 end
 
 function _int_to_dna(index; extended_alphabet::Bool=false)
