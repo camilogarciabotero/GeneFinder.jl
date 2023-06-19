@@ -181,7 +181,9 @@ function transition_probability_matrix(sequence::LongNucOrView{4}; extended_alph
     dtcm = transition_count_matrix(sequence; extended_alphabet)
     rowsums = sum(dtcm.counts, dims = 2)
     freqs = round.(dtcm.counts ./ rowsums, digits = 3)
-    # freqsform = [ println("%.2f", freqs[i,j]) for i in 1:size(freqs,1), j in 1:size(freqs,2) ]
+
+    freqs[isinf.(freqs)] .= 0.0
+    freqs[isnan.(freqs)] .= 0.0
 
     return DTPM(dtcm.order, freqs)
 end
@@ -192,6 +194,21 @@ end
     tpm = transition_probability_matrix(seq)
 
     @test tpm.probabilities == [0.0 1.0 0.0 0.0; 0.0 0.5 0.2 0.3; 0.25 0.125 0.625 0.0; 0.0 0.667 0.333 0.0]
+end
+
+function _int_to_dna(index; extended_alphabet::Bool=false)
+    alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
+    return LongSequence{DNAAlphabet{4}}([alph[index]])
+end
+
+function generatednaseq(tpm::Matrix{Float64}, steps::Int64; extended_alphabet::Bool=false)
+    newseq = LongSequence{DNAAlphabet{4}}()
+    pf = transpose(tpm) # the Perron-Frobenius matrix
+    trajectory = generate(pf, steps)
+    for i in trajectory
+        newseq = append!(newseq, _int_to_dna(i; extended_alphabet))
+    end
+    return newseq
 end
 
 # """
