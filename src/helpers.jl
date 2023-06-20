@@ -107,18 +107,19 @@ function dinucleotidetrans(sequence::LongNucOrView{4}; extended_alphabet::Bool=f
     return pairsdict
 end
 
-# function dinucleotidetrans(sequence::LongNucOrView{4}; extended_alphabet::Bool=false)
-#     alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T] # unique(sequence)
-#     dinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2]) for n1 in alph, n2 in alph])
+function nucleotidetrans(sequence::LongNucOrView{4}, order::Int64=2; extended_alphabet::Bool=false)
+    alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
+    nucleotides = [LongSequence{DNAAlphabet{4}}([nuc...]) for nuc in Iterators.product(fill(alph, order)...)]
 
-#     pairsdict = Dict{LongSequence{DNAAlphabet{4}},Int64}()
-#     for pair in dinucleotides
-#         instances = findall(ExactSearchQuery(pair), sequence)
-#         pairsdict[pair] = length(instances)
-#     end
-#     return pairsdict
-# end
+    nucleicdict = Dict{LongSequence{DNAAlphabet{4}}, Int64}()
 
+    for nuc in nucleotides
+        instances = findall(ExactSearchQuery(nuc), sequence)
+        nucleicdict[nuc] = length(instances)
+    end
+
+    return nucleicdict
+end
 
 """
     transition_count_matrix(sequence::LongSequence{DNAAlphabet{4}})
@@ -136,7 +137,7 @@ Compute the transition count matrix (TCM) of a given DNA sequence.
 A `DTCM` object representing the transition count matrix of the sequence.
 
 # Example
-```julia
+```
     seq = dna"AGCTAGCTAGCT"
     
     tcm = transition_count_matrix(seq)
@@ -189,7 +190,7 @@ Compute the transition probability matrix (TPM) of a given DNA sequence. Formall
 A `DTPM` object representing the transition probability matrix of the sequence.
 
 # Example
-```julia
+```
     seq = dna"AGCTAGCTAGCT"
 
     tpm = transition_probability_matrix(seq)
@@ -247,28 +248,29 @@ P(X_1 = i_1, \ldots, X_T = i_T) = \pi_{i_1}^{T-1} \prod_{t=1}^{T-1} a_{i_t, i_{t
 - `probability::Float64`: The probability of the input sequence.
 
 # Example
-```julia
+```
 
-    tpm = transition_probability_matrix(dna"CCTCCCGGACCCTGGGCTCGGGAC")
-    tpm
-    4×4 Matrix{Float64}:
-    0.0   1.0    0.0    0.0
-    0.0   0.5    0.2    0.3
-    0.25  0.125  0.625  0.0
-    0.0   0.667  0.333  0.0
+tpm = transition_probability_matrix(dna"CCTCCCGGACCCTGGGCTCGGGAC")
 
-    initials = initial_distribution(dna"CCTCCCGGACCCTGGGCTCGGGAC")
-    initials
-    1×4 Matrix{Float64}:
-    0.0869565  0.434783  0.347826  0.130435
+tpm
+4×4 Matrix{Float64}:
+0.0   1.0    0.0    0.0
+0.0   0.5    0.2    0.3
+0.25  0.125  0.625  0.0
+0.0   0.667  0.333  0.0
 
-    sequence = dna"CCTG"
-    sequence
-    4nt DNA Sequence:
-    CCTG
-    
-    sequenceprobability(sequence, tpm, initials)
-    0.0217
+initials = initial_distribution(dna"CCTCCCGGACCCTGGGCTCGGGAC")
+initials
+1×4 Matrix{Float64}:
+0.0869565  0.434783  0.347826  0.130435
+
+sequence = dna"CCTG"
+sequence
+4nt DNA Sequence:
+CCTG
+
+sequenceprobability(sequence, tpm, initials)
+0.0217
 """
 function sequenceprobability(sequence::LongNucOrView{4}, tpm::Matrix{Float64}, initials=Vector{Float64})
     
@@ -313,6 +315,56 @@ function sequenceprobability(sequence::LongNucOrView{4}, tpm::Matrix{Float64}, i
     end
     return probability
 end
+
+struct TransitionModel
+    coding::Matrix{Float64}
+    noncoding::Matrix{Float64}
+    codinginits::Matrix{Float64}
+    noncodinginits::Matrix{Float64}
+
+    function TransitionModel(coding, noncoding, codinginits, noncodinginits)
+        new(coding, noncoding, codinginits, noncodinginits)
+    end
+
+    # function TransitionModel(codingseq, noncodingseq)
+    # end
+end
+
+coding = [0.310 0.224 0.199 0.268
+          0.251 0.215 0.313 0.221
+          0.236 0.308 0.249 0.207
+          0.178 0.217 0.338 0.267]
+
+codinginits = [0.245 0.243 0.273 0.239]
+
+noncoding = [0.321 0.204 0.200 0.275
+             0.282 0.233 0.269 0.215
+             0.236 0.305 0.235 0.225
+             0.207 0.219 0.259 0.314]
+
+noncodinginits = [0.262 0.239 0.240 0.259]
+
+
+ecolimodel = TransitionModel(coding, noncoding, codinginits, noncodinginits)
+
+function logodds(sequence::LongSequence{DNAAlphabet{4}}, model::TransitionModel, η::Float64)
+    initcoding = model.codinginits
+    initnoncoding = model.noncodinginits
+    coding = model.coding
+    noncoding = model.noncoding
+    
+    pcoding = sequenceprobability(sequence, coding, initcoding)
+    pnoncoding = sequenceprobability(sequence, noncoding, initnoncoding)
+
+    odds = log(pcoding/pnoncoding)
+
+    if odds > η
+        return "coding"
+    else
+        return "non-coding"
+    end
+end
+
 
 function _int_to_dna(index; extended_alphabet::Bool=false)
     alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]

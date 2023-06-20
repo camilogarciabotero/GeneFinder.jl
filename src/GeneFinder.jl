@@ -3,9 +3,10 @@ module GeneFinder
 using BioSequences:
     DNA, NucleicAcidAlphabet,DNAAlphabet, AminoAcidAlphabet, LongDNA, LongAA, LongSequence, LongSubSeq, @biore_str, @dna_str,GeneticCode
 
+# using DataStructures: DefaultDict
 using FASTX: FASTA, sequence
 using IterTools: takewhile, iterated
-using MarkovChainHammer.Trajectory: generate
+# using MarkovChainHammer.Trajectory: generate
 using PrecompileTools
 using StatsBase: countmap
 using TestItems: @testitem
@@ -23,7 +24,7 @@ include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 
 include("helpers.jl")
-export fasta_to_dna, dinucleotidetrans, transition_count_matrix, transition_probability_matrix, sequenceprobability, initial_distribution, generatednaseq
+export fasta_to_dna, dinucleotidetrans, transition_count_matrix, transition_probability_matrix, sequenceprobability, initial_distribution, TransitionModel, transition_model, nucleotidetrans
 
 include("extended.jl")
 
@@ -36,11 +37,8 @@ include("extended.jl")
         # all calls in this block will be precompiled, regardless of whether
         # they belong to your package or not (on Julia 1.8 and higher)
         findorfs(seq)
-        getcds(seq)
-        getproteins(seq)
         dinucleotidetrans(seq)
-        transition_count_matrix(seq)
-        transition_probability_matrix(seq)
+        nucleotidetrans(seq)
     end
 end
 
