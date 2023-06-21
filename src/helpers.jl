@@ -57,9 +57,9 @@ Count the occurrences of nucleotide sequences of a given order in a LongDNA sequ
 A dictionary where the keys are the nucleotide sequences and the values are the counts.
 
 """
-function nucleotidetrans(sequence::LongNucOrView{4}, order::Int64=2; extended_alphabet::Bool=false)
+function nucleotidetrans(sequence::LongNucOrView{4}, degree::Int64=2; extended_alphabet::Bool=false)
     A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
-    nucleotides = [LongSequence{DNAAlphabet{4}}([nuc...]) for nuc in Iterators.product(fill(A, order)...)]
+    nucleotides = [LongSequence{DNAAlphabet{4}}([nuc...]) for nuc in Iterators.product(fill(A, degree)...)]
 
     nucleicdict = Dict{LongSequence{DNAAlphabet{4}}, Int64}()
 
@@ -100,13 +100,13 @@ A `DTCM` object representing the transition count matrix of the sequence.
      2  0  0  0
  ```
  """
-function transition_count_matrix(sequence::LongNucOrView{4}, order::Int64=2; extended_alphabet::Bool=false)
+function transition_count_matrix(sequence::LongNucOrView{4}, degree::Int64=2; extended_alphabet::Bool=false)
 
-    transitions = nucleotidetrans(sequence, order; extended_alphabet)
+    transitions = nucleotidetrans(sequence, degree; extended_alphabet)
     
-    alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
+    A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
 
-    dtcm = DTCM(alph)
+    dtcm = DTCM(A)
 
     for (dinucleotide, count) in transitions
         nucleotide1 = dinucleotide[1]
@@ -153,8 +153,8 @@ A `DTPM` object representing the transition probability matrix of the sequence.
     1.0  0.0  0.0  0.0
 ```
 """
-function transition_probability_matrix(sequence::LongNucOrView{4}, order::Int64=2; extended_alphabet::Bool=false)
-    dtcm = transition_count_matrix(sequence, order; extended_alphabet)
+function transition_probability_matrix(sequence::LongNucOrView{4}, degree::Int64=2; extended_alphabet::Bool=false)
+    dtcm = transition_count_matrix(sequence, degree; extended_alphabet)
     rowsums = sum(dtcm.counts, dims = 2)
     freqs = round.(dtcm.counts ./ rowsums, digits = 3)
 
@@ -200,28 +200,28 @@ P(X_1 = i_1, \ldots, X_T = i_T) = \pi_{i_1}^{T-1} \prod_{t=1}^{T-1} a_{i_t, i_{t
 ```
 
 tpm = transition_probability_matrix(dna"CCTCCCGGACCCTGGGCTCGGGAC")
-
-tpm
-4×4 Matrix{Float64}:
-0.0   1.0    0.0    0.0
-0.0   0.5    0.2    0.3
-0.25  0.125  0.625  0.0
-0.0   0.667  0.333  0.0
+    
+    4×4 Matrix{Float64}:
+    0.0   1.0    0.0    0.0
+    0.0   0.5    0.2    0.3
+    0.25  0.125  0.625  0.0
+    0.0   0.667  0.333  0.0
 
 initials = initial_distribution(dna"CCTCCCGGACCCTGGGCTCGGGAC")
-initials
-1×4 Matrix{Float64}:
-0.0869565  0.434783  0.347826  0.130435
+
+    1×4 Matrix{Float64}:
+    0.0869565  0.434783  0.347826  0.130435
 
 sequence = dna"CCTG"
-sequence
-4nt DNA Sequence:
-CCTG
+
+    4nt DNA Sequence:
+    CCTG
 
 sequenceprobability(sequence, tpm, initials)
-0.0217
+    
+    0.0217
 """
-function sequenceprobability(sequence::LongNucOrView{4}, tpm::Matrix{Float64}, initials=Vector{Float64})
+function sequenceprobability(sequence::LongNucOrView{4}, tpm::Matrix{Float64}, initials::Matrix{Float64})
     
     nucleotideindexes = Dict(
         DNA_A => 1,

@@ -23,7 +23,7 @@ include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 
 include("helpers.jl")
-export fasta_to_dna, transition_count_matrix, transition_probability_matrix, sequenceprobability, initial_distribution, transition_model, nucleotidetrans
+export fasta_to_dna, transition_count_matrix, transition_probability_matrix, sequenceprobability, initial_distribution, nucleotidetrans
 
 include("models/models.jl")
 export ECOLICDS
