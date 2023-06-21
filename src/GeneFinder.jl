@@ -3,7 +3,6 @@ module GeneFinder
 using BioSequences:
     DNA, NucleicAcidAlphabet,DNAAlphabet, AminoAcidAlphabet, LongDNA, LongAA, LongSequence, LongSubSeq, @biore_str, @dna_str,GeneticCode
 
-# using DataStructures: DefaultDict
 using FASTX: FASTA, sequence
 using IterTools: takewhile, iterated
 # using MarkovChainHammer.Trajectory: generate
@@ -12,7 +11,7 @@ using StatsBase: countmap
 using TestItems: @testitem
 
 include("types.jl")
-export ORF, CDS, Protein, DTCM, DTPM
+export ORF, CDS, Protein, DTCM, DTPM, TransitionModel
 
 include("algorithms/findorfs.jl")
 export locationiterator, findorfs
@@ -24,7 +23,10 @@ include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 
 include("helpers.jl")
-export fasta_to_dna, dinucleotidetrans, transition_count_matrix, transition_probability_matrix, sequenceprobability, initial_distribution, TransitionModel, transition_model, nucleotidetrans
+export fasta_to_dna, transition_count_matrix, transition_probability_matrix, sequenceprobability, initial_distribution, transition_model, nucleotidetrans
+
+include("models/models.jl")
+export ECOLICDS
 
 include("extended.jl")
 
@@ -37,7 +39,6 @@ include("extended.jl")
         # all calls in this block will be precompiled, regardless of whether
         # they belong to your package or not (on Julia 1.8 and higher)
         findorfs(seq)
-        dinucleotidetrans(seq)
         nucleotidetrans(seq)
     end
 end
