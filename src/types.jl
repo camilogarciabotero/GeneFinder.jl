@@ -133,10 +133,46 @@ struct DTPM
     probabilities::Matrix{Float64}
 end
 
+"""
+    struct TransitionModel
+
+The `TransitionModel` struct represents a transition model with coding and noncoding matrices,
+and coding and noncoding initial distributions.
+
+# Fields
+- `coding::Matrix{Float64}`: The coding matrix representing transition probabilities.
+- `noncoding::Matrix{Float64}`: The noncoding matrix representing transition probabilities.
+- `codinginits::Matrix{Float64}`: The coding initial distribution.
+- `noncodinginits::Matrix{Float64}`: The noncoding initial distribution.
+
+# Constructors
+- `TransitionModel(coding::Matrix{Float64}, noncoding::Matrix{Float64}, codinginits::Matrix{Float64}, noncodinginits::Matrix{Float64})`: Create a `TransitionModel` instance with the specified coding and noncoding matrices and initial distributions.
+- `TransitionModel(codingseq, noncodingseq)`: Create a `TransitionModel` instance by computing the transition probabilities and initial distributions from the given coding and noncoding sequences.
+
+"""
+struct TransitionModel
+    coding::Matrix{Float64}
+    noncoding::Matrix{Float64}
+    codinginits::Matrix{Float64}
+    noncodinginits::Matrix{Float64}
+
+    function TransitionModel(coding::Matrix{Float64}, noncoding::Matrix{Float64}, codinginits::Matrix{Float64}, noncodinginits::Matrix{Float64})
+        new(coding, noncoding, codinginits, noncodinginits)
+    end
+
+    function TransitionModel(codingseq, noncodingseq)
+        coding = transition_probability_matrix(codingseq)
+        noncoding = transition_probability_matrix(noncodingseq)
+        codinginits = initial_distribution(codingseq)
+        noncodinginits = initial_distribution(noncodingseq)
+        new(coding, noncoding, codinginits, noncodinginits)
+    end
+end
 const LongNucOrView{N} = Union{
      LongSequence{<:NucleicAcidAlphabet{N}},
      LongSubSeq{<:NucleicAcidAlphabet{N}}
  }
+
 
 ##### The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/ #####
 # """
