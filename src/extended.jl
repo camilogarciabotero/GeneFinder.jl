@@ -1,5 +1,7 @@
 # Methods from main packages that expand their fuctions to this package structs
 import BioSequences: translate, standard_genetic_code
+import Base: show
+
 function translate(
     ntseq::LongSubSeq{DNAAlphabet{4}};
     code::GeneticCode = standard_genetic_code,
@@ -48,4 +50,30 @@ function Base.show(io::IO, dtpm::DTPM)
         row_str = join(row, "  ")
         println(io, "$nucleotide1  $row_str")
     end
+end
+
+function show(io::IO, model::TransitionModel)
+    coding_rows, coding_cols = size(model.coding)
+    noncoding_rows, noncoding_cols = size(model.noncoding)
+    
+    println(io, "TransitionModel with:")
+    
+    println(io, "  Coding transition probability matrix:")
+    for i in 1:coding_rows
+        for j in 1:coding_cols
+            print(io, "    $(model.coding[i, j])")
+        end
+        println(io)
+    end
+    
+    println(io, "  Noncoding transition ptobability matrix:")
+    for i in 1:noncoding_rows
+        for j in 1:noncoding_cols
+            print(io, "    $(model.noncoding[i, j])")
+        end
+        println(io)
+    end
+    
+    println(io, "  Coding initial probabilities: $(model.codinginits)")
+    println(io, "  Noncoding initial probabilities: $(model.noncodinginits)")
 end
