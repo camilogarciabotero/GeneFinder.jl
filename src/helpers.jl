@@ -42,80 +42,29 @@ function nucleotidefreqs(sequence::LongNucOrView{4})::Dict{DNA,Float64}
     return F
 end
 
-"""
-    dinucleotidetrans(sequence::LongSequence{DNAAlphabet{4}})
 
-Compute the transition counts of each dinucleotide in a given DNA sequence.
+"""
+    nucleotidetrans(sequence::LongNucOrView{4}, order::Int64=2; extended_alphabet::Bool=false)
+
+Count the occurrences of nucleotide sequences of a given order in a LongDNA sequence.
 
 # Arguments
-- `sequence::LongSequence{DNAAlphabet{4}}`: a `LongSequence{DNAAlphabet{4}}` object representing the DNA sequence.
-
-# Keywords
-
-- `extended_alphabet::Bool=false`: If true will pass the extended alphabet of DNA to search
+- `sequence::LongNucOrView{4}`: The LongDNA sequence in which to count the nucleotide sequences.
+- `order::Int64`: The order of the nucleotide sequences to count. Default is 2.
+- `extended_alphabet::Bool`: Specify whether to use an extended alphabet that includes non-standard nucleotides. Default is `false`.
 
 # Returns
-A dictionary with keys being `LongSequence{DNAAlphabet{4}}` objects representing
-the dinucleotides, and values being the number of occurrences of each dinucleotide
-in the sequence.
+A dictionary where the keys are the nucleotide sequences and the values are the counts.
 
-# Example
-```julia
-    seq = dna"AGCTAGCTAGCT"
-
-    dinucleotidetrans(seq)
-
-    Dict{LongSequence{DNAAlphabet{4}}, Int64} with 16 entries:
-      GG => 0
-      TC => 0
-      GC => 3
-      CG => 0
-      CC => 0
-      AG => 3
-      TT => 0
-      AC => 0
-      TA => 2
-      GT => 0
-      GA => 0
-      CT => 3
-      CA => 0
-      AT => 0
-      AA => 0
-      TG => 0
-```
 """
-function dinucleotidetrans(sequence::LongNucOrView{4}; extended_alphabet::Bool=false)
-    alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
-    dinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2]) for n1 in alph, n2 in alph])
-    
-    counts = zeros(Int64, length(dinucleotides))
-    for (index, pair) in enumerate(dinucleotides)
-        count = 0
-        @inbounds for i in 1:length(sequence)-1
-            if sequence[i] == pair[1] && sequence[i+1] == pair[2]
-                count += 1
-            end
-        end
-        counts[index] = count
-    end
-    
-    pairsdict = Dict{LongSequence{DNAAlphabet{4}}, Int64}()
-    for (index, pair) in enumerate(dinucleotides)
-        pairsdict[pair] = counts[index]
-    end
-    
-    return pairsdict
-end
-
 function nucleotidetrans(sequence::LongNucOrView{4}, order::Int64=2; extended_alphabet::Bool=false)
-    alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
-    nucleotides = [LongSequence{DNAAlphabet{4}}([nuc...]) for nuc in Iterators.product(fill(alph, order)...)]
+    A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
+    nucleotides = [LongSequence{DNAAlphabet{4}}([nuc...]) for nuc in Iterators.product(fill(A, order)...)]
 
     nucleicdict = Dict{LongSequence{DNAAlphabet{4}}, Int64}()
 
     for nuc in nucleotides
-        instances = findall(ExactSearchQuery(nuc), sequence)
-        nucleicdict[nuc] = length(instances)
+        nucleicdict[nuc] = length(findall(ExactSearchQuery(nuc), sequence))
     end
 
     return nucleicdict
@@ -151,9 +100,9 @@ A `DTCM` object representing the transition count matrix of the sequence.
      2  0  0  0
  ```
  """
-function transition_count_matrix(sequence::LongNucOrView{4}; extended_alphabet::Bool=false)
+function transition_count_matrix(sequence::LongNucOrView{4}, order::Int64=2; extended_alphabet::Bool=false)
 
-    transitions = dinucleotidetrans(sequence; extended_alphabet)
+    transitions = nucleotidetrans(sequence, order; extended_alphabet)
     
     alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
 
@@ -204,8 +153,8 @@ A `DTPM` object representing the transition probability matrix of the sequence.
     1.0  0.0  0.0  0.0
 ```
 """
-function transition_probability_matrix(sequence::LongNucOrView{4}; extended_alphabet::Bool=false)
-    dtcm = transition_count_matrix(sequence; extended_alphabet)
+function transition_probability_matrix(sequence::LongNucOrView{4}, order::Int64=2; extended_alphabet::Bool=false)
+    dtcm = transition_count_matrix(sequence, order; extended_alphabet)
     rowsums = sum(dtcm.counts, dims = 2)
     freqs = round.(dtcm.counts ./ rowsums, digits = 3)
 
@@ -223,9 +172,9 @@ end
     @test tpm.probabilities == [0.0 1.0 0.0 0.0; 0.0 0.5 0.2 0.3; 0.25 0.125 0.625 0.0; 0.0 0.667 0.333 0.0]
 end
 
-function initial_distribution(sequence::LongNucOrView{4}) ## π̂ estimates of the initial probabilies
+function initial_distribution(sequence::LongNucOrView{4}, order::Int64=2) ## π̂ estimates of the initial probabilies
     initials = Vector{Float64}()
-    counts = transition_count_matrix(sequence).counts
+    counts = transition_count_matrix(sequence, order).counts
     initials = sum(counts, dims = 1) ./ sum(counts)
     return initials
 end
@@ -315,37 +264,6 @@ function sequenceprobability(sequence::LongNucOrView{4}, tpm::Matrix{Float64}, i
     end
     return probability
 end
-
-struct TransitionModel
-    coding::Matrix{Float64}
-    noncoding::Matrix{Float64}
-    codinginits::Matrix{Float64}
-    noncodinginits::Matrix{Float64}
-
-    function TransitionModel(coding, noncoding, codinginits, noncodinginits)
-        new(coding, noncoding, codinginits, noncodinginits)
-    end
-
-    # function TransitionModel(codingseq, noncodingseq)
-    # end
-end
-
-coding = [0.310 0.224 0.199 0.268
-          0.251 0.215 0.313 0.221
-          0.236 0.308 0.249 0.207
-          0.178 0.217 0.338 0.267]
-
-codinginits = [0.245 0.243 0.273 0.239]
-
-noncoding = [0.321 0.204 0.200 0.275
-             0.282 0.233 0.269 0.215
-             0.236 0.305 0.235 0.225
-             0.207 0.219 0.259 0.314]
-
-noncodinginits = [0.262 0.239 0.240 0.259]
-
-
-ecolimodel = TransitionModel(coding, noncoding, codinginits, noncodinginits)
 
 function logodds(sequence::LongSequence{DNAAlphabet{4}}, model::TransitionModel, η::Float64)
     initcoding = model.codinginits
