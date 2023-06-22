@@ -23,7 +23,7 @@ include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 
 include("helpers.jl")
-export fasta_to_dna, transition_count_matrix, transition_probability_matrix, sequenceprobability, initial_distribution, nucleotidetrans
+export fasta_to_dna, transition_count_matrix, transition_probability_matrix, sequenceprobability, initial_distribution, dinucleotidetrans
 
 include("models/models.jl")
 export ECOLICDS
@@ -39,7 +39,7 @@ include("extended.jl")
         # all calls in this block will be precompiled, regardless of whether
         # they belong to your package or not (on Julia 1.8 and higher)
         findorfs(seq)
-        nucleotidetrans(seq)
+        dinucleotidetrans(seq)
     end
 end
 

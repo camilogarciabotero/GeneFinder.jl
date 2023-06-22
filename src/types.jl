@@ -95,11 +95,11 @@ alphabet = [DNA_A, DNA_C, DNA_G, DNA_T]
 dtcm = DTCM(alphabet)
 ```
 """
-struct DTCM
+struct TCM
     order::Dict{DNA,Int64}
     counts::Matrix{Int64}
 
-    function DTCM(alphabet::Vector{DNA})
+    function TCM(alphabet::Vector{DNA})
 
         len = length(alphabet)
 
@@ -128,7 +128,7 @@ alphabet = [DNA_A, DNA_C, DNA_G, DNA_T]
 dtpm = DTPM(alphabet)
 ```
 """
-struct DTPM
+struct TPM
     order::Dict{DNA,Int64}
     probabilities::Matrix{Float64}
 end
