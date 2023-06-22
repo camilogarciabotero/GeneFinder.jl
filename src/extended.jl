@@ -56,28 +56,35 @@ function Base.show(io::IO, tpm::TPM)
     end
 end
 
-function show(io::IO, model::TransitionModel)
-    coding_rows, coding_cols = size(model.coding)
-    noncoding_rows, noncoding_cols = size(model.noncoding)
+function Base.show(io::IO, model::TransitionModel)
+    # Print the type name
+    println(io, "TransitionModel:")
 
-    println(io, "TransitionModel with:")
-
-    println(io, "  Coding transition probability matrix:")
-    for i in 1:coding_rows
-        for j in 1:coding_cols
-            print(io, "    $(model.coding[i, j])")
+    # Print the size of the transition probability matrix
+    tpm_size = "  - Transition Probability Matrix (Size: $(size(model.tpm, 1)) × $(size(model.tpm, 2))):"
+    println(io, tpm_size)
+    for row in 1:size(model.tpm, 1)
+        print(io, "    ")
+        for col in 1:size(model.tpm, 2)
+            print(io, round(model.tpm[row, col], digits=3))
+            print(io, "\t")
         end
         println(io)
     end
 
-    println(io, "  Noncoding transition ptobability matrix:")
-    for i in 1:noncoding_rows
-        for j in 1:noncoding_cols
-            print(io, "    $(model.noncoding[i, j])")
+    # Print the size of the initials matrix
+    initials_size = "  - Initials (Size: $(size(model.initials, 1)) × $(size(model.initials, 2))):"
+    println(io, initials_size)
+    for row in 1:size(model.initials, 1)
+        print(io, "    ")
+        for col in 1:size(model.initials, 2)
+            print(io, round(model.initials[row, col], digits=3))
+            print(io, "\t")
         end
         println(io)
     end
 
-    println(io, "  Coding initial probabilities: $(model.codinginits)")
-    println(io, "  Noncoding initial probabilities: $(model.noncodinginits)")
+    # Print the value of 'n'
+    order = "  - order: $(model.n)"
+    println(io, order)
 end
