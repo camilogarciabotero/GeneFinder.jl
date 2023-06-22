@@ -43,34 +43,6 @@ function nucleotidefreqs(sequence::LongNucOrView{4})::Dict{DNA,Float64}
 end
 
 
-# """
-#     nucleotidetrans(sequence::LongNucOrView{4}, order::Int64=2; extended_alphabet::Bool=false)
-
-# Count the occurrences of nucleotide sequences of a given order in a LongDNA sequence.
-
-# # Arguments
-# - `sequence::LongNucOrView{4}`: The LongDNA sequence in which to count the nucleotide sequences.
-# - `order::Int64`: The order of the nucleotide sequences to count. Default is 2.
-# - `extended_alphabet::Bool`: Specify whether to use an extended alphabet that includes non-standard nucleotides. Default is `false`.
-
-# # Returns
-# A dictionary where the keys are the nucleotide sequences and the values are the counts.
-
-# """
-# function nucleotidetrans(sequence::LongNucOrView{4}, degree::Int64=2; extended_alphabet::Bool=false)
-#     A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
-#     nucleotides = [LongSequence{DNAAlphabet{4}}([nuc...]) for nuc in Iterators.product(fill(A, degree)...)]
-
-#     nucleicdict = Dict{LongSequence{DNAAlphabet{4}}, Int64}()
-
-#     for nuc in nucleotides
-#         nucleicdict[nuc] = length(findall(ExactSearchQuery(nuc), sequence))
-#     end
-
-#     return nucleicdict
-# end
-
-
 """
     dinucleotides(sequence::LongSequence{DNAAlphabet{4}})
 
@@ -114,8 +86,8 @@ in the sequence.
 ```
 """
 function dinucleotides(sequence::LongNucOrView{4}; extended_alphabet::Bool=false)
-    alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
-    dinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2]) for n1 in alph, n2 in alph])
+    A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
+    dinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2]) for n1 in A, n2 in A])
     
     counts = zeros(Int64, length(dinucleotides))
     for (index, pair) in enumerate(dinucleotides)
@@ -134,6 +106,30 @@ function dinucleotides(sequence::LongNucOrView{4}; extended_alphabet::Bool=false
     end
     
     return pairsdict
+end
+
+function codons(sequence::LongNucOrView{4})
+    A = [DNA_A, DNA_C, DNA_G, DNA_T]
+    trinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2, n3]) for n1 in A, n2 in A, n3 in A])
+    
+    # counts = zeros(Int64, length(trinucleotides))
+    counts = Array{Int64, 1}(undef, 64)
+    for (index, trio) in enumerate(trinucleotides)
+        count = 0
+        @inbounds for i in 1:length(sequence)-2
+            if sequence[i:i+2] == trio
+                count += 1
+            end
+        end
+        counts[index] = count
+    end
+    
+    codondict = Dict{LongSequence{DNAAlphabet{4}}, Int64}()
+    for (index, codon) in enumerate(trinucleotides)
+        codondict[codon] = counts[index]
+    end
+    
+    return codondict
 end
 
 """
@@ -190,12 +186,12 @@ end
 
 Compute the transition probability matrix (TPM) of a given DNA sequence. Formally it construct `` \hat{A}`` where: 
 ```math
-\[a_{ij} = P(X_t = j \mid X_{t-1} = i) = \frac{{P(X_{t-1} = i, X_t = j)}}{{P(X_{t-1} = i)}}\]
-
+a_{ij} = P(X_t = j \mid X_{t-1} = i) = \frac{{P(X_{t-1} = i, X_t = j)}}{{P(X_{t-1} = i)}}
 ```
 
 # Arguments
 - `sequence::LongSequence{DNAAlphabet{4}}`: a `LongSequence{DNAAlphabet{4}}` object representing the DNA sequence.
+- `n::Int64=1`: The order of the Markov model. That is the `` \hat{A}^{n}``
 
 # Keywords
 
@@ -238,7 +234,7 @@ end
     @test tpm.probabilities == [0.0 1.0 0.0 0.0; 0.0 0.5 0.2 0.3; 0.25 0.125 0.625 0.0; 0.0 0.667 0.333 0.0]
 end
 
-function initial_distribution(sequence::LongNucOrView{4}; degree::Int64=2) ## π̂ estimates of the initial probabilies
+function initial_distribution(sequence::LongNucOrView{4}) ## π̂ estimates of the initial probabilies
     initials = Vector{Float64}()
     counts = transition_count_matrix(sequence).counts
     initials = sum(counts, dims = 1) ./ sum(counts)
@@ -314,6 +310,12 @@ function sequenceprobability(sequence::LongNucOrView{4}, tpm::Matrix{Float64}, i
         dna"TG" => [4,3],
         dna"TT" => [4,4]
     )
+    
+    # dinueclotideindexes = Dict{LongSequence{DNAAlphabet{4}},Vector{Int}}()
+    # for i in 1:4, j in 1:4
+    #     dinucleotide = LongSequence{DNAAlphabet{4}}([nucleotideindexes[i],nucleotideindexes[j]])
+    #     dinueclotideindexes[dinucleotide] = [i, j]
+    # end
 
     init = initials[nucleotideindexes[sequence[1]]]
 
@@ -351,13 +353,13 @@ end
 
 
 function _int_to_dna(index; extended_alphabet::Bool=false)
-    alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
-    return LongSequence{DNAAlphabet{4}}([alph[index]])
+    A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
+    return LongSequence{DNAAlphabet{4}}([A[index]])
 end
 
 function generatednaseq(tpm::Matrix{Float64}, steps::Int64; extended_alphabet::Bool=false)
     newseq = LongSequence{DNAAlphabet{4}}()
-    pf = transpose(tpm) # the Perron-Frobenius matrix
+    pf = transpose(tpm) # The Perron-Frobenius matrix
     trajectory = generate(pf, steps)
     for i in trajectory
         newseq = append!(newseq, _int_to_dna(i; extended_alphabet))

@@ -174,38 +174,30 @@ const LongNucOrView{N} = Union{
  }
 
 
-##### The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/ #####
+##### The following implementation is from https://biojulia.dev/BioSequences.jl/stable/interfaces/ #####
 # """
 #     Codon <: BioSequence{DNAAlphabet{2}}
 
 # A `Struct` representing a codon, which is a subtype of `BioSequence` with
 # an `Alphabet` of type `DNAAlphabet{2}`. It has a single field `x` of type
-# `UInt8`. This was implemente in The following implementation is from https://biojulia.net/BioSequences.jl/stable/interfaces/
+# `UInt8`. This was implemente in The following implementation is from https://biojulia.dev/BioSequences.jl/stable/interfaces/
 # """
 # struct Codon <: BioSequence{DNAAlphabet{2}}
 #     x::UInt8
-# end
 
-# function Codon(iterable)
-#     length(iterable) == 3 || error("Must have length 3")
-#     x = zero(UInt)
-#     for (i, nt) in enumerate(iterable)
-#         x |= BioSequences.encode(Alphabet(Codon), convert(DNA, nt)) << (6 - 2i)
-#     end
-#     Codon(x % UInt8)
-# end
-
-# Base.length(::Codon) = 3
-
-# function BioSequences.extract_encoded_element(x::Codon, i::Int)
-#     ((x.x >>> (6 - 2i)) & 3) % UInt
+#     function Codon(iterable)
+#         length(iterable) == 3 || error("Must have length 3")
+#         x = zero(UInt)
+#         for (i, nt) in enumerate(iterable)
+#             x |= BioSequences.encode(Alphabet(Codon), convert(DNA, nt)) << (6 - 2i)
+#         end
+#         new(x % UInt8)
+#     end 
 # end
 
 # Base.copy(seq::Codon) = Codon(seq.x)
-
-# BioSequences.has_interface(BioSequence, Codon, [DNA_C, DNA_T, DNA_G], false)
-
 # Base.count(codon::Codon, sequence::LongSequence{DNAAlphabet{4}}) = count(codon, sequence)
+# Base.length(::Codon) = 3
 
 # function Base.count(codons::Vector{Codon}, sequence::LongSequence{DNAAlphabet{4}})
 #     a = 0
@@ -213,6 +205,21 @@ const LongNucOrView{N} = Union{
 #         a += count(i, sequence)
 #     end
 #     return a
+# end
+
+# # has_interface(BioSequence, Codon, [DNA_C, DNA_T, DNA_G], false)
+
+# function extract_encoded_element(x::Codon, i::Int)
+#     ((x.x >>> (6 - 2i)) & 3) % UInt
+# end
+
+# function translate(
+#     ntseq::Codon;
+#     code::GeneticCode = standard_genetic_code,
+#     allow_ambiguous_codons = true,
+#     alternative_start = false,
+# )   
+#     translate(ntseq; code, allow_ambiguous_codons, alternative_start)
 # end
 
 ##### ---------------------------------------- #####
