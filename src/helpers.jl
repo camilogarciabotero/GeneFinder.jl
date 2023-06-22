@@ -61,28 +61,28 @@ the dinucleotides, and values being the number of occurrences of each dinucleoti
 in the sequence.
 
 # Example
-```julia
-    seq = dna"AGCTAGCTAGCT"
+```
+seq = dna"AGCTAGCTAGCT"
 
-    dinucleotides(seq)
+dinucleotides(seq)
 
-    Dict{LongSequence{DNAAlphabet{4}}, Int64} with 16 entries:
-      GG => 0
-      TC => 0
-      GC => 3
-      CG => 0
-      CC => 0
-      AG => 3
-      TT => 0
-      AC => 0
-      TA => 2
-      GT => 0
-      GA => 0
-      CT => 3
-      CA => 0
-      AT => 0
-      AA => 0
-      TG => 0
+Dict{LongSequence{DNAAlphabet{4}}, Int64} with 16 entries:
+  GG => 0
+  TC => 0
+  GC => 3
+  CG => 0
+  CC => 0
+  AG => 3
+  TT => 0
+  AC => 0
+  TA => 2
+  GT => 0
+  GA => 0
+  CT => 3
+  CA => 0
+  AT => 0
+  AA => 0
+  TG => 0
 ```
 """
 function dinucleotides(sequence::LongNucOrView{4}; extended_alphabet::Bool = false)
@@ -150,18 +150,18 @@ A `TCM` object representing the transition count matrix of the sequence.
 
 # Example
 ```
-    seq = dna"AGCTAGCTAGCT"
-    
-    tcm = transition_count_matrix(seq)
+seq = dna"AGCTAGCTAGCT"
 
-    tcm.counts
+tcm = transition_count_matrix(seq)
 
-    4×4 Matrix{Int64}:
-     0  0  3  0
-     0  0  0  3
-     0  3  0  0
-     2  0  0  0
- ```
+GeneFinder.TCM{Dict{DNA, Int64}, Matrix{Int64}:
+   A C G T
+A  0 0 3 0
+C  0 0 0 3
+G  0 3 0 0
+T  2 0 0 0
+
+```
  """
 function transition_count_matrix(
     sequence::LongNucOrView{4};
@@ -206,17 +206,16 @@ A `TPM` object representing the transition probability matrix of the sequence.
 
 # Example
 ```
-    seq = dna"AGCTAGCTAGCT"
+seq = dna"AGCTAGCTAGCT"
 
-    tpm = transition_probability_matrix(seq)
+tpm = transition_probability_matrix(seq)
 
-    tpm.probs
-
-    4×4 Matrix{Float64}:
-    0.0  0.0  1.0  0.0
-    0.0  0.0  0.0  1.0
-    0.0  1.0  0.0  0.0
-    1.0  0.0  0.0  0.0
+GeneFinder.tpm{Dict{DNA, Int64}, Matrix{Float64}:
+   A   C   G   T
+A  0.0 0.0 1.0 0.0
+C  0.0 0.0 0.0 1.0
+G  0.0 1.0 0.0 0.0
+T  1.0 0.0 0.0 0.0
 ```
 """
 function transition_probability_matrix(
@@ -267,8 +266,8 @@ P(X_1 = i_1, \ldots, X_T = i_T) = \pi_{i_1}^{T-1} \prod_{t=1}^{T-1} a_{i_t, i_{t
 - `probability::Float64`: The probability of the input sequence.
 
 # Example
-```
 
+```
 tpm = transition_probability_matrix(dna"CCTCCCGGACCCTGGGCTCGGGAC")
     
     4×4 Matrix{Float64}:
@@ -290,6 +289,7 @@ sequence = dna"CCTG"
 sequenceprobability(sequence, tpm, initials)
     
     0.0217
+```
 """
 function sequenceprobability(
     sequence::LongNucOrView{4},
@@ -356,10 +356,14 @@ function iscoding(
     end
 end
 
-
-function _int_to_dna(index; extended_alphabet::Bool = false)
+function _int_to_dna(index::Int64; extended_alphabet::Bool = false)
     A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
     return LongSequence{DNAAlphabet{4}}([A[index]])
+end
+
+function _dna_to_int(nucleotide::DNA; extended_alphabet::Bool = false)
+    A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
+    return findfirst(nucleotide, LongSequence{DNAAlphabet{4}}(A))
 end
 
 function generatednaseq(tpm::Matrix{Float64}, steps::Int64; extended_alphabet::Bool = false)
