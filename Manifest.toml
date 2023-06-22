@@ -28,9 +28,9 @@ version = "0.1.2"
 
 [[deps.BioSequences]]
 deps = ["BioSymbols", "PrecompileTools", "Random", "Twiddle"]
-git-tree-sha1 = "83dcdecdf02067ef75deba50c168e9657bb73392"
+git-tree-sha1 = "6cf406ea0d5bc901eabe55fca609007bce2db026"
 uuid = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
-version = "3.1.4"
+version = "3.1.5"
 
 [[deps.BioSymbols]]
 deps = ["PrecompileTools"]

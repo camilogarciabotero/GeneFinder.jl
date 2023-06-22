@@ -25,12 +25,14 @@ function Base.show(io::IO, tcm::TCM)
     println(io, "GeneFinder.TCM{$(typeof(tcm.order)), $(typeof(tcm.counts)):")
 
     # Print header
-    println(io, "   ", join(nucleotides, "  "))
+    max_digits = maximum([length(string(maximum(tcm.counts[:, i]))) for i in 1:size(tcm.counts, 2)])
+    header_str = "   " * join([rpad(n, max_digits+1) for n in nucleotides], "")
+    println(io, header_str)
 
     # Print rows
     for (i, nucleotide1) in enumerate(nucleotides)
         row = tcm.counts[i, :]
-        row_str = join(row, "  ")
+        row_str = join([rpad(string(x), max_digits+1) for x in row], "")
         println(io, "$nucleotide1  $row_str")
     end
 end
@@ -42,12 +44,14 @@ function Base.show(io::IO, tpm::TPM)
     println(io, "GeneFinder.tpm{$(typeof(tpm.order)), $(typeof(tpm.probabilities)):")
 
     # Print header
-    println(io, "   ", join(nucleotides, "      "))
+    max_digits = maximum([length(string(maximum(tpm.probabilities[:, i]))) for i in 1:size(tpm.probabilities, 2)])
+    header_str = "   " * join([rpad(n, max_digits+1) for n in nucleotides], "")
+    println(io, header_str)
 
     # Print rows
     for (i, nucleotide1) in enumerate(nucleotides)
         row = tpm.probabilities[i, :]
-        row_str = join(row, "  ")
+        row_str = join([rpad(string(x), max_digits+1) for x in row], "")
         println(io, "$nucleotide1  $row_str")
     end
 end
