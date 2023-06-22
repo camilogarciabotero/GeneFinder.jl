@@ -85,10 +85,10 @@ in the sequence.
       TG => 0
 ```
 """
-function dinucleotides(sequence::LongNucOrView{4}; extended_alphabet::Bool=false)
+function dinucleotides(sequence::LongNucOrView{4}; extended_alphabet::Bool = false)
     A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
     dinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2]) for n1 in A, n2 in A])
-    
+
     counts = zeros(Int64, length(dinucleotides))
     for (index, pair) in enumerate(dinucleotides)
         count = 0
@@ -99,21 +99,22 @@ function dinucleotides(sequence::LongNucOrView{4}; extended_alphabet::Bool=false
         end
         counts[index] = count
     end
-    
-    pairsdict = Dict{LongSequence{DNAAlphabet{4}}, Int64}()
+
+    pairsdict = Dict{LongSequence{DNAAlphabet{4}},Int64}()
     for (index, pair) in enumerate(dinucleotides)
         pairsdict[pair] = counts[index]
     end
-    
+
     return pairsdict
 end
 
 function codons(sequence::LongNucOrView{4})
     A = [DNA_A, DNA_C, DNA_G, DNA_T]
-    trinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2, n3]) for n1 in A, n2 in A, n3 in A])
-    
+    trinucleotides =
+        vec([LongSequence{DNAAlphabet{4}}([n1, n2, n3]) for n1 in A, n2 in A, n3 in A])
+
     # counts = zeros(Int64, length(trinucleotides))
-    counts = Array{Int64, 1}(undef, 64)
+    counts = Array{Int64,1}(undef, 64)
     for (index, trio) in enumerate(trinucleotides)
         count = 0
         @inbounds for i in 1:length(sequence)-2
@@ -123,12 +124,12 @@ function codons(sequence::LongNucOrView{4})
         end
         counts[index] = count
     end
-    
-    codondict = Dict{LongSequence{DNAAlphabet{4}}, Int64}()
+
+    codondict = Dict{LongSequence{DNAAlphabet{4}},Int64}()
     for (index, codon) in enumerate(trinucleotides)
         codondict[codon] = counts[index]
     end
-    
+
     return codondict
 end
 
@@ -162,10 +163,13 @@ A `TCM` object representing the transition count matrix of the sequence.
      2  0  0  0
  ```
  """
-function transition_count_matrix(sequence::LongNucOrView{4}; extended_alphabet::Bool=false)
+function transition_count_matrix(
+    sequence::LongNucOrView{4};
+    extended_alphabet::Bool = false
+)
 
     transitions = dinucleotides(sequence; extended_alphabet)
-    
+
     A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
 
     dtcm = TCM(A)
@@ -215,7 +219,11 @@ A `TPM` object representing the transition probability matrix of the sequence.
     1.0  0.0  0.0  0.0
 ```
 """
-function transition_probability_matrix(sequence::LongNucOrView{4}, n::Int64=1; extended_alphabet::Bool=false)
+function transition_probability_matrix(
+    sequence::LongNucOrView{4},
+    n::Int64 = 1;
+    extended_alphabet::Bool = false
+)
     dtcm = transition_count_matrix(sequence; extended_alphabet)
     rowsums = sum(dtcm.counts, dims = 2)
     freqs = round.(dtcm.counts ./ rowsums, digits = 3)
@@ -283,81 +291,78 @@ sequenceprobability(sequence, tpm, initials)
     
     0.0217
 """
-function sequenceprobability(sequence::LongNucOrView{4}, tpm::Matrix{Float64}, initials::Matrix{Float64})
-    
-    nucleotideindexes = Dict(
-        DNA_A => 1,
-        DNA_C => 2,
-        DNA_G => 3,
-        DNA_T => 4
-    )
+function sequenceprobability(
+    sequence::LongNucOrView{4},
+    tpm::Matrix{Float64},
+    initials::Matrix{Float64}
+)
+
+    nucleotideindexes = Dict(DNA_A => 1, DNA_C => 2, DNA_G => 3, DNA_T => 4)
 
     dinueclotideindexes = Dict(
-        dna"AA" => [1,1],
-        dna"AC" => [1,2],
-        dna"AG" => [1,3],
-        dna"AT" => [1,4],
-        dna"CA" => [2,1],
-        dna"CC" => [2,2],
-        dna"CG" => [2,3],
-        dna"CT" => [2,4],
-        dna"GA" => [3,1],
-        dna"GC" => [3,2],
-        dna"GG" => [3,3],
-        dna"GT" => [3,4],
-        dna"TA" => [4,1],
-        dna"TC" => [4,2],
-        dna"TG" => [4,3],
-        dna"TT" => [4,4]
+        dna"AA" => [1, 1],
+        dna"AC" => [1, 2],
+        dna"AG" => [1, 3],
+        dna"AT" => [1, 4],
+        dna"CA" => [2, 1],
+        dna"CC" => [2, 2],
+        dna"CG" => [2, 3],
+        dna"CT" => [2, 4],
+        dna"GA" => [3, 1],
+        dna"GC" => [3, 2],
+        dna"GG" => [3, 3],
+        dna"GT" => [3, 4],
+        dna"TA" => [4, 1],
+        dna"TC" => [4, 2],
+        dna"TG" => [4, 3],
+        dna"TT" => [4, 4],
     )
-    
-    # dinueclotideindexes = Dict{LongSequence{DNAAlphabet{4}},Vector{Int}}()
-    # for i in 1:4, j in 1:4
-    #     dinucleotide = LongSequence{DNAAlphabet{4}}([nucleotideindexes[i],nucleotideindexes[j]])
-    #     dinueclotideindexes[dinucleotide] = [i, j]
-    # end
 
     init = initials[nucleotideindexes[sequence[1]]]
 
     probability = init
-    
+
     for t in 1:length(sequence)-1
-        
+
         pair = LongSequence{DNAAlphabet{4}}([sequence[t], sequence[t+1]])
 
         i = dinueclotideindexes[pair][1]
         j = dinueclotideindexes[pair][2]
 
-        probability *= tpm[i,j]
+        probability *= tpm[i, j]
     end
     return probability
 end
 
-function logodds(sequence::LongSequence{DNAAlphabet{4}}, model::TransitionModel, η::Float64)
+function iscoding(
+    sequence::LongSequence{DNAAlphabet{4}},
+    model::TransitionModel,
+    η::Float64 = 1e-3
+)
     initcoding = model.codinginits
     initnoncoding = model.noncodinginits
     coding = model.coding
     noncoding = model.noncoding
-    
+
     pcoding = sequenceprobability(sequence, coding, initcoding)
     pnoncoding = sequenceprobability(sequence, noncoding, initnoncoding)
 
-    odds = log(pcoding/pnoncoding)
+    logodds = log(pcoding / pnoncoding)
 
-    if odds > η
-        return "coding"
+    if logodds > η
+        return true
     else
-        return "non-coding"
+        false
     end
 end
 
 
-function _int_to_dna(index; extended_alphabet::Bool=false)
+function _int_to_dna(index; extended_alphabet::Bool = false)
     A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
     return LongSequence{DNAAlphabet{4}}([A[index]])
 end
 
-function generatednaseq(tpm::Matrix{Float64}, steps::Int64; extended_alphabet::Bool=false)
+function generatednaseq(tpm::Matrix{Float64}, steps::Int64; extended_alphabet::Bool = false)
     newseq = LongSequence{DNAAlphabet{4}}()
     pf = transpose(tpm) # The Perron-Frobenius matrix
     trajectory = generate(pf, steps)

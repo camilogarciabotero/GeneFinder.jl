@@ -1,7 +1,17 @@
 module GeneFinder
 
 using BioSequences:
-    DNA, NucleicAcidAlphabet, DNAAlphabet, AminoAcidAlphabet, LongDNA, LongAA, LongSequence, LongSubSeq, @biore_str, @dna_str, GeneticCode
+    DNA,
+    NucleicAcidAlphabet,
+    DNAAlphabet,
+    AminoAcidAlphabet,
+    LongDNA,
+    LongAA,
+    LongSequence,
+    LongSubSeq,
+    @biore_str,
+    @dna_str,
+    GeneticCode
 using FASTX: FASTA, sequence
 using IterTools: takewhile, iterated
 # using MarkovChainHammer.Trajectory: generate
@@ -22,7 +32,13 @@ include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 
 include("helpers.jl")
-export fasta_to_dna, transition_count_matrix, transition_probability_matrix, sequenceprobability, initial_distribution, dinucleotides, codons
+export fasta_to_dna,
+    transition_count_matrix,
+    transition_probability_matrix,
+    sequenceprobability,
+    initial_distribution,
+    dinucleotides,
+    codons
 
 include("models/models.jl")
 export ECOLICDS

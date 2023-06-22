@@ -156,7 +156,12 @@ struct TransitionModel
     codinginits::Matrix{Float64}
     noncodinginits::Matrix{Float64}
 
-    function TransitionModel(coding::Matrix{Float64}, noncoding::Matrix{Float64}, codinginits::Matrix{Float64}, noncodinginits::Matrix{Float64})
+    function TransitionModel(
+        coding::Matrix{Float64},
+        noncoding::Matrix{Float64},
+        codinginits::Matrix{Float64},
+        noncodinginits::Matrix{Float64},
+    )
         new(coding, noncoding, codinginits, noncodinginits)
     end
 
@@ -168,10 +173,8 @@ struct TransitionModel
         new(coding, noncoding, codinginits, noncodinginits)
     end
 end
-const LongNucOrView{N} = Union{
-     LongSequence{<:NucleicAcidAlphabet{N}},
-     LongSubSeq{<:NucleicAcidAlphabet{N}}
- }
+const LongNucOrView{N} =
+    Union{LongSequence{<:NucleicAcidAlphabet{N}},LongSubSeq{<:NucleicAcidAlphabet{N}}}
 
 
 ##### The following implementation is from https://biojulia.dev/BioSequences.jl/stable/interfaces/ #####

@@ -55,9 +55,9 @@ end
 function show(io::IO, model::TransitionModel)
     coding_rows, coding_cols = size(model.coding)
     noncoding_rows, noncoding_cols = size(model.noncoding)
-    
+
     println(io, "TransitionModel with:")
-    
+
     println(io, "  Coding transition probability matrix:")
     for i in 1:coding_rows
         for j in 1:coding_cols
@@ -65,7 +65,7 @@ function show(io::IO, model::TransitionModel)
         end
         println(io)
     end
-    
+
     println(io, "  Noncoding transition ptobability matrix:")
     for i in 1:noncoding_rows
         for j in 1:noncoding_cols
@@ -73,7 +73,7 @@ function show(io::IO, model::TransitionModel)
         end
         println(io)
     end
-    
+
     println(io, "  Coding initial probabilities: $(model.codinginits)")
     println(io, "  Noncoding initial probabilities: $(model.noncodinginits)")
 end
