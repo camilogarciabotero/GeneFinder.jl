@@ -136,45 +136,37 @@ end
 """
     struct TransitionModel
 
-The `TransitionModel` struct represents a transition model with coding and noncoding matrices,
-and coding and noncoding initial distributions.
+The `TransitionModel` struct represents a transition model used in a sequence analysis. It consists of a transition probability matrix (tpm) and initial distribution probabilities.
 
 # Fields
-- `coding::Matrix{Float64}`: The coding matrix representing transition probabilities.
-- `noncoding::Matrix{Float64}`: The noncoding matrix representing transition probabilities.
-- `codinginits::Matrix{Float64}`: The coding initial distribution.
-- `noncodinginits::Matrix{Float64}`: The noncoding initial distribution.
+
+- `tpm::Matrix{Float64}`: The transition probability matrix, a matrix of type Float64 representing the probabilities of transitioning from one state to another.
+- `initials::Matrix{Float64}`: The initial distribution probabilities, a matrix of type Float64 representing the probabilities of starting in each state.
+- `n`: is the order of the transition model, or in other words the order of the resulted Markov chain.
 
 # Constructors
-- `TransitionModel(coding::Matrix{Float64}, noncoding::Matrix{Float64}, codinginits::Matrix{Float64}, noncodinginits::Matrix{Float64})`: Create a `TransitionModel` instance with the specified coding and noncoding matrices and initial distributions.
-- `TransitionModel(codingseq, noncodingseq)`: Create a `TransitionModel` instance by computing the transition probabilities and initial distributions from the given coding and noncoding sequences.
+
+- `TransitionModel(tpm::Matrix{Float64}, initials::Matrix{Float64})`: Constructs a `TransitionModel` object with the provided transition probability matrix `tpm` and initial distribution probabilities `initials`.
+- `TransitionModel(sequence::LongSequence{DNAAlphabet{4}})`: Constructs a `TransitionModel` object based on a given DNA sequence. The transition probability matrix is calculated using `transition_probability_matrix(sequence).probabilities`, and the initial distribution probabilities are calculated using `initial_distribution(sequence)`.
 
 """
 struct TransitionModel
-    coding::Matrix{Float64}
-    noncoding::Matrix{Float64}
-    codinginits::Matrix{Float64}
-    noncodinginits::Matrix{Float64}
+    tpm::Matrix{Float64}
+    initials::Matrix{Float64}
+    n::Int64
 
-    function TransitionModel(
-        coding::Matrix{Float64},
-        noncoding::Matrix{Float64},
-        codinginits::Matrix{Float64},
-        noncodinginits::Matrix{Float64},
-    )
-        new(coding, noncoding, codinginits, noncodinginits)
+    function TransitionModel(tpm::Matrix{Float64}, initials::Matrix{Float64}, n::Int64=1)
+        new(tpm, initials, n)
     end
 
-    function TransitionModel(codingseq, noncodingseq)
-        coding = transition_probability_matrix(codingseq)
-        noncoding = transition_probability_matrix(noncodingseq)
-        codinginits = initial_distribution(codingseq)
-        noncodinginits = initial_distribution(noncodingseq)
-        new(coding, noncoding, codinginits, noncodinginits)
+    function TransitionModel(sequence::LongSequence{DNAAlphabet{4}}, n::Int64=1)
+        tpm = transition_probability_matrix(sequence, n).probabilities
+        initials = initial_distribution(sequence)
+        new(tpm, initials, n)
     end
 end
-const LongNucOrView{N} =
-    Union{LongSequence{<:NucleicAcidAlphabet{N}},LongSubSeq{<:NucleicAcidAlphabet{N}}}
+
+const LongNucOrView{N} = Union{LongSequence{<:NucleicAcidAlphabet{N}},LongSubSeq{<:NucleicAcidAlphabet{N}}}
 
 
 ##### The following implementation is from https://biojulia.dev/BioSequences.jl/stable/interfaces/ #####
