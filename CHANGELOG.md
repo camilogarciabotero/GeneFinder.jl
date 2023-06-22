@@ -6,6 +6,10 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.10...main)
 
+## [0.0.18]
+
+- Clean code and update methods for transition matrix
+
 ## [0.0.17]
 
 - Add several methods towards HMMs in gene finding see PR [#17](https://github.com/camilogarciabotero/GeneFinder.jl/pull/17)
