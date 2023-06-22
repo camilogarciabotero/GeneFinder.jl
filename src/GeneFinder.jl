@@ -38,10 +38,11 @@ export fasta_to_dna,
     sequenceprobability,
     initial_distribution,
     dinucleotides,
-    codons
+    codons,
+    iscoding
 
 include("models/models.jl")
-export ECOLICDS
+export ECOLICDS, ECOLINOCDS
 
 include("extended.jl")
 
