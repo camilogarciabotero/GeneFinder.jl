@@ -18,35 +18,35 @@ function _orf_sort_key(orf::ORF)
     return (orf.location, orf.strand)
 end
 
-function Base.show(io::IO, dtcm::DTCM)
-    nucleotides = sort(collect(keys(dtcm.order)))
+function Base.show(io::IO, tcm::TCM)
+    nucleotides = sort(collect(keys(tcm.order)))
 
     # Print type
-    println(io, "GeneFinder.DTCM{$(typeof(dtcm.order)), $(typeof(dtcm.counts)):")
+    println(io, "GeneFinder.TCM{$(typeof(tcm.order)), $(typeof(tcm.counts)):")
 
     # Print header
     println(io, "   ", join(nucleotides, "  "))
 
     # Print rows
     for (i, nucleotide1) in enumerate(nucleotides)
-        row = dtcm.counts[i, :]
+        row = tcm.counts[i, :]
         row_str = join(row, "  ")
         println(io, "$nucleotide1  $row_str")
     end
 end
 
-function Base.show(io::IO, dtpm::DTPM)
-    nucleotides = sort(collect(keys(dtpm.order)))
+function Base.show(io::IO, tpm::TPM)
+    nucleotides = sort(collect(keys(tpm.order)))
 
     # Print type
-    println(io, "GeneFinder.DTPM{$(typeof(dtpm.order)), $(typeof(dtpm.probabilities)):")
+    println(io, "GeneFinder.tpm{$(typeof(tpm.order)), $(typeof(tpm.probabilities)):")
 
     # Print header
     println(io, "   ", join(nucleotides, "      "))
 
     # Print rows
     for (i, nucleotide1) in enumerate(nucleotides)
-        row = dtpm.probabilities[i, :]
+        row = tpm.probabilities[i, :]
         row_str = join(row, "  ")
         println(io, "$nucleotide1  $row_str")
     end

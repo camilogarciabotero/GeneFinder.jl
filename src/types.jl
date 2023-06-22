@@ -78,21 +78,21 @@ end
 
 
 """
-    DTCM(alphabet::Vector{DNA})
+    TCM(alphabet::Vector{DNA})
 
-A data structure for storing a DNA Transition Count Matrix (DTCM). The DTCM is a square matrix where each row and column corresponds to a nucleotide in the given `alphabet`. The value at position (i, j) in the matrix represents the number of times that nucleotide i is immediately followed by nucleotide j in a DNA sequence. 
+A data structure for storing a DNA Transition Count Matrix (TCM). The TCM is a square matrix where each row and column corresponds to a nucleotide in the given `alphabet`. The value at position (i, j) in the matrix represents the number of times that nucleotide i is immediately followed by nucleotide j in a DNA sequence. 
 
 Fields:
 - `order::Dict{DNA, Int64}`: A dictionary that maps each nucleotide in the `alphabet` to its corresponding index in the matrix.
 - `counts::Matrix{Int64}`: The actual matrix of counts.
 
 Internal function:
-- `DTCM(alphabet::Vector{DNA})`: Constructs a new `DTCM` object with the given `alphabet`. This function initializes the `order` field by creating a dictionary that maps each nucleotide in the `alphabet` to its corresponding index in the matrix. It also initializes the `counts` field to a matrix of zeros with dimensions `len x len`, where `len` is the length of the `alphabet`.
+- `TCM(alphabet::Vector{DNA})`: Constructs a new `TCM` object with the given `alphabet`. This function initializes the `order` field by creating a dictionary that maps each nucleotide in the `alphabet` to its corresponding index in the matrix. It also initializes the `counts` field to a matrix of zeros with dimensions `len x len`, where `len` is the length of the `alphabet`.
 
 Example usage:
 ```julia
 alphabet = [DNA_A, DNA_C, DNA_G, DNA_T]
-dtcm = DTCM(alphabet)
+dtcm = TCM(alphabet)
 ```
 """
 struct TCM
@@ -114,9 +114,9 @@ end
 
 
 """
-    DTPM(alphabet::Vector{DNA})
+    TPM(alphabet::Vector{DNA})
 
-A data structure for storing a DNA Transition Probability Matrix (DTPM). The DTPM is a square matrix where each row and column corresponds to a nucleotide in the given `alphabet`. The value at position (i, j) in the matrix represents the probability of transitioning from nucleotide i to nucleotide j in a DNA sequence. 
+A data structure for storing a DNA Transition Probability Matrix (TPM). The TPM is a square matrix where each row and column corresponds to a nucleotide in the given `alphabet`. The value at position (i, j) in the matrix represents the probability of transitioning from nucleotide i to nucleotide j in a DNA sequence. 
 
 Fields:
 - `order::Dict{DNA, Int64}`: A dictionary that maps each nucleotide in the `alphabet` to its corresponding index in the matrix.
@@ -125,7 +125,7 @@ Fields:
 Example usage:
 ```julia
 alphabet = [DNA_A, DNA_C, DNA_G, DNA_T]
-dtpm = DTPM(alphabet)
+dtpm = TPM(alphabet)
 ```
 """
 struct TPM

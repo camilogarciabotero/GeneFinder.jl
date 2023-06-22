@@ -72,7 +72,7 @@ end
 
 
 """
-    dinucleotidetrans(sequence::LongSequence{DNAAlphabet{4}})
+    dinucleotides(sequence::LongSequence{DNAAlphabet{4}})
 
 Compute the transition counts of each dinucleotide in a given DNA sequence.
 
@@ -92,7 +92,7 @@ in the sequence.
 ```julia
     seq = dna"AGCTAGCTAGCT"
 
-    dinucleotidetrans(seq)
+    dinucleotides(seq)
 
     Dict{LongSequence{DNAAlphabet{4}}, Int64} with 16 entries:
       GG => 0
@@ -113,7 +113,7 @@ in the sequence.
       TG => 0
 ```
 """
-function dinucleotidetrans(sequence::LongNucOrView{4}; extended_alphabet::Bool=false)
+function dinucleotides(sequence::LongNucOrView{4}; extended_alphabet::Bool=false)
     alph = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
     dinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2]) for n1 in alph, n2 in alph])
     
@@ -149,7 +149,7 @@ Compute the transition count matrix (TCM) of a given DNA sequence.
 - `extended_alphabet::Bool=false`: If true will pass the extended alphabet of DNA to search
 
 # Returns
-A `DTCM` object representing the transition count matrix of the sequence.
+A `TCM` object representing the transition count matrix of the sequence.
 
 # Example
 ```
@@ -168,7 +168,7 @@ A `DTCM` object representing the transition count matrix of the sequence.
  """
 function transition_count_matrix(sequence::LongNucOrView{4}; extended_alphabet::Bool=false)
 
-    transitions = dinucleotidetrans(sequence; extended_alphabet)
+    transitions = dinucleotides(sequence; extended_alphabet)
     
     A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
 
@@ -202,7 +202,7 @@ Compute the transition probability matrix (TPM) of a given DNA sequence. Formall
 - `extended_alphabet::Bool=false`: If true will pass the extended alphabet of DNA to search
 
 # Returns
-A `DTPM` object representing the transition probability matrix of the sequence.
+A `TPM` object representing the transition probability matrix of the sequence.
 
 # Example
 ```
@@ -240,7 +240,7 @@ end
 
 function initial_distribution(sequence::LongNucOrView{4}; degree::Int64=2) ## π̂ estimates of the initial probabilies
     initials = Vector{Float64}()
-    counts = transition_count_matrix(sequence, order).counts
+    counts = transition_count_matrix(sequence).counts
     initials = sum(counts, dims = 1) ./ sum(counts)
     return initials
 end
