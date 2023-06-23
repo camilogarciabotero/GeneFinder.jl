@@ -39,6 +39,7 @@ export fasta_to_dna,
     initial_distribution,
     dinucleotides,
     codons,
+    hasprematurestop,
     iscoding
 
 include("models/models.jl")
