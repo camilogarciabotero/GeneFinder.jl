@@ -31,18 +31,20 @@ export cdsgenerator, proteingenerator, getcds, getproteins
 include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 
-include("helpers.jl")
-export fasta_to_dna,
-    transition_count_matrix,
-    transition_probability_matrix,
-    initial_distribution,
-    dinucleotides,
-    codons,
-    hasprematurestop,
+include("markovchains.jl")
+export transition_count_matrix, 
+    transition_probability_matrix, 
+    initial_distribution, 
     sequenceprobability,
     iscoding,
     perronfrobenius,
     generatednaseq
+
+include("helpers.jl")
+export fasta_to_dna,
+    nucleotidefreqs,
+    dinucleotides,
+    hasprematurestop
 
 include("models/models.jl")
 export ECOLICDS, ECOLINOCDS
