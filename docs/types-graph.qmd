@@ -1,0 +1,18 @@
+
+```{mermaid}
+graph TB
+    A[Gene]
+    B[GeneFeatures]
+    C[ORF]
+    D[CDS]
+    E[Protein]
+    F[DTCM]
+    G[DTPM]
+    
+    A --> B
+    B --> C
+    B --> D
+    B --> E
+    D --- F
+    D --- G
+```

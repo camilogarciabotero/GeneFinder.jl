@@ -42,13 +42,13 @@ function nucleotidefreqs(sequence::LongNucOrView{4})::Dict{DNA,Float64}
 end
 
 """
-    hasprematurestop(sequence::LongSequence{DNAAlphabet{4}})::Bool
+    hasprematurestop(sequence::LongNucOrView{4})::Bool
 
 Determine whether the `sequence` of type `LongSequence{DNAAlphabet{4}}` contains a premature stop codon.
 
 Returns a boolean indicating whether the `sequence` has more than one stop codon.
 """
-function hasprematurestop(sequence::LongSequence{DNAAlphabet{4}})::Bool
+function hasprematurestop(sequence::LongNucOrView{4})::Bool
     
     stopcodons = [dna"TAA", dna"TAG", dna"TGA"]  # Create a set of stop codons
     
@@ -67,7 +67,7 @@ function hasprematurestop(sequence::LongSequence{DNAAlphabet{4}})::Bool
 end
 
 """
-    dinucleotides(sequence::LongSequence{DNAAlphabet{4}})
+    dinucleotides(sequence::LongNucOrView{4})
 
 Compute the transition counts of each dinucleotide in a given DNA sequence.
 
@@ -133,8 +133,7 @@ end
 
 function codons(sequence::LongNucOrView{4})
     A = [DNA_A, DNA_C, DNA_G, DNA_T]
-    trinucleotides =
-        vec([LongSequence{DNAAlphabet{4}}([n1, n2, n3]) for n1 in A, n2 in A, n3 in A])
+    trinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2, n3]) for n1 in A, n2 in A, n3 in A])
 
     # counts = zeros(Int64, length(trinucleotides))
     counts = Array{Int64,1}(undef, 64)
@@ -248,7 +247,7 @@ function transition_probability_matrix(
 )
     dtcm = transition_count_matrix(sequence; extended_alphabet)
     rowsums = sum(dtcm.counts, dims = 2)
-    freqs = round.(dtcm.counts ./ rowsums, digits = 3)
+    freqs = dtcm.counts ./ rowsums
 
     freqs[isinf.(freqs)] .= 0.0
     freqs[isnan.(freqs)] .= 0.0
@@ -261,7 +260,7 @@ end
     seq = dna"CCTCCCGGACCCTGGGCTCGGGAC"
     tpm = transition_probability_matrix(seq)
 
-    @test tpm.probabilities == [0.0 1.0 0.0 0.0; 0.0 0.5 0.2 0.3; 0.25 0.125 0.625 0.0; 0.0 0.667 0.333 0.0]
+    @test round.(tpm.probabilities, digits = 3) == [0.0 1.0 0.0 0.0; 0.0 0.5 0.2 0.3; 0.25 0.125 0.625 0.0; 0.0 0.667 0.333 0.0]
 end
 
 function initial_distribution(sequence::LongNucOrView{4}) ## π̂ estimates of the initial probabilies
@@ -316,8 +315,9 @@ sequenceprobability(sequence, tpm, initials)
 """
 function sequenceprobability(
     sequence::LongNucOrView{4},
-    tpm::Matrix{Float64},
-    initials::Matrix{Float64}
+    model::TransitionModel
+    # tpm::Matrix{Float64},
+    # initials::Matrix{Float64}
 )
 
     nucleotideindexes = Dict(DNA_A => 1, DNA_C => 2, DNA_G => 3, DNA_T => 4)
@@ -341,7 +341,7 @@ function sequenceprobability(
         dna"TT" => [4, 4],
     )
 
-    init = initials[nucleotideindexes[sequence[1]]]
+    init = model.initials[nucleotideindexes[sequence[1]]]
 
     probability = init
 
@@ -352,7 +352,7 @@ function sequenceprobability(
         i = dinueclotideindexes[pair][1]
         j = dinueclotideindexes[pair][2]
 
-        probability *= tpm[i, j]
+        probability *= model.tpm[i, j]
     end
     return probability
 end
@@ -398,18 +398,13 @@ iscoding(sequence, codingmodel, noncodingmodel)  # Returns: true
 ```
 """
 function iscoding(
-    sequence::LongSequence{DNAAlphabet{4}},
+    sequence::LongNucOrView{4},
     codingmodel::TransitionModel,
     noncodingmodel::TransitionModel,
     η::Float64 = 1e-5
 )
-    initcoding = codingmodel.initials
-    initnoncoding = noncodingmodel.initials
-    codingtpm = codingmodel.tpm
-    noncodingtpm = noncodingmodel.tpm
-
-    pcoding = sequenceprobability(sequence, codingtpm, initcoding)
-    pnoncoding = sequenceprobability(sequence, noncodingtpm, initnoncoding)
+    pcoding = sequenceprobability(sequence, codingmodel)
+    pnoncoding = sequenceprobability(sequence, noncodingmodel)
 
     logodds = log(pcoding / pnoncoding)
 
@@ -434,9 +429,15 @@ function _dna_to_int(nucleotide::DNA; extended_alphabet::Bool = false)
     return findfirst(nucleotide, LongSequence{DNAAlphabet{4}}(A))
 end
 
-function generatednaseq(tpm::Matrix{Float64}, steps::Int64; extended_alphabet::Bool = false)
-    newseq = LongSequence{DNAAlphabet{4}}()
-    pf = transpose(tpm) # The Perron-Frobenius matrix
+function perronfrobenius(sequence::LongNucOrView{4}, n::Int64=1)
+    tpm = transition_probability_matrix(sequence, n).probabilities
+    pf = transpose(tpm)
+    return copy(pf)
+end
+
+function generatednaseq(pf::Matrix{Float64}, steps::Int64; extended_alphabet::Bool = false)
+    newseq = LongDNA{4}()
+    # pf = transpose(tpm) # The Perron-Frobenius matrix
     trajectory = generate(pf, steps)
     for i in trajectory
         newseq = append!(newseq, _int_to_dna(i; extended_alphabet))
