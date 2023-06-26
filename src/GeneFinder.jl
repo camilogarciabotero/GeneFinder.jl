@@ -14,7 +14,7 @@ using BioSequences:
     GeneticCode
 using FASTX: FASTA, sequence
 using IterTools: takewhile, iterated
-# using MarkovChainHammer.Trajectory: generate
+using MarkovChainHammer.Trajectory: generate
 using PrecompileTools
 using StatsBase: countmap
 using TestItems: @testitem
@@ -35,12 +35,14 @@ include("helpers.jl")
 export fasta_to_dna,
     transition_count_matrix,
     transition_probability_matrix,
-    sequenceprobability,
     initial_distribution,
     dinucleotides,
     codons,
     hasprematurestop,
-    iscoding
+    sequenceprobability,
+    iscoding,
+    perronfrobenius,
+    generatednaseq
 
 include("models/models.jl")
 export ECOLICDS, ECOLINOCDS
@@ -57,6 +59,8 @@ include("extended.jl")
         # they belong to your package or not (on Julia 1.8 and higher)
         findorfs(seq)
         dinucleotides(seq)
+        sequenceprobability(seq, ECOLICDS)
+        perronfrobenius(seq)
     end
 end
 
