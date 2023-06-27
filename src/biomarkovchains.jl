@@ -15,7 +15,7 @@ A `TCM` object representing the transition count matrix of the sequence.
 
 # Example
 ```
-seq = dna"AGCTAGCTAGCT"
+seq = LongDNA{4}("AGCTAGCTAGCT")
 
 tcm = transition_count_matrix(seq)
 
@@ -133,7 +133,9 @@ P(X_1 = i_1, \ldots, X_T = i_T) = \pi_{i_1}^{T-1} \prod_{t=1}^{T-1} a_{i_t, i_{t
 # Example
 
 ```
-tpm = transition_probability_matrix(dna"CCTCCCGGACCCTGGGCTCGGGAC")
+mainseq = LongDNA{4}("CCTCCCGGACCCTGGGCTCGGGAC")
+
+tpm = transition_probability_matrix(mainseq)
     
     4×4 Matrix{Float64}:
     0.0   1.0    0.0    0.0
@@ -141,17 +143,17 @@ tpm = transition_probability_matrix(dna"CCTCCCGGACCCTGGGCTCGGGAC")
     0.25  0.125  0.625  0.0
     0.0   0.667  0.333  0.0
 
-initials = initial_distribution(dna"CCTCCCGGACCCTGGGCTCGGGAC")
+initials = initial_distribution(mainseq)
 
     1×4 Matrix{Float64}:
     0.0869565  0.434783  0.347826  0.130435
 
-sequence = dna"CCTG"
+newseq = LondDNA("CCTG")
 
     4nt DNA Sequence:
     CCTG
 
-sequenceprobability(sequence, tpm, initials)
+sequenceprobability(newseq, tpm, initials)
     
     0.0217
 ```
@@ -166,22 +168,22 @@ function sequenceprobability(
     nucleotideindexes = Dict(DNA_A => 1, DNA_C => 2, DNA_G => 3, DNA_T => 4)
 
     dinueclotideindexes = Dict(
-        dna"AA" => [1, 1],
-        dna"AC" => [1, 2],
-        dna"AG" => [1, 3],
-        dna"AT" => [1, 4],
-        dna"CA" => [2, 1],
-        dna"CC" => [2, 2],
-        dna"CG" => [2, 3],
-        dna"CT" => [2, 4],
-        dna"GA" => [3, 1],
-        dna"GC" => [3, 2],
-        dna"GG" => [3, 3],
-        dna"GT" => [3, 4],
-        dna"TA" => [4, 1],
-        dna"TC" => [4, 2],
-        dna"TG" => [4, 3],
-        dna"TT" => [4, 4],
+        LongDNA{4}("AA") => [1, 1],
+        LongDNA{4}("AC") => [1, 2],
+        LongDNA{4}("AG") => [1, 3],
+        LongDNA{4}("AT") => [1, 4],
+        LongDNA{4}("CA") => [2, 1],
+        LongDNA{4}("CC") => [2, 2],
+        LongDNA{4}("CG") => [2, 3],
+        LongDNA{4}("CT") => [2, 4],
+        LongDNA{4}("GA") => [3, 1],
+        LongDNA{4}("GC") => [3, 2],
+        LongDNA{4}("GG") => [3, 3],
+        LongDNA{4}("GT") => [3, 4],
+        LongDNA{4}("TA") => [4, 1],
+        LongDNA{4}("TC") => [4, 2],
+        LongDNA{4}("TG") => [4, 3],
+        LongDNA{4}("TT") => [4, 4],
     )
 
     init = model.initials[nucleotideindexes[sequence[1]]]
@@ -234,7 +236,7 @@ S(X) = \log \left( \frac{{P_C(X_1=i_1, \ldots, X_T=i_T)}}{{P_N(X_1=i_1, \ldots, 
 # Example
 
 ```
-sequence = LongSequence{DNAAlphabet{4}}("ATGGCATCTAG")
+sequence = LondDNA("ATGGCATCTAG")
 codingmodel = TransitionModel()
 noncodingmodel = TransitionModel()
 iscoding(sequence, codingmodel, noncodingmodel)  # Returns: true

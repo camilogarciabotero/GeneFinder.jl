@@ -50,7 +50,7 @@ Returns a boolean indicating whether the `sequence` has more than one stop codon
 """
 function hasprematurestop(sequence::LongNucOrView{4})::Bool
     
-    stopcodons = [dna"TAA", dna"TAG", dna"TGA"]  # Create a set of stop codons
+    stopcodons = [LongDNA{4}("TAA"), LongDNA{4}("TAG"), LongDNA{4}("TGA")]  # Create a set of stop codons
     
     length(sequence) % 3 == 0 || error("The sequence is not divisible by 3")
     
@@ -144,8 +144,6 @@ function _dna_to_int(nucleotide::DNA; extended_alphabet::Bool = false)
     return findfirst(nucleotide, LongSequence{DNAAlphabet{4}}(A))
 end
 
-
-
 # function codons(sequence::LongNucOrView{4})
 #     A = [DNA_A, DNA_C, DNA_G, DNA_T]
 #     trinucleotides = vec([LongSequence{DNAAlphabet{4}}([n1, n2, n3]) for n1 in A, n2 in A, n3 in A])
@@ -201,7 +199,6 @@ end
 #     end
 #     stop_codon_count > 1 
 # end
-
 
 # @testitem "hasprematurestop test" begin
 #     using BioSequences

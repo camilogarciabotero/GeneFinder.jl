@@ -10,7 +10,6 @@ using BioSequences:
     LongSequence,
     LongSubSeq,
     @biore_str,
-    @dna_str,
     GeneticCode
 using FASTX: FASTA, sequence
 using IterTools: takewhile, iterated
@@ -31,7 +30,7 @@ export cdsgenerator, proteingenerator, getcds, getproteins
 include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 
-include("markovchains.jl")
+include("biomarkovchains.jl")
 export transition_count_matrix, 
     transition_probability_matrix, 
     initial_distribution, 
