@@ -192,10 +192,8 @@ function sequenceprobability(
 
     for t in 1:length(sequence)-1
 
-        pair = LongSequence{DNAAlphabet{4}}([sequence[t], sequence[t+1]])
-
-        i = dinueclotideindexes[pair][1]
-        j = dinueclotideindexes[pair][2]
+        pair = LongDNA{4}([sequence[t], sequence[t+1]])
+        i, j = dinueclotideindexes[pair]
 
         probability *= model.tpm[i, j]
     end
