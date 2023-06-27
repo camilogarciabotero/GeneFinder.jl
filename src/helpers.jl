@@ -116,7 +116,7 @@ function dinucleotides(sequence::LongNucOrView{4}; extended_alphabet::Bool = fal
     counts = Array{Int64,1}(undef, 64)
     for (index, pair) in enumerate(dinucleotides)
         count = 0
-        @inbounds for i in 1:length(sequence)-1
+        for i in 1:length(sequence)-1
             if sequence[i] == pair[1] && sequence[i+1] == pair[2]
                 count += 1
             end
@@ -131,8 +131,6 @@ function dinucleotides(sequence::LongNucOrView{4}; extended_alphabet::Bool = fal
 
     return pairsdict
 end
-
-
 
 function _int_to_dna(index::Int64; extended_alphabet::Bool = false)
     A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
