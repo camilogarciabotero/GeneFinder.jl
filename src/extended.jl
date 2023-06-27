@@ -22,7 +22,7 @@ function Base.show(io::IO, tcm::TCM)
     nucleotides = sort(collect(keys(tcm.order)))
 
     # Print type
-    println(io, "GeneFinder.TCM{$(typeof(tcm.order)), $(typeof(tcm.counts)):")
+    println(io, "TCM{$(typeof(tcm.order)), $(typeof(tcm.counts)):")
 
     # Print header
     max_digits = maximum([length(string(maximum(tcm.counts[:, i]))) for i in 1:size(tcm.counts, 2)])
@@ -41,7 +41,7 @@ function Base.show(io::IO, tpm::TPM)
     nucleotides = sort(collect(keys(tpm.order)))
 
     # Print type
-    println(io, "GeneFinder.tpm{$(typeof(tpm.order)), $(typeof(tpm.probabilities)):")
+    println(io, "TPM{$(typeof(tpm.order)), $(typeof(tpm.probabilities)):")
 
     # Print header
     max_digits = maximum([length(string(maximum(round.(tpm.probabilities[:, i], digits = 3)))) for i in 1:size(tpm.probabilities, 2)])
