@@ -1,8 +1,6 @@
 format: 
-  gfm:
+  commonmark:
     variant: -raw_html
-    wrap: none
+    wrap: preserve
     self-contained: true
-  markdown: default
-engine: knitr
 bibliography: references.bib
