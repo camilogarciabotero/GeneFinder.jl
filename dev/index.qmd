@@ -39,7 +39,7 @@ the master branch to try new features before release.
 
 ### Coding genes (CDS - ORFs)
 
-- [x] [Simple finder](https://camilogarciabotero.github.io/GeneFinder.jl/dev/simplefinder/)
+- [x] [Finding ORFs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/simplefinder/)
 - [ ] EasyGene
 - [ ] GLIMMER
 - [ ] Prodigal - Pyrodigal
@@ -59,7 +59,7 @@ the master branch to try new features before release.
 - [ ] specialized types
   - [x] Gene
   - [x] ORF
-  - [x] Codon
+  - [ ] Codon
   - [x] CDS
   - [ ] EukaryoticGene (?)
   - [ ] ProkaryoticGene (?)

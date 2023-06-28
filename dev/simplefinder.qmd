@@ -10,7 +10,7 @@ code-annotations: select
 using Pkg
 Pkg.activate("../../")
 ```
-# A simple algorithm
+# Finding ORFs in `BioSequences`
 
 The first implemented function is `findorfs` a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
 
