@@ -27,15 +27,19 @@ One important step towards many gene finding algorithms is to represent a DNA se
 
 More formally a Markov chain is a random process where each state is a random variable $X_t$ where $t \in T$ is a discrete time in a finite sequence $T$ and the probability to jump from one state into another is *only dependent of the current state.* Therefore a definition of this *Markov property* is given by:
 
-$$
+```math
+\begin{align}
 P(X_{t} = j |X_{t−1} = i)
-$$
+\end{align}
+```
 
 where $i,j \in \mathscr{A}$ . This property led us to generalize a way to calculate the probability of a sequence $T$ from a process $X_{1}...X_{T}$ where each random variable is a nucleotide from $\mathscr{A}$ so that:
 
-$$
+```math
+\begin{align}
 P(X_{1} = i_{1},...,X_{T} = i_{T}) = P(X_{1} = i_{1}) \prod_{t=2}^{T} P(X_{t} = i_{t} | X_{t−1} = i_{t−1})
-$$
+\end{align}
+``
 
 Note that previous equations has two terms, a initial probability $P(X_{1} = i_{1})$ and the the product of all transitions beginning at $t=2$. 
 

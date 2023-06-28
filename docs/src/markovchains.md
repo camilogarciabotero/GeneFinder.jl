@@ -30,27 +30,32 @@ a finite sequence *T* and the probability to jump from one state into
 another is *only dependent of the current state.* Therefore a definition
 of this *Markov property* is given by:
 
-*P*(*X*<sub>*t*</sub>=*j*|*X*<sub>*t* − 1</sub>=*i*)
+``` math
+\begin{align}
+P(X_{t} = j |X_{t−1} = i)
+\end{align}
+```
 
 where *i*, *j* ∈ 𝒜 . This property led us to generalize a way to
 calculate the probability of a sequence *T* from a process
 *X*<sub>1</sub>...*X*<sub>*T*</sub> where each random variable is a
 nucleotide from 𝒜 so that:
 
-$$
-P(X\_{1} = i\_{1},...,X\_{T} = i\_{T}) = P(X\_{1} = i\_{1}) \prod\_{t=2}^{T} P(X\_{t} = i\_{t} | X\_{t−1} = i\_{t−1})
-$$
+``` math
+\begin{align}
+P(X_{1} = i_{1},...,X_{T} = i_{T}) = P(X_{1} = i_{1}) \prod_{t=2}^{T} P(X_{t} = i_{t} | X_{t−1} = i_{t−1})
+\end{align}
+``
 
-Note that previous equations has two terms, a initial probability
-*P*(*X*<sub>1</sub>=*i*<sub>1</sub>) and the the product of all
-transitions beginning at *t* = 2.
+Note that previous equations has two terms, a initial probability $P(X_{1} = i_{1})$ and the the product of all transitions beginning at $t=2$. 
 
 ## Markov chain BioSequences
 
-We can now calculate a transition matrix from a `LongDNA` sequence using
-`transition_probability_matrix` method
+We can now calculate a transition matrix from a `LongDNA` sequence using `transition_probability_matrix` method
 
-``` julia
+
+::: {.cell execution_count=2}
+``` {.julia .cell-code}
 using BioSequences, GeneFinder
 
 genome = randdnaseq(10^6)
@@ -60,8 +65,10 @@ cds = getcds(genome, min_len = 64)[1]
 cds
 ```
 
-    69nt DNA Sequence:
-    ATGATTCCTGTACGTTCTAGCTGCTTCCTGGGTCTAAAACTCGTTTTCTGCCATTACTGCCACGACTGA
+    93nt DNA Sequence:
+    ATGGATTACGTGCTTAGCCGTGCTGTATCCGAGGGCCGC…GTAAAGAGCAAGATGGGCATTTTATTGCCAACAGTCTAG
+
+:::
 
 The `cds` object is a an ORF with the potential to encode a CDS from the
 randomly generated `genome`. To see what is the transition probabilities
@@ -74,12 +81,12 @@ TransitionModel(cds)
 
     TransitionModel:
       - Transition Probability Matrix (Size: 4 × 4):
-        0.25    0.417   0.083   0.25    
-        0.105   0.211   0.158   0.526   
-        0.231   0.308   0.154   0.308   
-        0.167   0.25    0.292   0.292   
+        0.32    0.08    0.36    0.24    
+        0.222   0.278   0.222   0.278   
+        0.2 0.36    0.2 0.24    
+        0.292   0.083   0.333   0.292   
       - Initials (Size: 1 × 4):
-        0.176   0.279   0.191   0.353   
+        0.261   0.196   0.283   0.261   
       - order: 1
 
 ## References
