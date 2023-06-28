@@ -1,5 +1,10 @@
 ---
 # cache: refresh
+format: 
+  commonmark_x:
+    variant: -raw_html
+    wrap: none
+    self-contained: true
 code-line-numbers: true
 code-annotations: select
 bibliography: references.bib
@@ -18,21 +23,21 @@ Several packages (e.g. [MarkovChainsHammer](), [Markovians](), etc.) in the Juli
 
 One important step towards many gene finding algorithms is to represent a DNA sequence as a Markov chain. In this representation a DNA sequence of a reduced alphabet $\mathscr{A} = \{A, C, G, T\}$ is draw as a four-vertex graph, where each letter of $\mathscr{A}$ is a *state (vertex)* and the edges of the graph represent *transitions* from one nucleotide to another in a sequence (e.g. $A \rightarrow T$ represent a single nucleotide to nucleotide transition). This is also considered more specifically as a Discrete Markov chain [@axelson-fisk2015]. The complete set of transitions and states of a DNA sequence of alphabet $\mathscr{A}$ could be seen as [@fig-dna-markov].
 
-![DNA sequence as a Markov chain with a DNA alphabet $\mathscr{A} = \{A, C, G, T\}$](../assets/nucleotide-markov-chain.svg){#fig-dna-markov fig-align="center"}
+![DNA sequence as a Markov chain with a DNA alphabet $\mathscr{A} = \{A, C, G, T\}$](../assets/nucleotide-markov-chain.png){#fig-dna-markov fig-align="center"}
 
 More formally a Markov chain is a random process where each state is a random variable $X_t$ where $t \in T$ is a discrete time in a finite sequence $T$ and the probability to jump from one state into another is *only dependent of the current state.* Therefore a definition of this *Markov property* is given by:
 
 $$
-P(X_{t} = j |X_{t−1} = i )
+P(X_{t} = j |X_{t−1} = i)
 $$ {#eq-markov-property}
 
 where $i,j \in \mathscr{A}$ . This property led us to generalize a way to calculate the probability of a sequence $T$ from a process $X_{1}...X_{T}$ where each random variable is a nucleotide from $\mathscr{A}$ so that:
 
 $$
-P(X_{1} = i_{1},...,X_{T} = i_{T}) = P(X_{1} = i_{1}) \prod_{t=2}^{T} P(X_{t} = i_{t} | X_{t−1}) = i_{t−1}).
-$$ {#eq-seq-probability}
+P(X_{1} = i_{1},...,X_{T} = i_{T}) = P(X_{1} = i_{1}) \prod_{t=2}^{T} P(X_{t} = i_{t} | X_{t−1} = i_{t−1})
+$$ {#eq-seqprobability}
 
-Note that @eq-seq-probability has two terms, a initial probability $P(X_{1} = i_{1})$ and the the product of all transitions beginning at $t=2$. 
+Note that @eq-seqprobability has two terms, a initial probability $P(X_{1} = i_{1})$ and the the product of all transitions beginning at $t=2$. 
 
 ## Markov chain BioSequences
 
