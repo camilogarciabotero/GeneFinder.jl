@@ -156,16 +156,6 @@ struct TransitionModel
     tpm::Matrix{Float64}
     initials::Matrix{Float64}
     n::Int64
-
-    function TransitionModel(tpm::Matrix{Float64}, initials::Matrix{Float64}, n::Int64=1)
-        new(tpm, initials, n)
-    end
-
-    function TransitionModel(sequence::LongNucOrView{4}, n::Int64=1)
-        tpm = transition_probability_matrix(sequence, n).probabilities
-        initials = initial_distribution(sequence)
-        new(tpm, initials, n)
-    end
 end
 
 

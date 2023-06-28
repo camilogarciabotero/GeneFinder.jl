@@ -113,6 +113,57 @@ function initial_distribution(sequence::LongNucOrView{4}) ## π̂ estimates of t
     return initials
 end
 
+
+"""
+    transition_model(sequence::LongNucOrView{4}, n::Int64=1)
+
+Constructs a transition model based on the given DNA sequence and transition order.
+
+# Arguments
+- `sequence::LongNucOrView{4}`: A DNA sequence represented as a `LongNucOrView{4}` object.
+- `n::Int64 (optional)`: The transition order (default: 1).
+
+# Returns
+A `TransitionModel` object representing the transition model.
+
+---
+
+    transition_model(tpm::Matrix{Float64}, initials::Matrix{Float64}, n::Int64=1)
+
+Builds a transtition model based on the transition probability matrix and the initial distributions. It can also calculates higer orders of the model if `n` is changed.
+
+# Arguments
+- `tpm::Matrix{Float64}`: the transition probability matrix `TPM`
+- `initials::Matrix{Float64}`: the initial distributions of the model.
+- `n::Int64 (optional)`: The transition order (default: 1).
+
+# Returns
+A `TransitionProbabilityMatrix` object representing the transition probability matrix.
+
+# Examples
+```julia
+julia> sequence = LongDNA{4}("ACTACATCTA")
+julia> model = transition_model(sequence, 2)
+TransitionModel:
+  - Transition Probability Matrix (Size: 4 × 4):
+    0.444	0.111	0.0	0.444
+    0.444	0.444	0.0	0.111
+    0.0	0.0	0.0	0.0
+    0.111	0.444	0.0	0.444
+  - Initials (Size: 1 × 4):
+    0.333	0.333	0.0	0.333
+  - order: 2
+"""
+function transition_model(sequence::LongNucOrView{4}, n::Int64=1)
+    tpm = transition_probability_matrix(sequence, n).probabilities
+    initials = initial_distribution(sequence)
+    TransitionModel(tpm, initials, n)
+end
+
+function transition_model(tpm::Matrix{Float64}, initials::Matrix{Float64}, n::Int64=1)
+    TransitionModel(tpm, initials, n)
+end
+
 @doc raw"""
     sequenceprobability(sequence::LongNucOrView{4}, tpm::Matrix{Float64}, initials=Vector{Float64})
 

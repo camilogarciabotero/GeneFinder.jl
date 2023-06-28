@@ -34,6 +34,7 @@ include("biomarkovchains.jl")
 export transition_count_matrix,
     transition_probability_matrix, 
     initial_distribution, 
+    transition_model,
     sequenceprobability,
     iscoding,
     perronfrobenius,
