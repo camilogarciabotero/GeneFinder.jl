@@ -23,7 +23,7 @@ Several packages (e.g. [MarkovChainsHammer](), [Markovians](), etc.) in the Juli
 
 One important step towards many gene finding algorithms is to represent a DNA sequence as a Markov chain. In this representation a DNA sequence of a reduced alphabet $\mathscr{A} = \{A, C, G, T\}$ is draw as a four-vertex graph, where each letter of $\mathscr{A}$ is a *state (vertex)* and the edges of the graph represent *transitions* from one nucleotide to another in a sequence (e.g. $A \rightarrow T$ represent a single nucleotide to nucleotide transition). This is also considered more specifically as a Discrete Markov chain [@axelson-fisk2015]. The complete set of transitions and states of a DNA sequence of alphabet $\mathscr{A}$.
 
-![DNA sequence as a Markov chain with a DNA alphabet $\mathscr{A} = \{A, C, G, T\}$](../assets/nucleotide-markov-chain.png)
+![DNA sequence as a Markov chain](../assets/nucleotide-markov-chain.png)
 
 More formally a Markov chain is a random process where each state is a random variable $X_t$ where $t \in T$ is a discrete time in a finite sequence $T$ and the probability to jump from one state into another is *only dependent of the current state.* Therefore a definition of this *Markov property* is given by:
 
