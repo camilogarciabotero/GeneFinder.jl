@@ -19,14 +19,13 @@ transition). This is also considered more specifically as a Discrete
 Markov chain (Axelson-Fisk 2015). The complete set of transitions and
 states of a DNA sequence of alphabet 𝒜.
 
-![DNA sequence as a Markov chain with a DNA alphabet
-𝒜 = {*A*, *C*, *G*, *T*}](../assets/nucleotide-markov-chain.png)
+![DNA sequence as a Markov chain](../assets/nucleotide-markov-chain.png)
 
 More formally a Markov chain is a random process where each state is a
-random variable *X*<sub>*t*</sub> where *t* ∈ *T* is a discrete time in
-a finite sequence *T* and the probability to jump from one state into
-another is *only dependent of the current state.* Therefore a definition
-of this *Markov property* is given by:
+random variable `X_t` where `t \in T` is a discrete time in a finite
+sequence *T* and the probability to jump from one state into another is
+*only dependent of the current state.* Therefore a definition of this
+*Markov property* is given by:
 
 ``` math
 \begin{align}
@@ -36,8 +35,8 @@ P(X_{t} = j |X_{t−1} = i)
 
 where *i*, *j* ∈ 𝒜 . This property led us to generalize a way to
 calculate the probability of a sequence *T* from a process
-(*X*<sub>1</sub>...*X*<sub>*T*</sub>) where each random variable is a
-nucleotide from 𝒜 so that:
+`(X_{1}...X_{T})` where each random variable is a nucleotide from 𝒜 so
+that:
 
 ``` math
 \begin{align}
@@ -46,45 +45,118 @@ P(X_{1} = i_{1},...,X_{T} = i_{T}) = P(X_{1} = i_{1}) \prod_{t=2}^{T} P(X_{t} = 
 ```
 
 Note that previous equations has two terms, a initial probability
-*P*(*X*<sub>1</sub>=*i*<sub>1</sub>) and the the product of all
-transitions beginning at *t* = 2.
+`P(X_{1} = i_{1})` and the the product of all transitions beginning at
+`t=2`. So, to calculate the initial probability distribution of each of
+the nucleotides of a string $T$ with the alphabet 𝒜 we can first
+calculate the transition probability matrix ℳ̂ out of the frequency count
+of the transitions. In an alphabet 𝒜 we got 4<sup>2</sup> transitions of
+one order, that is the *A**A*, *A**C*, *A**G*, ... which coincides with
+the frequency of the dinucleotides in the sequence. So we can later in
+fact build a 4*x*4 matrix representing all the transitions. For instance
+in a DNA sequence *T* of 24 nucleotides:  
 
-## Markov chain BioSequences
+``` math
+CCTCCCGGACCCTGGGCTCGGGAC
+```
+
+We can calculate each frequency nucleotide to any other nucleotide
+$\widehat{m}\_{ij} = \frac{c\_{ij}}{c\_{i}}$ where *c*<sub>*i**j*</sub>
+is the actual count of the dinucleotide, and therefore *c*<sub>*i*</sub>
+is the counts of the nucleotide *i* to any other nucleotide and build
+the transition probability matrix:
+
+``` math
+\begin{bmatrix}
+   & \text{A} & \text{C} & \text{G} & \text{T} \\
+\text{A} & 0.00 & 1.00 & 0.00 & 0.00 \\
+\text{C} & 0.00 & 0.56 & 0.22 & 0.30 \\
+\text{G} & 0.25 & 0.12 & 0.62 & 0.00 \\
+\text{T} & 0.00 & 0.67 & 0.33 & 0.00 \\
+\end{bmatrix}
+```
+
+It is noteworthy that initial probabilities can also be obtained from
+the counts of each nucleotide transitions *c*<sub>*i**j*</sub> over the
+total sum of the dinucleotide counts *c*<sub>*k*</sub> :
+
+``` math
+\widehat{\pi}_{i} = \frac{c_{i}}{\sum_{k}c_{k}}
+```
+
+That way for the previous example example we can can calculate the
+inital probabilities *π̂* = (0.08,0.43,0.34,0.13). Both set of
+probabilities composed a *transition model* that can be used to predict
+the probability of any sequence using equation (2).
+
+## Transition models with BioSequences
 
 We can now calculate a transition matrix from a `LongDNA` sequence using
-`transition_probability_matrix` method
+the `transition_probability_matrix` and `initial_distribution` methods
+for a given `LongDNA` sequence:  
 
 ``` julia
 using BioSequences, GeneFinder
 
-genome = randdnaseq(10^6)
+sequence = dna"CCTCCCGGACCCTGGGCTCGGGAC"
 
-cds = getcds(genome, min_len = 64)[1]
+tpm = transition_probability_matrix(sequence)
+initials = initial_distribution(sequence)
 
-cds
+println(tpm)
+println(initials)
 ```
 
-    108nt DNA Sequence:
-    ATGGAATGGGCCATCTGCTGTACTCGTACGCCACGAAGT…AGAGCATATTCAGGTCTCTTAACCAGTCGTATTCACTAG
+    TPM{Dict{DNA, Int64}, Matrix{Float64}:
+       A     C     G     T     
+    A  0.0   1.0   0.0   0.0   
+    C  0.0   0.5   0.2   0.3   
+    G  0.25  0.125 0.625 0.0   
+    T  0.0   0.667 0.333 0.0   
 
-The `cds` object is a an ORF with the potential to encode a CDS from the
-randomly generated `genome`. To see what is the transition probabilities
-and the initial distribution, we can use build the Transition Model
-using simply the constructor `TransitionModel`
+    [0.08695652173913043 0.43478260869565216 0.34782608695652173 0.13043478260869565]
+
+More conveniently, we can now use the `transition_model` method and
+obtain the transition probabilities and the initial distribution and
+build a transition model:
 
 ``` julia
-TransitionModel(cds)
+transition_model(sequence)
 ```
 
     TransitionModel:
       - Transition Probability Matrix (Size: 4 × 4):
-        0.125   0.25    0.292   0.333   
-        0.286   0.25    0.179   0.286   
-        0.13    0.217   0.261   0.391   
-        0.281   0.312   0.188   0.219   
+        0.0 1.0 0.0 0.0 
+        0.0 0.5 0.2 0.3 
+        0.25    0.125   0.625   0.0 
+        0.0 0.667   0.333   0.0 
       - Initials (Size: 1 × 4):
-        0.215   0.262   0.224   0.299   
+        0.087   0.435   0.348   0.13    
       - order: 1
+
+Note that, sometimes the dinucleotides transition do not harbor
+important biological meaning, whereas trinucleotides or codons are, in
+fact, the building block of proteins. Therefore, sometimes the
+transition model we want to build is usually a second-order Markov
+chain, that represents the possible transitions of a trinucleotide.
+
+A very nice nice property of the transition probability matrix is that
+the *n-step transition probability matrix* $^{n} = (\_{ij}(n))$, that is
+the *n*th power of ℳ represents *i* → *j* transitions in *n* steps. We
+can also have higher order transition models as:
+
+``` julia
+transition_model(sequence, 2)
+```
+
+    TransitionModel:
+      - Transition Probability Matrix (Size: 4 × 4):
+        0.0 0.5 0.2 0.3 
+        0.05    0.475   0.325   0.15    
+        0.156   0.391   0.416   0.038   
+        0.083   0.375   0.342   0.2 
+      - Initials (Size: 1 × 4):
+        0.087   0.435   0.348   0.13    
+      - order: 2
 
 ## References
 
