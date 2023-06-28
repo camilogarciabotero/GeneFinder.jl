@@ -140,10 +140,11 @@ Builds a transtition model based on the transition probability matrix and the in
 # Returns
 A `TransitionProbabilityMatrix` object representing the transition probability matrix.
 
-# Examples
-```julia
-julia> sequence = LongDNA{4}("ACTACATCTA")
-julia> model = transition_model(sequence, 2)
+# Example
+```
+sequence = LongDNA{4}("ACTACATCTA")
+
+model = transition_model(sequence, 2)
 TransitionModel:
   - Transition Probability Matrix (Size: 4 × 4):
     0.444	0.111	0.0	0.444
@@ -153,6 +154,7 @@ TransitionModel:
   - Initials (Size: 1 × 4):
     0.333	0.333	0.0	0.333
   - order: 2
+```
 """
 function transition_model(sequence::LongNucOrView{4}, n::Int64=1)
     tpm = transition_probability_matrix(sequence, n).probabilities

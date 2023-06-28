@@ -120,7 +120,6 @@ Base.length(::TransitionModel) = 1
 #     end
 # end
 
-
 # function Base.iterate(iter::LongNucOrViewIterator{4, T}, state=nothing) where T
 #     if state === nothing
 #         state = model.initials[nucleotideindexes[iter.iterable[1]]]
