@@ -15,7 +15,8 @@ makedocs(;
     ),
     pages = [
         "Home" => "index.md",
-        "A first algorithm" => "simplefinder.md",
+        "Finding ORFs" => "simplefinder.md",
+        "Towards Markov Chains" => "markovchains.md"
         "API" => "api.md",
     ],
 )

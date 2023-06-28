@@ -1,5 +1,5 @@
 
-# A simple algorithm
+# Finding ORFs in `BioSequences`
 
 The first implemented function is `findorfs` a very non-restrictive
 ORF finder function that will catch all ORFs in a dedicated structure.

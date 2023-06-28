@@ -5,3 +5,4 @@ format:
     self-contained: true
   markdown: default
 engine: knitr
+bibliography: references.bib

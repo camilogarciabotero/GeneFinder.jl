@@ -2,6 +2,8 @@
 
 abstract type Gene end
 
+const LongNucOrView{N} = Union{LongSequence{<:NucleicAcidAlphabet{N}},LongSubSeq{<:NucleicAcidAlphabet{N}}}
+
 """
     struct GeneFeatures
         seqname::String
@@ -159,14 +161,12 @@ struct TransitionModel
         new(tpm, initials, n)
     end
 
-    function TransitionModel(sequence::LongSequence{DNAAlphabet{4}}, n::Int64=1)
+    function TransitionModel(sequence::LongNucOrView{4}, n::Int64=1)
         tpm = transition_probability_matrix(sequence, n).probabilities
         initials = initial_distribution(sequence)
         new(tpm, initials, n)
     end
 end
-
-const LongNucOrView{N} = Union{LongSequence{<:NucleicAcidAlphabet{N}},LongSubSeq{<:NucleicAcidAlphabet{N}}}
 
 
 ##### The following implementation is from https://biojulia.dev/BioSequences.jl/stable/interfaces/ #####

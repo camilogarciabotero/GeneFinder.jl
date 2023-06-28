@@ -31,7 +31,7 @@ include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 
 include("biomarkovchains.jl")
-export transition_count_matrix, 
+export transition_count_matrix,
     transition_probability_matrix, 
     initial_distribution, 
     sequenceprobability,

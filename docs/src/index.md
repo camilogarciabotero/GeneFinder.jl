@@ -70,13 +70,13 @@ check out the master branch to try new features before release.
 
 Must interact with or extend:
 
--   GenomicAnnotations.jl
--   BioSequences.jl
--   SequenceVariation.jl
--   GenomicFeatures.jl
--   FASTX.jl
--   Kmers.jl
-- Graphs..jl
+- GenomicAnnotations.jl
+- BioSequences.jl
+- SequenceVariation.jl
+- GenomicFeatures.jl
+- FASTX.jl
+- Kmers.jl
+- Graphs.jl
 
 ## Contributing
 
