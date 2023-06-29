@@ -35,10 +35,10 @@ function transition_count_matrix(
 
     transitions = dinucleotides(sequence; extended_alphabet)
 
-    A = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
+    A::Array = extended_alphabet ? collect(alphabet(DNA)) : [DNA_A, DNA_C, DNA_G, DNA_T]
 
     dtcm = TCM(A)
-
+    
     for (dinucleotide, count) in transitions
         nucleotide1 = dinucleotide[1]
         nucleotide2 = dinucleotide[2]
@@ -59,7 +59,7 @@ a_{ij} = P(X_t = j \mid X_{t-1} = i) = \frac{{P(X_{t-1} = i, X_t = j)}}{{P(X_{t-
 ```
 
 # Arguments
-- `sequence::LongSequence{DNAAlphabet{4}}`: a `LongSequence{DNAAlphabet{4}}` object representing the DNA sequence.
+- `sequence::LongNucOrView{4}`: a `LongNucOrView{4}` object representing the DNA sequence.
 - `n::Int64=1`: The order of the Markov model. That is the `` \hat{A}^{n}``
 
 # Keywords
@@ -177,8 +177,7 @@ P(X_1 = i_1, \ldots, X_T = i_T) = \pi_{i_1}^{T-1} \prod_{t=1}^{T-1} a_{i_t, i_{t
 
 # Arguments
 - `sequence::LongNucOrView{4}`: The input sequence of nucleotides.
-- `tpm::Matrix{Float64}`: The transition probability matrix.
-- `initials=Vector{Float64}`: Optional initial state probabilities. Default is an empty vector.
+- `tm::TransitionModel` is the actual data structure composed of a `tpm::Matrix{Float64}` the transition probability matrix and `initials=Vector{Float64}` the initial state probabilities.
 
 # Returns
 - `probability::Float64`: The probability of the input sequence.
@@ -200,13 +199,24 @@ initials = initial_distribution(mainseq)
 
     1×4 Matrix{Float64}:
     0.0869565  0.434783  0.347826  0.130435
+    
+tm = transition_model(tpm, initials)
+    - Transition Probability Matrix (Size: 4 × 4):
+    0.0	1.0	0.0	0.0
+    0.0	0.5	0.2	0.3
+    0.25	0.125	0.625	0.0
+    0.0	0.667	0.333	0.0
+    - Initials (Size: 1 × 4):
+    0.087	0.435	0.348	0.13
+    - order: 1
 
 newseq = LondDNA("CCTG")
 
     4nt DNA Sequence:
     CCTG
 
-sequenceprobability(newseq, tpm, initials)
+
+sequenceprobability(newseq, tm)
     
     0.0217
 ```
@@ -214,8 +224,6 @@ sequenceprobability(newseq, tpm, initials)
 function sequenceprobability(
     sequence::LongNucOrView{4},
     model::TransitionModel
-    # tpm::Matrix{Float64},
-    # initials::Matrix{Float64}
 )
 
     nucleotideindexes = Dict(DNA_A => 1, DNA_C => 2, DNA_G => 3, DNA_T => 4)

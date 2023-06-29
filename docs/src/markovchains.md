@@ -1,20 +1,20 @@
 # DNA as a Markov chain
 
-Several packages (e.g. [MarkovChainsHammer](), [Markovians](), etc.) in
+Several packages (e.g. [MarkovChainsHammer.kl](https://github.com/sandreza/MarkovChainHammer.jl), [DiscreteMarkovChains.jl](https://github.com/Maelstrom6/DiscreteMarkovChains.jl), etc.) in
 the Julia ecosystem have been implemented to work with Markov chains
 with a *state space* of integers, those could be efficient in many ways,
 but they are clumsy to work with a specialized biological types as in
 the `BioJulia` ecosystem. Therefore, in the `GeneFinder` package we
 dedicated some implementations to work with `BioSequence` types so that
 we can expand the functionality in an efficient way (see complete
-[API]()).
+[API](https://camilogarciabotero.github.io/GeneFinder.jl/dev/api/)).
 
 One important step towards many gene finding algorithms is to represent
 a DNA sequence as a Markov chain. In this representation a DNA sequence
-of a reduced alphabet 𝒜 = {*A*, *C*, *G*, *T*} is draw as a four-vertex
+of a reduced alphabet ``𝒜 = {A,  C,  G ,  T}`` is draw as a four-vertex
 graph, where each letter of 𝒜 is a *state (vertex)* and the edges of the
 graph represent *transitions* from one nucleotide to another in a
-sequence (e.g. *A* → *T* represent a single nucleotide to nucleotide
+sequence (e.g. ``A \rightarrow T`` represent a single nucleotide to nucleotide
 transition). This is also considered more specifically as a Discrete
 Markov chain (Axelson-Fisk 2015). The complete set of transitions and
 states of a DNA sequence of alphabet 𝒜.
@@ -45,24 +45,24 @@ P(X_{1} = i_{1},...,X_{T} = i_{T}) = P(X_{1} = i_{1}) \prod_{t=2}^{T} P(X_{t} = 
 ```
 
 Note that previous equations has two terms, a initial probability
-`P(X_{1} = i_{1})` and the the product of all transitions beginning at
-`t=2`. So, to calculate the initial probability distribution of each of
-the nucleotides of a string $T$ with the alphabet 𝒜 we can first
+``P(X_{1} = i_{1})`` and the the product of all transitions beginning at
+``t=2``. So, to calculate the initial probability distribution of each of
+the nucleotides of a string ``T`` with the alphabet 𝒜 we can first
 calculate the transition probability matrix ℳ̂ out of the frequency count
-of the transitions. In an alphabet 𝒜 we got 4<sup>2</sup> transitions of
-one order, that is the *A**A*, *A**C*, *A**G*, ... which coincides with
+of the transitions. In an alphabet 𝒜 we got ``4^2`` transitions of
+one order, that is the ``AA, AC, AG, ...`` which coincides with
 the frequency of the dinucleotides in the sequence. So we can later in
-fact build a 4*x*4 matrix representing all the transitions. For instance
-in a DNA sequence *T* of 24 nucleotides:  
+fact build a ``4 x 4`` matrix representing all the transitions. For instance
+in a DNA sequence ``T`` of 24 nucleotides:  
 
 ``` math
 CCTCCCGGACCCTGGGCTCGGGAC
 ```
 
 We can calculate each frequency nucleotide to any other nucleotide
-$\widehat{m}\_{ij} = \frac{c\_{ij}}{c\_{i}}$ where *c*<sub>*i**j*</sub>
-is the actual count of the dinucleotide, and therefore *c*<sub>*i*</sub>
-is the counts of the nucleotide *i* to any other nucleotide and build
+``\widehat{m}\_{ij} = \frac{c\_{ij}}{c\_{i}}`` where ``c_{ij}``
+is the actual count of the dinucleotide, and therefore ``c_{i}``
+is the counts of the nucleotide ``i`` to any other nucleotide and build
 the transition probability matrix:
 
 ``` math
@@ -76,23 +76,23 @@ the transition probability matrix:
 ```
 
 It is noteworthy that initial probabilities can also be obtained from
-the counts of each nucleotide transitions *c*<sub>*i**j*</sub> over the
-total sum of the dinucleotide counts *c*<sub>*k*</sub> :
+the counts of each nucleotide transitions ``c_{ij}`` over the
+total sum of the dinucleotide counts ``c_{k}``:
 
 ``` math
 \widehat{\pi}_{i} = \frac{c_{i}}{\sum_{k}c_{k}}
 ```
 
 That way for the previous example example we can can calculate the
-inital probabilities *π̂* = (0.08,0.43,0.34,0.13). Both set of
+initial probabilities ``π̂ = (0.08,0.43,0.34,0.13)``. Both set of
 probabilities composed a *transition model* that can be used to predict
-the probability of any sequence using equation (2).
+the probability of any DNA sequence using equation (2).
 
 ## Transition models with BioSequences
 
-We can now calculate a transition matrix from a `LongDNA` sequence using
-the `transition_probability_matrix` and `initial_distribution` methods
-for a given `LongDNA` sequence:  
+We can now calculate a transition probability matrix from a `LongDNA`
+sequence using the `transition_probability_matrix` and
+`initial_distribution` methods for a given `LongDNA` sequence:
 
 ``` julia
 using BioSequences, GeneFinder
@@ -140,7 +140,7 @@ transition model we want to build is usually a second-order Markov
 chain, that represents the possible transitions of a trinucleotide.
 
 A very nice nice property of the transition probability matrix is that
-the *n-step transition probability matrix* $^{n} = (\_{ij}(n))$, that is
+the *n-step transition probability matrix* ``^{n} = (\_{ij}(n))``, that is
 the *n*th power of ℳ represents *i* → *j* transitions in *n* steps. We
 can also have higher order transition models as:
 
@@ -157,6 +157,40 @@ transition_model(sequence, 2)
       - Initials (Size: 1 × 4):
         0.087   0.435   0.348   0.13    
       - order: 2
+
+## The *log-odds ratio* decision rule
+
+The sequence probability given a transition probability model (eq. 2)
+could be used as the source of a sequence classification based on a
+decision rule to classify whether a sequence correspond to a model or
+another. Now, imagine we got two DNA sequence transition models, a CDS
+model and a No-CDS model. The *log-odds ratio* decision rule could be
+establish as:
+
+``` math
+S(X) = \log \frac{{P_C(X_1=i_1, \ldots, X_T=i_T)}}{{P_N(X_1=i_1, \ldots, X_T=i_T)}}  \begin{cases} > \eta & \Rightarrow \text{coding} \\ < \eta & \Rightarrow \text{noncoding} \end{cases}
+```
+
+Where the ``P_{C}`` is the probability of the sequence given a
+CDS model, ``P_{N}`` is the probability of the sequence given a
+No-CDS model, the decision rule is finally based on whether the ratio is
+greater or lesser than a given threshold *η* of significance level.
+
+In the GeneFinder we have implemented this rule and a couple of basic
+transition probability models of CDS and No-CDS of *E. coli* from
+Axelson-Fisk (2015) work. To check whether a random sequence could be
+coding based on these decision we use the predicate `iscoding` with the
+`ECOLICDS` and `ECOLINOCDS` models:
+
+``` julia
+randseq = getcds(randdnaseq(99))[1] # this will retrieved a random coding ORF
+
+iscoding(randseq, ECOLICDS, ECOLINOCDS)
+```
+
+    true
+
+## 
 
 ## References
 
