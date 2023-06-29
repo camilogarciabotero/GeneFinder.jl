@@ -16,12 +16,12 @@ transition). This is also considered more specifically as a Discrete
 Markov chain (Axelson-Fisk 2015). The complete set of transitions and
 states of a DNA sequence of alphabet 𝒜.
 
-![DNA sequence as a Markov chain](./assets/nucleotide-markov-chain.png)
+![DNA sequence as a Markov chain](docs/assets/nucleotide-markov-chain.png)
 
 More formally a Markov chain is a random process where each state is a
-random variable `X_t` where `t \in T` is a discrete time in a finite
-sequence *T* and the probability to jump from one state into another is
-*only dependent of the current state.* Therefore a definition of this
+random variable ``X_{t}`` where ``t \in T`` is a discrete time in a finite
+sequence ``T`` and the probability to jump from one state into another is
+*only dependent of the current state*. Therefore a definition of this
 *Markov property* is given by:
 
 ``` math
@@ -43,7 +43,7 @@ P(X_{1} = i_{1},...,X_{T} = i_{T}) = P(X_{1} = i_{1}) \prod_{t=2}^{T} P(X_{t} = 
 
 Note that previous equations has two terms, a initial probability
 ``P(X_{1} = i_{1})`` and the the product of all transitions beginning at
-``t=2``. So, to calculate the initial probability distribution of each of
+``t = 2``. So, to calculate the initial probability distribution of each of
 the nucleotides of a string ``T`` with the alphabet 𝒜 we can first
 calculate the transition probability matrix ``\widehat{\mathscr{M}}`` out of the frequency count of the transitions. In an alphabet 𝒜 we got ``4^2`` transitions of
 one order, that is the ``AA, AC, AG, ...`` which coincides with
