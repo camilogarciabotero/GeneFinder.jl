@@ -1,6 +1,6 @@
 # DNA as a Markov chain
 
-Several packages (e.g. [MarkovChainsHammer.kl](https://github.com/sandreza/MarkovChainHammer.jl), [DiscreteMarkovChains.jl](https://github.com/Maelstrom6/DiscreteMarkovChains.jl), etc.) in the Julia ecosystem have been implemented to work with Markov chains with a *state space* of integers, those could be efficient in many ways, but they are clumsy to work with a specialized biological types as in
+Several packages (e.g. [MarkovChainsHammer.jl](https://github.com/sandreza/MarkovChainHammer.jl), [DiscreteMarkovChains.jl](https://github.com/Maelstrom6/DiscreteMarkovChains.jl), etc.) in the Julia ecosystem have been implemented to work with Markov chains with a *state space* of integers, those could be efficient in many ways, but they are clumsy to work with a specialized biological types as in
 the `BioJulia` ecosystem. Therefore, in the `GeneFinder` package we
 dedicated some implementations to work with `BioSequence` types so that
 we can expand the functionality in an efficient way (see complete
@@ -16,7 +16,7 @@ transition). This is also considered more specifically as a Discrete
 Markov chain (Axelson-Fisk 2015). The complete set of transitions and
 states of a DNA sequence of alphabet 𝒜.
 
-![DNA sequence as a Markov chain](docs/assets/nucleotide-markov-chain.png)
+![DNA sequence as a Markov chain](/docs/assets/nucleotide-markov-chain.png)
 
 More formally a Markov chain is a random process where each state is a
 random variable ``X_{t}`` where ``t \in T`` is a discrete time in a finite
