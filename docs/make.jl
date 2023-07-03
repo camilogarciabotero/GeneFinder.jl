@@ -9,6 +9,7 @@ makedocs(;
     repo = "https://github.com/camilogarciabotero/GeneFinder.jl/blob/{commit}{path}#{line}",
     sitename = "GeneFinder.jl",
     format = Documenter.HTML(;
+        mathengine=MathJax3(),
         prettyurls = get(ENV, "CI", "false") == "true",
         canonical = "https://camilogarciabotero.github.io/GeneFinder.jl",
         edit_link = "main",
@@ -17,6 +18,7 @@ makedocs(;
         "Home" => "index.md",
         "Finding ORFs" => "simplefinder.md",
         "Towards Markov Chains" => "markovchains.md",
+        "A variant test" => "markovchains-variant.md",
         "API" => "api.md",
     ],
 )
