@@ -19,8 +19,7 @@ transition). This is also considered more specifically as a Discrete
 Markov chain (Axelson-Fisk 2015). The complete set of transitions and
 states of a DNA sequence of alphabet 𝒜.
 
-![DNA sequence as a Markov
-chain](/docs/assets/nucleotide-markov-chain.png)
+![DNA sequence as a Markov chain](images/nucleotide-markov-chain.png)
 
 More formally a Markov chain is a random process where each state is a
 random variable *X*<sub>*t*</sub> where `t \in T` is a discrete time in
@@ -36,8 +35,8 @@ P(X_{t} = j |X_{t−1} = i)
 
 where *i*, *j* ∈ 𝒜 . This property led us to generalize a way to
 calculate the probability of a sequence *T* from a process
-`(X_{1}...X_{T})` where each random variable is a nucleotide from 𝒜 so
-that:
+(*X*<sub>1</sub>...*X*<sub>*T*</sub>) where each random variable is a
+nucleotide from 𝒜 so that:
 
 ``` math
 \begin{align}
@@ -46,15 +45,16 @@ P(X_{1} = i_{1},...,X_{T} = i_{T}) = P(X_{1} = i_{1}) \prod_{t=2}^{T} P(X_{t} = 
 ```
 
 Note that previous equations has two terms, a initial probability
-`P(X_{1} = i_{1})` and the the product of all transitions beginning at
-`t=2`. So, to calculate the initial probability distribution of each of
-the nucleotides of a string $T$ with the alphabet 𝒜 we can first
-calculate the transition probability matrix ℳ̂ out of the frequency count
-of the transitions. In an alphabet 𝒜 we got 4<sup>2</sup> transitions of
-one order, that is the *A**A*, *A**C*, *A**G*, ... which coincides with
-the frequency of the dinucleotides in the sequence. So we can later in
-fact build a 4*x*4 matrix representing all the transitions. For instance
-in a DNA sequence *T* of 24 nucleotides:  
+*P*(*X*<sub>1</sub>=*i*<sub>1</sub>) and the the product of all
+transitions beginning at *t* = 2. So, to calculate the initial
+probability distribution of each of the nucleotides of a string $T$ with
+the alphabet 𝒜 we can first calculate the transition probability matrix
+ℳ̂ out of the frequency count of the transitions. In an alphabet 𝒜 we got
+4<sup>2</sup> transitions of one order, that is the
+{*A**A*, *A**C*, *A**G*, ...} which coincides with the frequency of the
+dinucleotides in the sequence. So we can later in fact build a 4*x*4
+matrix representing all the transitions. For instance in a DNA sequence
+*T* of 24 nucleotides:  
 
 ``` math
 CCTCCCGGACCCTGGGCTCGGGAC
@@ -191,7 +191,7 @@ randseq = getcds(randdnaseq(99))[1] # this will retrieved a random coding ORF
 iscoding(randseq, ECOLICDS, ECOLINOCDS)
 ```
 
-    false
+    true
 
 ## References
 
