@@ -8,14 +8,13 @@ we can expand the functionality in an efficient way (see complete
 
 One important step towards many gene finding algorithms is to represent
 a DNA sequence as a Markov chain. In this representation a DNA sequence
-of a reduced alphabet ``𝒜 = {A,  C,  G ,  T}`` is draw as a four-vertex
-graph, where each letter of 𝒜 is a *state (vertex)* and the edges of the
+of a reduced alphabet ``\mathscr{A} = \{A,  C,  G ,  T \}`` is draw as a four-vertex
+graph, where each letter of ``\mathscr{A}`` is a *state (vertex)* and the edges of the
 graph represent *transitions* from one nucleotide to another in a
 sequence (e.g. ``A \rightarrow T`` represent a single nucleotide to nucleotide
 transition). This is also considered more specifically as a Discrete
 Markov chain (Axelson-Fisk 2015). The complete set of transitions and
-states of a DNA sequence of alphabet 𝒜.
-
+states of a DNA sequence of alphabet ``\mathscr{A}``.
 
 ```@raw html
 <img src="docs/src/assets/logo.svg" height="150" align="center">
@@ -33,9 +32,9 @@ P(X_{t} = j |X_{t−1} = i)
 \end{align}
 ```
 
-where *i*, *j* ∈ 𝒜 . This property led us to generalize a way to
-calculate the probability of a sequence *T* from a process
-`(X_{1}...X_{T})` where each random variable is a nucleotide from 𝒜 so
+where ``i, j \in  \mathscr{A}`` . This property led us to generalize a way to
+calculate the probability of a sequence ``T`` from a process
+``(X_{1}...X_{T})`` where each random variable is a nucleotide from ``\mathscr{A}`` so
 that:
 
 ``` math
