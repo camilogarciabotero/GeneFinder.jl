@@ -18,8 +18,7 @@ states of a DNA sequence of alphabet 𝒜.
 
 
 ```@raw html
-<img src="assets/logo.svg" height="150" align="center">
-<i>DNA sequence as a Markov chain</i>
+<img src="docs/src/assets/logo.svg" height="150" align="center">
 ```
 
 More formally a Markov chain is a random process where each state is a
