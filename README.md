@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/logo.svg" height="150"><br/>
+  <img src="docs/src/assets/logo.svg" height="150"><br/>
   <i>A Gene Finder framework for Julia.</i><br/><br/>
   <a href="https://camilogarciabotero.github.io/GeneFinder.jl/dev/">
     <img src="https://img.shields.io/badge/documentation-online-blue.svg?logo=Julia&logoColor=white">
