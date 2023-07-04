@@ -17,7 +17,9 @@ Markov chain (Axelson-Fisk 2015). The complete set of transitions and
 states of a DNA sequence of alphabet ``\mathscr{A}``.
 
 ```@raw html
-<img src="docs/src/assets/logo.svg" height="150" align="center">
+<center>
+  <img src="/docs/src/assets/logo.svg" height="150" alt="DNA as a Markov chain">
+</center>
 ```
 
 More formally a Markov chain is a random process where each state is a
