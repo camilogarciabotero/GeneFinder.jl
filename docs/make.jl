@@ -13,12 +13,12 @@ makedocs(;
         prettyurls = get(ENV, "CI", "false") == "true",
         canonical = "https://camilogarciabotero.github.io/GeneFinder.jl",
         edit_link = "main",
+        head = "<link rel=\"stylesheet\" href=\"assets/custom.css\">",
     ),
     pages = [
         "Home" => "index.md",
         "Finding ORFs" => "simplefinder.md",
         "Towards Markov Chains" => "markovchains.md",
-        "A variant test" => "markovchains-variant.md",
         "API" => "api.md",
     ],
 )
