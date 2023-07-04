@@ -18,7 +18,7 @@ states of a DNA sequence of alphabet ``\mathscr{A}``.
 
 ```@raw html
 <center>
-  <img src="/docs/src/assets/logo.svg" height="150" alt="DNA as a Markov chain">
+  <img src="assets/nucleotide-markov-chain.png" height="150" alt="DNA as a Markov chain">
 </center>
 ```
 
