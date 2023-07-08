@@ -11,7 +11,7 @@ using BioSequences:
     LongSubSeq,
     @biore_str,
     GeneticCode
-using FASTX: FASTA, sequence
+using FASTX: FASTA, sequence, FASTAReader
 using IterTools: takewhile, iterated
 using MarkovChainHammer.Trajectory: generate
 using PrecompileTools

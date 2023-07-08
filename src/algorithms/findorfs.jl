@@ -61,7 +61,8 @@ function findorfs(sequence::String; alternative_start::Bool = false, min_len::In
 end
 
 @testitem "findorfs test" begin
-    using BioSequences
+    using BioSequences, FASTX
+    cd(@__DIR__)
 
     # A random seq to start
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
@@ -94,7 +95,7 @@ end
     # Pyrodigal predicts 2 genes from this sequence:
     # 1) An alternative start codon (GTG) sequence at 48:347
     # 2) A common start codon sequence at 426:590
-    # On the other hand, the NCBI ORFfinder program predicts 9 ORFS whose length is greater tha 75 nt, from which one has an "outbound" stop
+    # On the other hand, the NCBI ORFfinder program predicts 9 ORFs whose length is greater than 75 nt, from which one has an "outbound" stop
     seq03 = dna"TTCGTCAGTCGTTCTGTTTCATTCAATACGATAGTAATGTATTTTTCGTGCATTTCCGGTGGAATCGTGCCGTCCAGCATAGCCTCCAGATATCCCCTTATAGAGGTCAGAGGGGAACGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGATCATCCTCGGAACGGGCAATTTCGCTTGCCATATAATTCAGACAGGAAGCCAGATAACCGATTTCATCCTCACTATCGACCTGAAATTCATAATGCATATTACCGGCAGCATACTGCTCTGTGGCATGAGTGATCTTCCTCAGAGGAATATATACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAGCAGGAACAGGATTGCCAGGGTGATATAGGAAATATTCAGCAGGTTGTTACAGGATTTCTGAATATCATTCATATCAGTATGGATGACTACATAGCCTTTTACCTTGTAGTTGGAGGTAATGGGAGCAAATACAGTAAGTACATCCGAATCAAAATTACCGAAGAAATCACCAACAATGTAATAGGAGCCGCTGGTTACGGTCGAATCAAAATTCTCAATGACAACCACATTCTCCACATCTAAGGGACTATTGGTATCCAGTACCAGTCGTCCGGAGGGATTGATGATGCGAATCTCGGAATTCAGGTAGACCGCCAGGGAGTCCAGCTGCATTTTAACGGTCTCCAAAGTTGTTTCACTGGTGTACAATCCGCCGGCATAGGTTCCGGCGATCAGGGTTGCTTCGGAATAGAGACTTTCTGCCTTTTCCCGGATCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAACAATGATGAAACCAAATACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAAAGTGTTTTTTTCATAACAAATCCTGCTTTTGGTATGACTTAATTACGTACTTCGAATTTATAGCCGATGCCCCAGATGGTGCTGATCTTCCAGTTGGCATGATCCTTGATCTTCTC"
     orfs03 = findorfs(seq03, min_len=75)
     @test length(orfs03) == 9
@@ -110,4 +111,16 @@ end
         ORF(786:872, '+')
     ]
 
+    # Lambda phage tests
+    # Compare to https://github.com/jonas-fuchs/viral_orf_finder/blob/master/orf_finder.py 
+    # Salisbury and Tsorukas (2019) paper used the Lambda phage genome with 73 CDS and 545 non-CDS ORFs (a total of 618) to compare predictions between several Gene Finder programs
+    # For a minimal length of 75 nt the following ORFs are predicted: 
+    # orf_finder.py --> 885 (222 complete)
+    # findorfs (GeneFinder.jl) --> 885
+    # NCBI ORFfinder --> 375 ORFs
+    # orfipy --> 375 (`orfipy NC_001416.1.fasta --start ATG --include-stop --min 75`)
+    NC_001416 = fasta_to_dna("../../test/data/NC_001416.1.fasta")[1]
+
+    NC_001416_orfs = findorfs(NC_001416, min_len=75)
+    @test length(NC_001416_orfs) == 885
 end
