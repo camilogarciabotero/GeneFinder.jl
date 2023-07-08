@@ -31,13 +31,25 @@ The `findorfs` function takes a LongSequence{DNAAlphabet{4}} sequence and return
 """
 function findorfs(sequence::LongSequence{DNAAlphabet{4}}; alternative_start::Bool = false, min_len::Int64 = 6)
     orfs = Vector{ORF}()
+    reversedseq = reverse_complement(sequence)
+    seqlen = length(sequence)
+
+    frames = Dict(0 => 3, 1 => 1, 2 => 2)
 
     for strand in ['+', '-']
-        seq = strand == '-' ? reverse_complement(sequence) : sequence
+        seq = strand == '-' ? reversedseq : sequence
 
         @inbounds for location in locationiterator(seq; alternative_start)
             if length(location) >= min_len
-                push!(orfs, ORF(location, strand))
+                if strand == '+'
+                    frame = frames[location.start % 3]
+                    push!(orfs, ORF(location, strand, frame))
+                else
+                    newstop = seqlen - location.start + 1
+                    newstart = seqlen - location.stop + 1
+                    frame = frames[newstart % 3]
+                    push!(orfs, ORF(newstart:newstop, strand, frame))
+                end
             end
         end
     end
@@ -123,4 +135,41 @@ end
 
     NC_001416_orfs = findorfs(NC_001416, min_len=75)
     @test length(NC_001416_orfs) == 885
+end
+
+function getorfdna(
+    sequence::LongSequence{DNAAlphabet{4}};
+    alternative_start::Bool = false,
+    min_len::Int64 = 6
+)
+    orfs = findorfs(sequence; alternative_start, min_len)
+    seqs = Vector{LongSubSeq{DNAAlphabet{4}}}()
+    @inbounds for i in orfs
+        if i.strand == '+'
+            push!(seqs, @view sequence[i.location])
+        else
+            newseq = reverse_complement(@view sequence[i.location])
+            push!(seqs, newseq)
+        end
+    end
+    return seqs
+end
+
+function getorfaa(
+    sequence::LongSequence{DNAAlphabet{4}};
+    alternative_start::Bool = false,
+    code::GeneticCode = BioSequences.standard_genetic_code,
+    min_len::Int64 = 6
+)
+    orfs = findorfs(sequence; alternative_start, min_len)
+    aas = Vector{LongSubSeq{AminoAcidAlphabet}}()
+    @inbounds for i in orfs
+        if i.strand == '+'
+            push!(aas, translate(@view sequence[i.location]))
+        else
+            newaa = translate(reverse_complement(@view sequence[i.location]); code)
+            push!(aas, newaa)
+        end
+    end
+    return aas
 end

@@ -43,6 +43,7 @@ The ORF struct represents an open reading frame in a DNA sequence. It has two fi
 struct ORF <: Gene
     location::UnitRange{Int64} # Note that it is also called position for gene struct in GenomicAnotations
     strand::Char
+    frame::Integer # 1, 2, or 3
 end
 
 """
