@@ -10,7 +10,8 @@ using BioSequences:
     LongSequence,
     LongSubSeq,
     @biore_str,
-    GeneticCode
+    GeneticCode,
+    reverse_complement
 using FASTX: FASTA, sequence, FASTAReader
 using IterTools: takewhile, iterated
 using MarkovChainHammer.Trajectory: generate
@@ -22,10 +23,10 @@ include("types.jl")
 export ORF, CDS, Protein, TCM, TPM, TransitionModel
 
 include("algorithms/findorfs.jl")
-export locationiterator, findorfs
+export locationiterator, findorfs, getorfdna, getorfaa
 
-include("findgenes.jl")
-export cdsgenerator, proteingenerator, getcds, getproteins
+#include("findgenes.jl")
+#export cdsgenerator, proteingenerator, getcds, getproteins, getorfdna, getorfaa
 
 include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
@@ -55,11 +56,13 @@ include("extended.jl")
     # Putting some things in `@setup_workload` instead of `@compile_workload` can reduce the size of the
     # precompile file and potentially make loading faster.
     using BioSequences
-    seq = randdnaseq(10^6)
+    seq = randdnaseq(10^3)
     @compile_workload begin
         # all calls in this block will be precompiled, regardless of whether
         # they belong to your package or not (on Julia 1.8 and higher)
         findorfs(seq)
+        getorfdna(seq)
+        getorfaa(seq)
         nucleotidefreqs(seq)
         dinucleotides(seq)
         sequenceprobability(seq, ECOLICDS)

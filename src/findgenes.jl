@@ -66,26 +66,26 @@ This function will take a `LongSequence{DNAAlphabet{4}}` or `String` sequence an
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
-function getcds(
-    sequence::LongSequence{DNAAlphabet{4}};
-    alternative_start::Bool = false,
-    min_len::Int64 = 6
-)
-    cds = Vector{LongSubSeq{DNAAlphabet{4}}}()
-    for i in cdsgenerator(sequence; alternative_start, min_len)
-        push!(cds, i.sequence)
-    end
-    return cds
-end
+# function getcds(
+#     sequence::LongSequence{DNAAlphabet{4}};
+#     alternative_start::Bool = false,
+#     min_len::Int64 = 6
+# )
+#     cds = Vector{LongSubSeq{DNAAlphabet{4}}}()
+#     for i in cdsgenerator(sequence; alternative_start, min_len)
+#         push!(cds, i.sequence)
+#     end
+#     return cds
+# end
 
-function getcds(sequence::String; alternative_start::Bool = false, min_len = 6)
-    dnaseq = LongSequence{DNAAlphabet{4}}(sequence)
-    cds = Vector{LongSubSeq{DNAAlphabet{4}}}()
-    for i in cdsgenerator(dnaseq; alternative_start, min_len)
-        push!(cds, i.sequence)
-    end
-    return cds
-end
+# function getcds(sequence::String; alternative_start::Bool = false, min_len = 6)
+#     dnaseq = LongSequence{DNAAlphabet{4}}(sequence)
+#     cds = Vector{LongSubSeq{DNAAlphabet{4}}}()
+#     for i in cdsgenerator(dnaseq; alternative_start, min_len)
+#         push!(cds, i.sequence)
+#     end
+#     return cds
+# end
 
 
 ## Need to replace by a IO input
