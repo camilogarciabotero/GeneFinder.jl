@@ -1,169 +1,126 @@
 
-# Finding ORFs in `BioSequences`
+## Finding complete and internal (overlapped) ORFs
 
-The first implemented function is `findorfs` a very non-restrictive
-ORF finder function that will catch all ORFs in a dedicated structure.
-Note that this will catch random ORFs not necesarily genes since it has
-no ORFs size or overlapping condition contraints. Thus it might consider
-`aa"M*"` a posible encoding protein from the resulting ORFs.
+The first implemented function is `findorfs` a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
 
-``` julia
+```julia
 using BioSequences, GeneFinder
 
 # > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
 seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
 ```
+Now lest us find the ORFs
 
-    726nt DNA Sequence:
-    AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC
-
-## Finding all ORFs
-
-``` julia
+```julia
 findorfs(seq)
+
+12-element Vector{ORF}:
+ ORF(29:40, '+', 2)
+ ORF(137:145, '+', 2)
+ ORF(164:184, '+', 2)
+ ORF(173:184, '+', 2)
+ ORF(236:241, '+', 2)
+ ORF(248:268, '+', 2)
+ ORF(362:373, '+', 2)
+ ORF(470:496, '+', 2)
+ ORF(551:574, '+', 2)
+ ORF(569:574, '+', 2)
+ ORF(581:601, '+', 2)
+ ORF(695:706, '+', 2)
 ```
 
-    12-element Vector{ORF}:
-     ORF(29:40, '+')
-     ORF(137:145, '+')
-     ORF(164:184, '+')
-     ORF(173:184, '+')
-     ORF(236:241, '+')
-     ORF(248:268, '+')
-     ORF(362:373, '+')
-     ORF(470:496, '+')
-     ORF(551:574, '+')
-     ORF(569:574, '+')
-     ORF(581:601, '+')
-     ORF(695:706, '+')
+Two other functions (`getorfdna` and `getorfaa`) pass the sequence to `findorfs` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or writteen into a file more conviniently using the `FASTX` IO system:
 
-Two other functions (`getcds` and `getproteins`) pass the sequence to
-`findorfs` take the ORFs and act as generators of the sequence, so
-this way the can be `collect`ed in the REPL as an standard output or
-written into a file more conviniently using the `FASTX` IO system:
+```julia
+getorfdna(seq)
 
-## Generting cds and proteins with its ORF
-
-``` julia
-getcds(seq)
+12-element Vector{LongSubSeq{DNAAlphabet{4}}}:
+ ATGCAACCCTGA
+ ATGCGCTGA
+ ATGCGTCGAATGGCACGGTGA
+ ATGGCACGGTGA
+ ATGTGA
+ ATGTGTCCAACGGCAGTCTGA
+ ATGCAACCCTGA
+ ATGCACTGGCTGGTCCTGTCAATCTGA
+ ATGTCACCGCACAAGGCAATGTGA
+ ATGTGA
+ ATGTGTCCAACGGCAGCCTGA
+ ATGCAACCCTGA
 ```
 
-    12-element Vector{LongSequence{DNAAlphabet{4}}}:
-     ATGCAACCCTGA
-     ATGCGCTGA
-     ATGCGTCGAATGGCACGGTGA
-     ATGGCACGGTGA
-     ATGTGA
-     ATGTGTCCAACGGCAGTCTGA
-     ATGCAACCCTGA
-     ATGCACTGGCTGGTCCTGTCAATCTGA
-     ATGTCACCGCACAAGGCAATGTGA
-     ATGTGA
-     ATGTGTCCAACGGCAGCCTGA
-     ATGCAACCCTGA
+```julia
+getorfaa(seq)
 
-``` julia
-getproteins(seq)
+12-element Vector{LongSubSeq{AminoAcidAlphabet}}:
+ MQP*
+ MR*
+ MRRMAR*
+ MAR*
+ M*
+ MCPTAV*
+ MQP*
+ MHWLVLSI*
+ MSPHKAM*
+ M*
+ MCPTAA*
+ MQP*
 ```
 
-    12-element Vector{LongAA}:
-     MQP*
-     MR*
-     MRRMAR*
-     MAR*
-     M*
-     MCPTAV*
-     MQP*
-     MHWLVLSI*
-     MSPHKAM*
-     M*
-     MCPTAA*
-     MQP*
+### Writting cds, proteins fastas, bed and gffs whether from a `LongSeq` or from a external fasta file.
 
-## Combining `FASTX` for reading and writing a fasta record
-
-``` julia
-using FASTX
-
-write_proteins("../../test/data/NC_001884.fasta", "proteins.fasta")
-```
-
-``` bash
-head proteins.fasta
->location=75:113 strand=+
-MKLNLRIGVISN*
->location=144:215 strand=+
-MLTITSFKTILNSSFFFSELDSM*
->location=210:215 strand=+
-M*
->location=237:374 strand=+
-MLFLTVLLSISDCVSCNPLSSFFAFWSSLNSSSNAAFLFKKSSSL*
->location=337:402 strand=+
-MQLFSSKKVHHCKCHFHIYRR*
-```
-
-## Writting cds and proteins fastas
-
-``` julia
+```julia
 write_cds("cds.fasta", seq)
 ```
 
-``` bash
+```bash
 cat cds.fasta
->location=29:40 strand=+
+
+>location=29:40 strand=+ frame=2
 ATGCAACCCTGA
->location=137:145 strand=+
+>location=137:145 strand=+ frame=2
 ATGCGCTGA
->location=164:184 strand=+
+>location=164:184 strand=+ frame=2
 ATGCGTCGAATGGCACGGTGA
->location=173:184 strand=+
+>location=173:184 strand=+ frame=2
 ATGGCACGGTGA
->location=236:241 strand=+
+>location=236:241 strand=+ frame=2
 ATGTGA
->location=248:268 strand=+
+>location=248:268 strand=+ frame=2
 ATGTGTCCAACGGCAGTCTGA
->location=362:373 strand=+
+>location=362:373 strand=+ frame=2
 ATGCAACCCTGA
->location=470:496 strand=+
+>location=470:496 strand=+ frame=2
 ATGCACTGGCTGGTCCTGTCAATCTGA
->location=551:574 strand=+
+>location=551:574 strand=+ frame=2
 ATGTCACCGCACAAGGCAATGTGA
->location=569:574 strand=+
+>location=569:574 strand=+ frame=2
 ATGTGA
->location=581:601 strand=+
+>location=581:601 strand=+ frame=2
 ATGTGTCCAACGGCAGCCTGA
->location=695:706 strand=+
+>location=695:706 strand=+ frame=2
 ATGCAACCCTGA
 ```
 
-``` julia
-write_proteins("proteins.fasta", seq)
+### Combining `FASTX` for reading and writing fastas
+
+```julia
+using FASTX
+
+write_proteins("test/data/NC_001884.fasta", "proteins.fasta")
 ```
 
-``` bash
-cat proteins.fasta
->location=29:40 strand=+
-MQP*
->location=137:145 strand=+
-MR*
->location=164:184 strand=+
-MRRMAR*
->location=173:184 strand=+
-MAR*
->location=236:241 strand=+
-M*
->location=248:268 strand=+
-MCPTAV*
->location=362:373 strand=+
-MQP*
->location=470:496 strand=+
-MHWLVLSI*
->location=551:574 strand=+
-MSPHKAM*
->location=569:574 strand=+
-M*
->location=581:601 strand=+
-MCPTAA*
->location=695:706 strand=+
-MQP*
+```bash
+head proteins.fasta
+
+>location=41:145 strand=- frame=2
+MTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
+>location=41:172 strand=- frame=2
+MVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
+>location=41:454 strand=- frame=2
+MSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
+>location=41:472 strand=- frame=2
+MKTKKQMSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
+>location=41:505 strand=- frame=2
+MLSKYEDDNSNMKTKKQMSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
 ```

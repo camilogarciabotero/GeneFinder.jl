@@ -18,10 +18,6 @@ function write_bed(input::LongSequence{DNAAlphabet{4}}, output::String; alternat
 end
 
 function write_bed(input::String, output::String; alternative_start = false, min_len = 6)
-    # rdr = FASTA.Reader(open(input))
-    # record = first(rdr)
-    # seq = sequence(record)
-    # dnaseq = LongSequence{DNAAlphabet{4}}(seq)
     dnaseq = fasta_to_dna(input)[1]
 
     open(output, "w") do f
@@ -45,21 +41,19 @@ Write a file containing the coding sequences (CDSs) of a given DNA sequence to t
 function write_cds(input::LongSequence{DNAAlphabet{4}}, output::String; alternative_start = false, min_len = 6)
     open(output, "w") do f
         for i in findorfs(input; alternative_start, min_len)
-            write(f, ">location=$(i.location) strand=$(i.strand)\n$(input[i.location])\n")
+            # sequence = i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
+            write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(i.strand == '+' ? dnaseq[i.location] : reverse_complement(@view dnaseq[i.location]))\n")
         end
     end
 end
 
 function write_cds(input::String, output::String; alternative_start = false, min_len = 6)
-    # rdr = FASTA.Reader(open(input))
-    # record = first(rdr)
-    # seq = sequence(record)
-    # dnaseq = LongSequence{DNAAlphabet{4}}(seq)
     dnaseq = fasta_to_dna(input)[1]
 
     open(output, "w") do f
         for i in findorfs(dnaseq; alternative_start, min_len)
-            write(f, ">location=$(i.location) strand=$(i.strand)\n$(input[i.location])\n")
+            # sequence = i.strand == '+' ? dnaseq[i.location] : reverse_complement(@view dnaseq[i.location])
+            write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(i.strand == '+' ? dnaseq[i.location] : reverse_complement(@view dnaseq[i.location]))\n")
         end
     end
 end
@@ -84,7 +78,8 @@ function write_proteins(
 )
     open(output, "w") do f
         for i in findorfs(input; alternative_start, code, min_len)
-            write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(translate(input[i.location]))\n")
+            translation = i.strand == '+' ? translate(dnaseq[i.location]) : translate(reverse_complement(@view dnaseq[i.location]))
+            write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(translation)\n")
         end
     end
 end
@@ -95,15 +90,12 @@ function write_proteins(
     alternative_start = false,
     min_len = 6,
 )
-    # rdr = FASTA.Reader(open(input))
-    # record = first(rdr)
-    # seq = sequence(record)
-    # dnaseq = LongSequence{DNAAlphabet{4}}(seq)
     dnaseq = fasta_to_dna(input)[1]
 
     open(output, "w") do f
         for i in findorfs(dnaseq; alternative_start, min_len)
-            write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(translate(input[i.location]))\n")
+            translation = i.strand == '+' ? translate(dnaseq[i.location]) : translate(reverse_complement(@view dnaseq[i.location]))
+            write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(translation)\n")
         end
     end
 end

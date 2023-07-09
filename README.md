@@ -41,7 +41,7 @@ add GeneFinder
 If you are interested in the cutting edge of the development, please check out
 the master branch to try new features before release.
 
-## Example
+## Finding complete and internal (overlapped) ORFs
 
 The first implemented function is `findorfs` a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
 
@@ -51,32 +51,32 @@ using BioSequences, GeneFinder
 # > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
 seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
 ```
-### Finding all ORFs, the CDS and Proteins
+Now lest us find the ORFs
 
 ```julia
 findorfs(seq)
 
 12-element Vector{ORF}:
- ORF(29:40, '+')
- ORF(137:145, '+')
- ORF(164:184, '+')
- ORF(173:184, '+')
- ORF(236:241, '+')
- ORF(248:268, '+')
- ORF(362:373, '+')
- ORF(470:496, '+')
- ORF(551:574, '+')
- ORF(569:574, '+')
- ORF(581:601, '+')
- ORF(695:706, '+')
+ ORF(29:40, '+', 2)
+ ORF(137:145, '+', 2)
+ ORF(164:184, '+', 2)
+ ORF(173:184, '+', 2)
+ ORF(236:241, '+', 2)
+ ORF(248:268, '+', 2)
+ ORF(362:373, '+', 2)
+ ORF(470:496, '+', 2)
+ ORF(551:574, '+', 2)
+ ORF(569:574, '+', 2)
+ ORF(581:601, '+', 2)
+ ORF(695:706, '+', 2)
 ```
 
-Two other functions (`getcds` and `getproteins`) pass the sequence to `findorfs` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or writteen into a file more conviniently using the `FASTX` IO system:
+Two other functions (`getorfdna` and `getorfaa`) pass the sequence to `findorfs` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or writteen into a file more conviniently using the `FASTX` IO system:
 
 ```julia
-getcds(seq)
+getorfdna(seq)
 
-12-element Vector{LongSequence{DNAAlphabet{4}}}:
+12-element Vector{LongSubSeq{DNAAlphabet{4}}}:
  ATGCAACCCTGA
  ATGCGCTGA
  ATGCGTCGAATGGCACGGTGA
@@ -92,9 +92,9 @@ getcds(seq)
 ```
 
 ```julia
-getproteins(seq)
+getorfaa(seq)
 
-12-element Vector{LongAA}:
+12-element Vector{LongSubSeq{AminoAcidAlphabet}}:
  MQP*
  MR*
  MRRMAR*
@@ -109,7 +109,7 @@ getproteins(seq)
  MQP*
 ```
 
-### Writting cds, proteins fastas and bed file
+### Writting cds, proteins fastas, bed and gffs whether from a `LongSeq` or from a external fasta file.
 
 ```julia
 write_cds("cds.fasta", seq)
@@ -118,84 +118,30 @@ write_cds("cds.fasta", seq)
 ```bash
 cat cds.fasta
 
->location=29:40 strand=+
+>location=29:40 strand=+ frame=2
 ATGCAACCCTGA
->location=137:145 strand=+
+>location=137:145 strand=+ frame=2
 ATGCGCTGA
->location=164:184 strand=+
+>location=164:184 strand=+ frame=2
 ATGCGTCGAATGGCACGGTGA
->location=173:184 strand=+
+>location=173:184 strand=+ frame=2
 ATGGCACGGTGA
->location=236:241 strand=+
+>location=236:241 strand=+ frame=2
 ATGTGA
->location=248:268 strand=+
+>location=248:268 strand=+ frame=2
 ATGTGTCCAACGGCAGTCTGA
->location=362:373 strand=+
+>location=362:373 strand=+ frame=2
 ATGCAACCCTGA
->location=470:496 strand=+
+>location=470:496 strand=+ frame=2
 ATGCACTGGCTGGTCCTGTCAATCTGA
->location=551:574 strand=+
+>location=551:574 strand=+ frame=2
 ATGTCACCGCACAAGGCAATGTGA
->location=569:574 strand=+
+>location=569:574 strand=+ frame=2
 ATGTGA
->location=581:601 strand=+
+>location=581:601 strand=+ frame=2
 ATGTGTCCAACGGCAGCCTGA
->location=695:706 strand=+
+>location=695:706 strand=+ frame=2
 ATGCAACCCTGA
-```
-
-```julia
-write_proteins("proteins.fasta", seq)
-```
-
-```bash
-cat proteins.fasta
-
->location=29:40 strand=+
-MQP*
->location=137:145 strand=+
-MR*
->location=164:184 strand=+
-MRRMAR*
->location=173:184 strand=+
-MAR*
->location=236:241 strand=+
-M*
->location=248:268 strand=+
-MCPTAV*
->location=362:373 strand=+
-MQP*
->location=470:496 strand=+
-MHWLVLSI*
->location=551:574 strand=+
-MSPHKAM*
->location=569:574 strand=+
-M*
->location=581:601 strand=+
-MCPTAA*
->location=695:706 strand=+
-MQP*
-```
-
-```julia
-write_bed("cds.bed", seq)
-```
-
-```
-cat cds.bed
-
-29	40	+
-137	145	+
-164	184	+
-173	184	+
-236	241	+
-248	268	+
-362	373	+
-470	496	+
-551	574	+
-569	574	+
-581	601	+
-695	706	+
 ```
 
 ### Combining `FASTX` for reading and writing fastas
@@ -209,23 +155,92 @@ write_proteins("test/data/NC_001884.fasta", "proteins.fasta")
 ```bash
 head proteins.fasta
 
->location=75:113 strand=+
-MKLNLRIGVISN*
->location=144:215 strand=+
-MLTITSFKTILNSSFFFSELDSM*
->location=210:215 strand=+
-M*
->location=237:374 strand=+
-MLFLTVLLSISDCVSCNPLSSFFAFWSSLNSSSNAAFLFKKSSSL*
->location=337:402 strand=+
-MQLFSSKKVHHCKCHFHIYRR*
+>location=41:145 strand=- frame=2
+MTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
+>location=41:172 strand=- frame=2
+MVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
+>location=41:454 strand=- frame=2
+MSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
+>location=41:472 strand=- frame=2
+MKTKKQMSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
+>location=41:505 strand=- frame=2
+MLSKYEDDNSNMKTKKQMSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
 ```
+
+## Creating transtion models out of DNA sequences
+
+An important step beofore developing several of the gene finding algorithms, consist of having a Markov chain representation of the DNA. To do so, we implement a the `transtion_model` method that will capture the initials and transition probabilities of a DNA sequence (`LongSequence`) and will create a dedicated object storing relevant information of a DNA Makov chain. Here an example:
+
+Let us use the Lambda phage genome and get a random orf from it:
+
+```julia
+lambda = fasta_to_dna("test/data/NC_001416.1.fasta")[1]
+dna = getorfdna(lambda, min_len=75)[1]
+```
+If we translate it, we get a 127aa sequence:
+
+```julia
+translate(dna)
+```
+
+```
+127aa Amino Acid Sequence:
+MAFVLNSSWLEICLAGLPQFFNLPAQLFVLNFSIPFGIP…SFHGQKQRKETTEAKKPRFQHLSFPFFSEGILNKNIKL*
+```
+
+Now supposing I do want to see how transitions are occuring in this ORF sequence, the I can use the `transtion_model` method and tune it to 2nd-order Markov chain:
+
+
+
+```julia
+transition_model(dna, 2)
+```
+
+```
+TransitionModel:
+  - Transition Probability Matrix (Size: 4 × 4):
+    0.246	0.277	0.212	0.266
+    0.244	0.274	0.208	0.274
+    0.248	0.279	0.205	0.268
+    0.214	0.286	0.197	0.303
+  - Initials (Size: 1 × 4):
+    0.237	0.279	0.205	0.279
+  - order: 2
+```
+This is very useful to latter crete HMMs and calculate sequence probability based on a given model, for instance we now have the *E. coli* CDS and No-CDS transition models implemented:
+
+```julia
+ECOLICDS
+```
+```
+TransitionModel:
+  - Transition Probability Matrix (Size: 4 × 4):
+    0.31	0.224	0.199	0.268
+    0.251	0.215	0.313	0.221
+    0.236	0.308	0.249	0.207
+    0.178	0.217	0.338	0.267
+  - Initials (Size: 1 × 4):
+    0.245	0.243	0.273	0.239
+  - order: 1
+```
+
+What is then the probability of the previos random Lambda phage DNA sequence, given this model?
+
+```julia
+sequenceprobability(dna, ECOLICDS)
+```
+
+```
+1.6727204374520648e-230
+```
+
+This is of course not very informative, but we can different criteeria to then classify new ORFs. For a more detailed explanation see the [docs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/markovchains/)
 
 ## Algorithms
 
 ### Coding genes (CDS - ORFs)
 
-- [x] [Simple finder](https://camilogarciabotero.github.io/GeneFinder.jl/dev/simplefinder/)
+- [x] [findorfs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/simplefinder/)
 - [ ] EasyGene
 - [ ] GLIMER3
 - [ ] Prodigal - Pyrodigal
