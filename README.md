@@ -234,7 +234,7 @@ sequenceprobability(dna, ECOLICDS)
 1.6727204374520648e-230
 ```
 
-This is of course not very informative, but we can different criteeria to then classify new ORFs. For a more detailed explanation see the [docs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/markovchains/)
+This is of course not very informative, but we can later use different criteeria to then classify new ORFs. For a more detailed explanation see the [docs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/markovchains/)
 
 ## Algorithms
 
@@ -242,6 +242,7 @@ This is of course not very informative, but we can different criteeria to then c
 
 - [x] [findorfs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/simplefinder/)
 - [ ] EasyGene
+- [ ] ORPHEUS
 - [ ] GLIMER3
 - [ ] Prodigal - Pyrodigal
 - [ ] PHANOTATE
