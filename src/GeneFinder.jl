@@ -25,9 +25,6 @@ export ORF, CDS, Protein, TCM, TPM, TransitionModel
 include("algorithms/findorfs.jl")
 export locationiterator, findorfs, getorfdna, getorfaa
 
-#include("findgenes.jl")
-#export cdsgenerator, proteingenerator, getcds, getproteins, getorfdna, getorfaa
-
 include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 

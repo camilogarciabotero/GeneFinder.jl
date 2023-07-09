@@ -12,7 +12,7 @@ Write BED data to a file.
 function write_bed(input::LongSequence{DNAAlphabet{4}}, output::String; alternative_start = false, min_len = 6)
     open(output, "w") do f
         @simd for i in findorfs(input; alternative_start, min_len)
-            write(f, "$(i.location.start)\t$(i.location.stop)\t$(i.strand)\n")
+            write(f, "$(i.location.start)\t$(i.location.stop)\t$(i.strand)\t$(i.frame)\n")
         end
     end
 end
@@ -25,7 +25,7 @@ function write_bed(input::String, output::String; alternative_start = false, min
 
     open(output, "w") do f
         @simd for i in findorfs(dnaseq; alternative_start, min_len)
-            write(f, "$(i.location.start)\t$(i.location.stop)\t$(i.strand)\n")
+            write(f, "$(i.location.start)\t$(i.location.stop)\t$(i.strand)\t$(i.frame)\n")
         end
     end
 end
@@ -43,8 +43,8 @@ Write a file containing the coding sequences (CDSs) of a given DNA sequence to t
 """
 function write_cds(input::LongSequence{DNAAlphabet{4}}, output::String; alternative_start = false, min_len = 6)
     open(output, "w") do f
-        for i in cdsgenerator(input; alternative_start, min_len)
-            write(f, ">location=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
+        for i in findorfs(input; alternative_start, min_len)
+            write(f, ">location=$(i.location) strand=$(i.strand)\n$(input[i.location])\n")
         end
     end
 end
@@ -56,8 +56,8 @@ function write_cds(input::String, output::String; alternative_start = false, min
     dnaseq = LongSequence{DNAAlphabet{4}}(seq)
 
     open(output, "w") do f
-        for i in cdsgenerator(dnaseq; alternative_start, min_len)
-            write(f, ">location=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
+        for i in findorfs(dnaseq; alternative_start, min_len)
+            write(f, ">location=$(i.location) strand=$(i.strand)\n$(input[i.location])\n")
         end
     end
 end
@@ -81,8 +81,8 @@ function write_proteins(
     min_len = 6,
 )
     open(output, "w") do f
-        for i in proteingenerator(input; alternative_start, code, min_len)
-            write(f, ">location=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
+        for i in findorfs(input; alternative_start, code, min_len)
+            write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(translate(input[i.location]))\n")
         end
     end
 end
@@ -99,8 +99,8 @@ function write_proteins(
     dnaseq = LongSequence{DNAAlphabet{4}}(seq)
 
     open(output, "w") do f
-        for i in proteingenerator(dnaseq; alternative_start, min_len)
-            write(f, ">location=$(i.orf.location) strand=$(i.orf.strand)\n$(i.sequence)\n")
+        for i in findorfs(dnaseq; alternative_start, min_len)
+            write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(translate(input[i.location]))\n")
         end
     end
 end
@@ -128,7 +128,7 @@ function write_gff(input::String, output::String; alternative_start = false, min
             id = string("ORF", lpad(string(index), 5, "0"))
             write(
                 f,
-                "Chr\tGeneFinder\tORF\t$(i.location.start)\t$(i.location.stop)\t.\t$(i.strand)\t.\tid=$(id);name=$(id)\n",
+                "Chr\tGeneFinder\tORF\t$(i.location.start)\t$(i.location.stop)\t$(i.strand)\t$(i.frame)\tid=$(id);name=$(id)\n",
             )
         end
     end
@@ -141,7 +141,7 @@ function write_gff(input::LongSequence{DNAAlphabet{4}}, output::String; alternat
             id = string("ORF", lpad(string(index), 5, "0"))
             write(
                 f,
-                "Chr\tGeneFinder\tORF\t$(i.location.start)\t$(i.location.stop)\t.\t$(i.strand)\t.\tid=$(id);name=$(id)\n",
+                "Chr\tGeneFinder\tORF\t$(i.location.start)\t$(i.location.stop)\t$(i.strand)\t$(i.frame)\tID=$(id);Name=$(id)\n",
             )
         end
     end
