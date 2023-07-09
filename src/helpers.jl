@@ -10,6 +10,12 @@ function fasta_to_dna(input::AbstractString)::Vector{LongSequence{DNAAlphabet{4}
     end
 end
 
+# function gff_to_dna(input::AbstractString)
+#     GFF3.Reader(open(input)) do reader
+#         return [record for record in reader]
+#     end
+# end
+
 """
     nucleotidefreqs(sequence::LongSequence{DNAAlphabet{4}}) -> Dict{DNA, Float64}
 
