@@ -18,10 +18,11 @@ function write_bed(input::LongSequence{DNAAlphabet{4}}, output::String; alternat
 end
 
 function write_bed(input::String, output::String; alternative_start = false, min_len = 6)
-    rdr = FASTA.Reader(open(input))
-    record = first(rdr)
-    seq = sequence(record)
-    dnaseq = LongSequence{DNAAlphabet{4}}(seq)
+    # rdr = FASTA.Reader(open(input))
+    # record = first(rdr)
+    # seq = sequence(record)
+    # dnaseq = LongSequence{DNAAlphabet{4}}(seq)
+    dnaseq = fasta_to_dna(input)[1]
 
     open(output, "w") do f
         @simd for i in findorfs(dnaseq; alternative_start, min_len)
@@ -50,10 +51,11 @@ function write_cds(input::LongSequence{DNAAlphabet{4}}, output::String; alternat
 end
 
 function write_cds(input::String, output::String; alternative_start = false, min_len = 6)
-    rdr = FASTA.Reader(open(input))
-    record = first(rdr)
-    seq = sequence(record)
-    dnaseq = LongSequence{DNAAlphabet{4}}(seq)
+    # rdr = FASTA.Reader(open(input))
+    # record = first(rdr)
+    # seq = sequence(record)
+    # dnaseq = LongSequence{DNAAlphabet{4}}(seq)
+    dnaseq = fasta_to_dna(input)[1]
 
     open(output, "w") do f
         for i in findorfs(dnaseq; alternative_start, min_len)
@@ -93,10 +95,11 @@ function write_proteins(
     alternative_start = false,
     min_len = 6,
 )
-    rdr = FASTA.Reader(open(input))
-    record = first(rdr)
-    seq = sequence(record)
-    dnaseq = LongSequence{DNAAlphabet{4}}(seq)
+    # rdr = FASTA.Reader(open(input))
+    # record = first(rdr)
+    # seq = sequence(record)
+    # dnaseq = LongSequence{DNAAlphabet{4}}(seq)
+    dnaseq = fasta_to_dna(input)[1]
 
     open(output, "w") do f
         for i in findorfs(dnaseq; alternative_start, min_len)
@@ -117,10 +120,7 @@ Write GFF data to a file.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
 function write_gff(input::String, output::String; alternative_start = false, min_len = 6)
-    rdr = FASTA.Reader(open(input))
-    record = first(rdr)
-    seq = sequence(record)
-    dnaseq = LongSequence{DNAAlphabet{4}}(seq)
+    dnaseq = fasta_to_dna(input)[1]
 
     open(output, "w") do f
         write(f, "##gff-version 3\n##sequence-region Chr 1 $(length(dnaseq))\n")
@@ -128,7 +128,7 @@ function write_gff(input::String, output::String; alternative_start = false, min
             id = string("ORF", lpad(string(index), 5, "0"))
             write(
                 f,
-                "Chr\tGeneFinder\tORF\t$(i.location.start)\t$(i.location.stop)\t$(i.strand)\t$(i.frame)\tid=$(id);name=$(id)\n",
+                "Chr\t.\tORF\t$(i.location.start)\t$(i.location.stop)\t.\t$(i.strand)\t.\tID=$(id);Name=$(id);Frame=$(i.frame)\n",
             )
         end
     end
@@ -136,13 +136,15 @@ end
 
 function write_gff(input::LongSequence{DNAAlphabet{4}}, output::String; alternative_start = false, min_len = 6)
     open(output, "w") do f
-        write(f, "##gff-version 3\n##sequence-region Chr 1 $(length(input))\n")
+        write(f, "##gff-version 3\n##sequence-region Chr 1 $(length(input))\n") 
         for (index, i) in enumerate(findorfs(input; alternative_start, min_len))
             id = string("ORF", lpad(string(index), 5, "0"))
             write(
                 f,
-                "Chr\tGeneFinder\tORF\t$(i.location.start)\t$(i.location.stop)\t$(i.strand)\t$(i.frame)\tID=$(id);Name=$(id)\n",
+                "Chr\t.\tORF\t$(i.location.start)\t$(i.location.stop)\t.\t$(i.strand)\t.\tID=$(id);Name=$(id);Frame=$(i.frame)\n",
             )
         end
     end
 end
+
+# Chr needs to be changed to fit well on IGV 
