@@ -1,21 +1,24 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Finding ORFs · GeneFinder.jl</title><script data-outdated-warner src="../assets/warner.js"></script><link rel="canonical" href="https://camilogarciabotero.github.io/GeneFinder.jl/simplefinder/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.svg" alt="GeneFinder.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">GeneFinder.jl</a></span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li class="is-active"><a class="tocitem" href>Finding ORFs</a><ul class="internal"><li><a class="tocitem" href="#Finding-all-ORFs"><span>Finding all ORFs</span></a></li><li><a class="tocitem" href="#Generting-cds-and-proteins-with-its-ORF"><span>Generting cds and proteins with its ORF</span></a></li><li><a class="tocitem" href="#Combining-FASTX-for-reading-and-writing-a-fasta-record"><span>Combining <code>FASTX</code> for reading and writing a fasta record</span></a></li><li><a class="tocitem" href="#Writting-cds-and-proteins-fastas"><span>Writting cds and proteins fastas</span></a></li></ul></li><li><a class="tocitem" href="../markovchains/">Towards Markov Chains</a></li><li><a class="tocitem" href="../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Finding ORFs</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Finding ORFs</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/docs/src/simplefinder.md#" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Finding-ORFs-in-BioSequences"><a class="docs-heading-anchor" href="#Finding-ORFs-in-BioSequences">Finding ORFs in <code>BioSequences</code></a><a id="Finding-ORFs-in-BioSequences-1"></a><a class="docs-heading-anchor-permalink" href="#Finding-ORFs-in-BioSequences" title="Permalink"></a></h1><p>The first implemented function is <code>findorfs</code> a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider <code>aa&quot;M*&quot;</code> a posible encoding protein from the resulting ORFs.</p><pre><code class="language-julia hljs">using BioSequences, GeneFinder
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Finding ORFs · GeneFinder.jl</title><script data-outdated-warner src="../assets/warner.js"></script><link rel="canonical" href="https://camilogarciabotero.github.io/GeneFinder.jl/simplefinder/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.svg" alt="GeneFinder.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">GeneFinder.jl</a></span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li class="is-active"><a class="tocitem" href>Finding ORFs</a><ul class="internal"><li><a class="tocitem" href="#Finding-complete-and-internal-(overlapped)-ORFs"><span>Finding complete and internal (overlapped) ORFs</span></a></li></ul></li><li><a class="tocitem" href="../markovchains/">Towards Markov Chains</a></li><li><a class="tocitem" href="../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Finding ORFs</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Finding ORFs</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/docs/src/simplefinder.md#" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h2 id="Finding-complete-and-internal-(overlapped)-ORFs"><a class="docs-heading-anchor" href="#Finding-complete-and-internal-(overlapped)-ORFs">Finding complete and internal (overlapped) ORFs</a><a id="Finding-complete-and-internal-(overlapped)-ORFs-1"></a><a class="docs-heading-anchor-permalink" href="#Finding-complete-and-internal-(overlapped)-ORFs" title="Permalink"></a></h2><p>The first implemented function is <code>findorfs</code> a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider <code>aa&quot;M*&quot;</code> a posible encoding protein from the resulting ORFs.</p><pre><code class="language-julia hljs">using BioSequences, GeneFinder
 
 # &gt; 180195.SAMN03785337.LFLS01000089 -&gt; finds only 1 gene in Prodigal (from Pyrodigal tests)
-seq = dna&quot;AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC&quot;</code></pre><pre><code class="nohighlight hljs">726nt DNA Sequence:
-AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC</code></pre><h2 id="Finding-all-ORFs"><a class="docs-heading-anchor" href="#Finding-all-ORFs">Finding all ORFs</a><a id="Finding-all-ORFs-1"></a><a class="docs-heading-anchor-permalink" href="#Finding-all-ORFs" title="Permalink"></a></h2><pre><code class="language-julia hljs">findorfs(seq)</code></pre><pre><code class="nohighlight hljs">12-element Vector{ORF}:
- ORF(29:40, &#39;+&#39;)
- ORF(137:145, &#39;+&#39;)
- ORF(164:184, &#39;+&#39;)
- ORF(173:184, &#39;+&#39;)
- ORF(236:241, &#39;+&#39;)
- ORF(248:268, &#39;+&#39;)
- ORF(362:373, &#39;+&#39;)
- ORF(470:496, &#39;+&#39;)
- ORF(551:574, &#39;+&#39;)
- ORF(569:574, &#39;+&#39;)
- ORF(581:601, &#39;+&#39;)
- ORF(695:706, &#39;+&#39;)</code></pre><p>Two other functions (<code>getcds</code> and <code>getproteins</code>) pass the sequence to <code>findorfs</code> take the ORFs and act as generators of the sequence, so this way the can be <code>collect</code>ed in the REPL as an standard output or written into a file more conviniently using the <code>FASTX</code> IO system:</p><h2 id="Generting-cds-and-proteins-with-its-ORF"><a class="docs-heading-anchor" href="#Generting-cds-and-proteins-with-its-ORF">Generting cds and proteins with its ORF</a><a id="Generting-cds-and-proteins-with-its-ORF-1"></a><a class="docs-heading-anchor-permalink" href="#Generting-cds-and-proteins-with-its-ORF" title="Permalink"></a></h2><pre><code class="language-julia hljs">getcds(seq)</code></pre><pre><code class="nohighlight hljs">12-element Vector{LongSequence{DNAAlphabet{4}}}:
+seq = dna&quot;AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC&quot;</code></pre><p>Now lest us find the ORFs</p><pre><code class="language-julia hljs">findorfs(seq)
+
+12-element Vector{ORF}:
+ ORF(29:40, &#39;+&#39;, 2)
+ ORF(137:145, &#39;+&#39;, 2)
+ ORF(164:184, &#39;+&#39;, 2)
+ ORF(173:184, &#39;+&#39;, 2)
+ ORF(236:241, &#39;+&#39;, 2)
+ ORF(248:268, &#39;+&#39;, 2)
+ ORF(362:373, &#39;+&#39;, 2)
+ ORF(470:496, &#39;+&#39;, 2)
+ ORF(551:574, &#39;+&#39;, 2)
+ ORF(569:574, &#39;+&#39;, 2)
+ ORF(581:601, &#39;+&#39;, 2)
+ ORF(695:706, &#39;+&#39;, 2)</code></pre><p>Two other functions (<code>getorfdna</code> and <code>getorfaa</code>) pass the sequence to <code>findorfs</code> take the ORFs and act as generators of the sequence, so this way the can be <code>collect</code>ed in the REPL as an standard output or writteen into a file more conviniently using the <code>FASTX</code> IO system:</p><pre><code class="language-julia hljs">getorfdna(seq)
+
+12-element Vector{LongSubSeq{DNAAlphabet{4}}}:
  ATGCAACCCTGA
  ATGCGCTGA
  ATGCGTCGAATGGCACGGTGA
@@ -27,7 +30,9 @@ AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAG
  ATGTCACCGCACAAGGCAATGTGA
  ATGTGA
  ATGTGTCCAACGGCAGCCTGA
- ATGCAACCCTGA</code></pre><pre><code class="language-julia hljs">getproteins(seq)</code></pre><pre><code class="nohighlight hljs">12-element Vector{LongAA}:
+ ATGCAACCCTGA</code></pre><pre><code class="language-julia hljs">getorfaa(seq)
+
+12-element Vector{LongSubSeq{AminoAcidAlphabet}}:
  MQP*
  MR*
  MRRMAR*
@@ -39,64 +44,42 @@ AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAG
  MSPHKAM*
  M*
  MCPTAA*
- MQP*</code></pre><h2 id="Combining-FASTX-for-reading-and-writing-a-fasta-record"><a class="docs-heading-anchor" href="#Combining-FASTX-for-reading-and-writing-a-fasta-record">Combining <code>FASTX</code> for reading and writing a fasta record</a><a id="Combining-FASTX-for-reading-and-writing-a-fasta-record-1"></a><a class="docs-heading-anchor-permalink" href="#Combining-FASTX-for-reading-and-writing-a-fasta-record" title="Permalink"></a></h2><pre><code class="language-julia hljs">using FASTX
+ MQP*</code></pre><h3 id="Writting-cds,-proteins-fastas,-bed-and-gffs-whether-from-a-LongSeq-or-from-a-external-fasta-file."><a class="docs-heading-anchor" href="#Writting-cds,-proteins-fastas,-bed-and-gffs-whether-from-a-LongSeq-or-from-a-external-fasta-file.">Writting cds, proteins fastas, bed and gffs whether from a <code>LongSeq</code> or from a external fasta file.</a><a id="Writting-cds,-proteins-fastas,-bed-and-gffs-whether-from-a-LongSeq-or-from-a-external-fasta-file.-1"></a><a class="docs-heading-anchor-permalink" href="#Writting-cds,-proteins-fastas,-bed-and-gffs-whether-from-a-LongSeq-or-from-a-external-fasta-file." title="Permalink"></a></h3><pre><code class="language-julia hljs">write_cds(&quot;cds.fasta&quot;, seq)</code></pre><pre><code class="language-bash hljs">cat cds.fasta
 
-write_proteins(&quot;../../test/data/NC_001884.fasta&quot;, &quot;proteins.fasta&quot;)</code></pre><pre><code class="language-bash hljs">head proteins.fasta
-&gt;location=75:113 strand=+
-MKLNLRIGVISN*
-&gt;location=144:215 strand=+
-MLTITSFKTILNSSFFFSELDSM*
-&gt;location=210:215 strand=+
-M*
-&gt;location=237:374 strand=+
-MLFLTVLLSISDCVSCNPLSSFFAFWSSLNSSSNAAFLFKKSSSL*
-&gt;location=337:402 strand=+
-MQLFSSKKVHHCKCHFHIYRR*</code></pre><h2 id="Writting-cds-and-proteins-fastas"><a class="docs-heading-anchor" href="#Writting-cds-and-proteins-fastas">Writting cds and proteins fastas</a><a id="Writting-cds-and-proteins-fastas-1"></a><a class="docs-heading-anchor-permalink" href="#Writting-cds-and-proteins-fastas" title="Permalink"></a></h2><pre><code class="language-julia hljs">write_cds(&quot;cds.fasta&quot;, seq)</code></pre><pre><code class="language-bash hljs">cat cds.fasta
-&gt;location=29:40 strand=+
+&gt;location=29:40 strand=+ frame=2
 ATGCAACCCTGA
-&gt;location=137:145 strand=+
+&gt;location=137:145 strand=+ frame=2
 ATGCGCTGA
-&gt;location=164:184 strand=+
+&gt;location=164:184 strand=+ frame=2
 ATGCGTCGAATGGCACGGTGA
-&gt;location=173:184 strand=+
+&gt;location=173:184 strand=+ frame=2
 ATGGCACGGTGA
-&gt;location=236:241 strand=+
+&gt;location=236:241 strand=+ frame=2
 ATGTGA
-&gt;location=248:268 strand=+
+&gt;location=248:268 strand=+ frame=2
 ATGTGTCCAACGGCAGTCTGA
-&gt;location=362:373 strand=+
+&gt;location=362:373 strand=+ frame=2
 ATGCAACCCTGA
-&gt;location=470:496 strand=+
+&gt;location=470:496 strand=+ frame=2
 ATGCACTGGCTGGTCCTGTCAATCTGA
-&gt;location=551:574 strand=+
+&gt;location=551:574 strand=+ frame=2
 ATGTCACCGCACAAGGCAATGTGA
-&gt;location=569:574 strand=+
+&gt;location=569:574 strand=+ frame=2
 ATGTGA
-&gt;location=581:601 strand=+
+&gt;location=581:601 strand=+ frame=2
 ATGTGTCCAACGGCAGCCTGA
-&gt;location=695:706 strand=+
-ATGCAACCCTGA</code></pre><pre><code class="language-julia hljs">write_proteins(&quot;proteins.fasta&quot;, seq)</code></pre><pre><code class="language-bash hljs">cat proteins.fasta
-&gt;location=29:40 strand=+
-MQP*
-&gt;location=137:145 strand=+
-MR*
-&gt;location=164:184 strand=+
-MRRMAR*
-&gt;location=173:184 strand=+
-MAR*
-&gt;location=236:241 strand=+
-M*
-&gt;location=248:268 strand=+
-MCPTAV*
-&gt;location=362:373 strand=+
-MQP*
-&gt;location=470:496 strand=+
-MHWLVLSI*
-&gt;location=551:574 strand=+
-MSPHKAM*
-&gt;location=569:574 strand=+
-M*
-&gt;location=581:601 strand=+
-MCPTAA*
-&gt;location=695:706 strand=+
-MQP*</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../markovchains/">Towards Markov Chains »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.24 on <span class="colophon-date" title="Saturday 8 July 2023 20:50">Saturday 8 July 2023</span>. Using Julia version 1.9.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+&gt;location=695:706 strand=+ frame=2
+ATGCAACCCTGA</code></pre><h3 id="Combining-FASTX-for-reading-and-writing-fastas"><a class="docs-heading-anchor" href="#Combining-FASTX-for-reading-and-writing-fastas">Combining <code>FASTX</code> for reading and writing fastas</a><a id="Combining-FASTX-for-reading-and-writing-fastas-1"></a><a class="docs-heading-anchor-permalink" href="#Combining-FASTX-for-reading-and-writing-fastas" title="Permalink"></a></h3><pre><code class="language-julia hljs">using FASTX
+
+write_proteins(&quot;test/data/NC_001884.fasta&quot;, &quot;proteins.fasta&quot;)</code></pre><pre><code class="language-bash hljs">head proteins.fasta
+
+&gt;location=41:145 strand=- frame=2
+MTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
+&gt;location=41:172 strand=- frame=2
+MVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
+&gt;location=41:454 strand=- frame=2
+MSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
+&gt;location=41:472 strand=- frame=2
+MKTKKQMSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
+&gt;location=41:505 strand=- frame=2
+MLSKYEDDNSNMKTKKQMSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../markovchains/">Towards Markov Chains »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.24 on <span class="colophon-date" title="Sunday 9 July 2023 13:30">Sunday 9 July 2023</span>. Using Julia version 1.9.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
