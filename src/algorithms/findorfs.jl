@@ -36,19 +36,14 @@ function findorfs(sequence::LongSequence{DNAAlphabet{4}}; alternative_start::Boo
 
     frames = Dict(0 => 3, 1 => 1, 2 => 2)
 
-    for strand in ['+', '-']
+    for strand in ('+', '-')
         seq = strand == '-' ? reversedseq : sequence
 
         @inbounds for location in locationiterator(seq; alternative_start)
             if length(location) >= min_len
-                if strand == '+'
-                    frame = frames[location.start % 3]
-                    push!(orfs, ORF(location, strand, frame))
-                else
-                    newstop = seqlen - location.start + 1
-                    newstart = seqlen - location.stop + 1
-                    frame = frames[newstart % 3]
-                    push!(orfs, ORF(newstart:newstop, strand, frame))
+                if length(location) >= min_len
+                    frame = strand == '+' ? frames[location.start % 3] : frames[(seqlen - location.stop + 1) % 3]
+                    push!(orfs, ORF(strand == '+' ? location : (seqlen - location.stop + 1):(seqlen - location.start + 1), strand, frame))
                 end
             end
         end
@@ -80,7 +75,7 @@ end
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
     orfs01 = findorfs(seq01)
 
-    @test orfs01 == [ORF(1:33, '+'), ORF(4:33, '+'), ORF(8:22, '+'), ORF(12:29, '+'), ORF(16:33, '+')]
+    @test orfs01 == [ORF(1:33, '+', 1), ORF(4:33, '+', 1), ORF(8:22, '+', 2), ORF(12:29, '+', 3), ORF(16:33, '+', 1)]
     @test length(orfs01) == 5
 
     # > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
@@ -88,20 +83,7 @@ end
     orfs02 = findorfs(seq02)
 
     @test length(orfs02) == 12
-    @test orfs02 == [
-        ORF(29:40, '+'),
-        ORF(137:145, '+'),
-        ORF(164:184, '+'),
-        ORF(173:184, '+'),
-        ORF(236:241, '+'),
-        ORF(248:268, '+'),
-        ORF(362:373, '+'),
-        ORF(470:496, '+'),
-        ORF(551:574, '+'),
-        ORF(569:574, '+'),
-        ORF(581:601, '+'),
-        ORF(695:706, '+'),
-    ]
+    @test orfs02 == [ORF(29:40, '+', 2), ORF(137:145, '+', 2), ORF(164:184, '+', 2), ORF(173:184, '+', 2), ORF(236:241, '+', 2), ORF(248:268, '+', 2), ORF(362:373, '+', 2), ORF(470:496, '+', 2), ORF(551:574, '+', 2), ORF(569:574, '+', 2), ORF(581:601, '+', 2), ORF(695:706, '+', 2)]
 
     # From pyrodigal issue #13 link: https://github.com/althonos/pyrodigal/blob/1f939b0913b48dbaa55d574b20e124f1b8323825/pyrodigal/tests/test_orf_finder.py#L271
     # Pyrodigal predicts 2 genes from this sequence:
@@ -111,18 +93,8 @@ end
     seq03 = dna"TTCGTCAGTCGTTCTGTTTCATTCAATACGATAGTAATGTATTTTTCGTGCATTTCCGGTGGAATCGTGCCGTCCAGCATAGCCTCCAGATATCCCCTTATAGAGGTCAGAGGGGAACGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGATCATCCTCGGAACGGGCAATTTCGCTTGCCATATAATTCAGACAGGAAGCCAGATAACCGATTTCATCCTCACTATCGACCTGAAATTCATAATGCATATTACCGGCAGCATACTGCTCTGTGGCATGAGTGATCTTCCTCAGAGGAATATATACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAGCAGGAACAGGATTGCCAGGGTGATATAGGAAATATTCAGCAGGTTGTTACAGGATTTCTGAATATCATTCATATCAGTATGGATGACTACATAGCCTTTTACCTTGTAGTTGGAGGTAATGGGAGCAAATACAGTAAGTACATCCGAATCAAAATTACCGAAGAAATCACCAACAATGTAATAGGAGCCGCTGGTTACGGTCGAATCAAAATTCTCAATGACAACCACATTCTCCACATCTAAGGGACTATTGGTATCCAGTACCAGTCGTCCGGAGGGATTGATGATGCGAATCTCGGAATTCAGGTAGACCGCCAGGGAGTCCAGCTGCATTTTAACGGTCTCCAAAGTTGTTTCACTGGTGTACAATCCGCCGGCATAGGTTCCGGCGATCAGGGTTGCTTCGGAATAGAGACTTTCTGCCTTTTCCCGGATCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAACAATGATGAAACCAAATACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAAAGTGTTTTTTTCATAACAAATCCTGCTTTTGGTATGACTTAATTACGTACTTCGAATTTATAGCCGATGCCCCAGATGGTGCTGATCTTCCAGTTGGCATGATCCTTGATCTTCTC"
     orfs03 = findorfs(seq03, min_len=75)
     @test length(orfs03) == 9
-    @test orfs03 ==  [
-        ORF(17:106, '-'), # This is not predicted in ORFdinder
-        ORF(37:156, '+'),
-        ORF(249:347, '+'),
-        ORF(266:343, '-'),
-        ORF(426:590, '+'), # This occured in Pyrodigal
-        ORF(565:657, '+'),
-        ORF(710:799, '-'),
-        ORF(725:799, '-'),
-        ORF(786:872, '+')
-    ]
-
+    @test orfs03 == [ORF(37:156, '+', 1), ORF(194:268, '-', 2), ORF(194:283, '-', 2), ORF(249:347, '+', 3), ORF(426:590, '+', 3), ORF(565:657, '+', 1), ORF(650:727, '-', 2), ORF(786:872, '+', 3), ORF(887:976, '-', 2)]
+                                                                                                           #|->  This occured in Pyrodigal
     # Lambda phage tests
     # Compare to https://github.com/jonas-fuchs/viral_orf_finder/blob/master/orf_finder.py 
     # Salisbury and Tsorukas (2019) paper used the Lambda phage genome with 73 CDS and 545 non-CDS ORFs (a total of 618) to compare predictions between several Gene Finder programs
@@ -137,6 +109,23 @@ end
     @test length(NC_001416_orfs) == 885
 end
 
+
+"""
+    getorfdna(input::LongSequence{DNAAlphabet{4}}, output::String; kwargs...)
+    getorfdna(input::String; kwargs...) ## for strings per se
+
+This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and identifies the open reading frames (ORFs) using the `findorfs()` function. The function then extracts the DNA sequence of each ORF and stores it in a `Vector{LongSubSeq{DNAAlphabet{4}}}`.
+
+# Arguments
+
+- `input`: The input sequence as a `LongSequence{DNAAlphabet{4}}` or `String`.
+
+# Keyword Arguments
+
+- `alternative_start::Bool=false`: If set to `true`, the function considers alternative start codons when searching for ORFs. This increases the execution time by approximately 3x.
+- `min_len::Int64=6`: The minimum length of the allowed ORF. By default, it allows ORFs that can encode at least one amino acid (e.g., `aa"M*"`).
+
+"""
 function getorfdna(
     sequence::LongSequence{DNAAlphabet{4}};
     alternative_start::Bool = false,
@@ -155,6 +144,32 @@ function getorfdna(
     return seqs
 end
 
+@testitem "getorfdna tests" begin
+    using BioSequences
+
+    seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+    orfseqs = getorfdna(seq01)
+
+    @test length(orfseqs) == 5
+    @test orfseqs[1] == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
+end
+
+"""
+    getorfaa(input::LongSequence{DNAAlphabet{4}}; kwargs...)
+    getorfaa(input::String; kwargs...) ## for strings per se
+
+This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and identifies the open reading frames (ORFs) using the `findorfs()` function. The function then translates each ORF into an amino acid sequence and stores it in a `Vector{LongSubSeq{AminoAcidAlphabet}}`.
+
+# Arguments
+
+- `input`: The input sequence as a `LongSequence{DNAAlphabet{4}}` or `String`.
+
+# Keyword Arguments
+
+- `alternative_start::Bool=false`: If set to `true`, the function considers alternative start codons when searching for ORFs. This increases the execution time by approximately 3x.
+- `min_len::Int64=6`: The minimum length of the allowed ORF. By default, it allows ORFs that can encode at least one amino acid (e.g., `aa"M*"`).
+
+"""
 function getorfaa(
     sequence::LongSequence{DNAAlphabet{4}};
     alternative_start::Bool = false,
@@ -172,4 +187,14 @@ function getorfaa(
         end
     end
     return aas
+end
+
+@testitem "getorfaa tests" begin
+    using BioSequences
+
+    seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+    aas = getorfaa(seq01)
+
+    @test length(aas) == 5
+    @test aas[1] == aa"MMHACMLVTS*"
 end
