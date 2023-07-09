@@ -8,7 +8,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [0.0.21]
 
-- Improve the orf prediction and add frame information
+- Improve the orf prediction and add frame information see [#20](https://github.com/camilogarciabotero/GeneFinder.jl/pull/20)
 
 ## [0.0.20]
 
