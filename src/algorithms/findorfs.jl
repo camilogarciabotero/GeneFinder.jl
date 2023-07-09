@@ -54,13 +54,20 @@ end
 function findorfs(sequence::String; alternative_start::Bool = false, min_len::Int64 = 6)
     sequence = LongSequence{DNAAlphabet{4}}(sequence)
     orfs = Vector{ORF}()
+    reversedseq = reverse_complement(sequence)
+    seqlen = length(sequence)
 
-    for strand in ['+', '-']
-        seq = strand == '-' ? reverse_complement(sequence) : sequence
+    frames = Dict(0 => 3, 1 => 1, 2 => 2)
+
+    for strand in ('+', '-')
+        seq = strand == '-' ? reversedseq : sequence
 
         @inbounds for location in locationiterator(seq; alternative_start)
             if length(location) >= min_len
-                push!(orfs, ORF(location, strand))
+                if length(location) >= min_len
+                    frame = strand == '+' ? frames[location.start % 3] : frames[(seqlen - location.stop + 1) % 3]
+                    push!(orfs, ORF(strand == '+' ? location : (seqlen - location.stop + 1):(seqlen - location.start + 1), strand, frame))
+                end
             end
         end
     end
