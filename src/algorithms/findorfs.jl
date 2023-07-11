@@ -1,11 +1,22 @@
 """
     locationiterator(sequence::LongSequence{DNAAlphabet{4}}; alternative_start::Bool=false)
 
-This is an iterator function that uses regular expressions to search the entire CDS (instead of start and stop codons) in a `LongSequence{DNAAlphabet{4}}` sequence.
-    It uses an anonymous function that will find the first regularly expressed CDS. Then using this anonymous function it creates an iterator that will apply it until there is no other CDS.
+This is an iterator function that uses regular expressions to search the entire ORF (instead of start and stop codons) in a `LongSequence{DNAAlphabet{4}}` sequence.
+    It uses an anonymous function that will find the first regularly expressed ORF. Then using this anonymous function it creates an iterator that will apply it until there is no other CDS.
+
+!!! note
+    As a note of the implementation we want to expand on how the ORFs are found:
+
+    The expression `(?:[N]{3})*?` serves as the boundary between the start and stop codons. Within this expression, the character class `[N]{3}` captures exactly three occurrences of any character (representing nucleotides using IUPAC codes). This portion functions as the regular codon matches. Since it is enclosed within a non-capturing group `(?:)` and followed by `*?`, it allows for the matching of intermediate codons, but with a preference for the smallest number of repetitions. 
+    
+    In summary, the regular expression `ATG(?:[N]{3})*?T(AG|AA|GA)` identifies patterns that start with "ATG," followed by any number of three-character codons (represented by "N" in the IUPAC code), and ends with a stop codon "TAG," "TAA," or "TGA." This pattern is commonly used to identify potential protein-coding regions within genetic sequences.
+
+    See more about the discussion [here](https://discourse.julialang.org/t/how-to-improve-a-generator-to-be-more-memory-efficient-when-it-is-collected/92932/8?u=camilogarciabotero)
+
 """
 function locationiterator(sequence::LongSequence{DNAAlphabet{4}}; alternative_start::Bool = false)
     regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
+    # regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG([N]{3})*T(AG|AA|GA)?"dna
     finder(x) = findfirst(regorf, sequence, first(x) + 1) # + 3
     itr = takewhile(!isnothing, iterated(finder, findfirst(regorf, sequence)))
     return itr
@@ -41,10 +52,8 @@ function findorfs(sequence::LongSequence{DNAAlphabet{4}}; alternative_start::Boo
 
         @inbounds for location in locationiterator(seq; alternative_start)
             if length(location) >= min_len
-                if length(location) >= min_len
-                    frame = strand == '+' ? frames[location.start % 3] : frames[(seqlen - location.stop + 1) % 3]
-                    push!(orfs, ORF(strand == '+' ? location : (seqlen - location.stop + 1):(seqlen - location.start + 1), strand, frame))
-                end
+                frame = strand == '+' ? frames[location.start % 3] : frames[(seqlen - location.stop + 1) % 3]
+                push!(orfs, ORF(strand == '+' ? location : (seqlen - location.stop + 1):(seqlen - location.start + 1), strand, frame))
             end
         end
     end
@@ -64,10 +73,8 @@ function findorfs(sequence::String; alternative_start::Bool = false, min_len::In
 
         @inbounds for location in locationiterator(seq; alternative_start)
             if length(location) >= min_len
-                if length(location) >= min_len
-                    frame = strand == '+' ? frames[location.start % 3] : frames[(seqlen - location.stop + 1) % 3]
-                    push!(orfs, ORF(strand == '+' ? location : (seqlen - location.stop + 1):(seqlen - location.start + 1), strand, frame))
-                end
+                frame = strand == '+' ? frames[location.start % 3] : frames[(seqlen - location.stop + 1) % 3]
+                push!(orfs, ORF(strand == '+' ? location : (seqlen - location.stop + 1):(seqlen - location.start + 1), strand, frame))
             end
         end
     end

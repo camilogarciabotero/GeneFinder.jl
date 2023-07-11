@@ -10,17 +10,17 @@ using BioSequences:
     LongSequence,
     LongSubSeq,
     @biore_str,
+    @dna_str,
     GeneticCode,
     reverse_complement
 using FASTX: FASTA, sequence, FASTAReader
 using IterTools: takewhile, iterated
-using MarkovChainHammer.Trajectory: generate
-using PrecompileTools
+using PrecompileTools: @setup_workload, @compile_workload
 using StatsBase: countmap
 using TestItems: @testitem
 
 include("types.jl")
-export ORF, CDS, Protein, TCM, TPM, TransitionModel
+export ORF
 
 include("algorithms/findorfs.jl")
 export locationiterator, findorfs, getorfdna, getorfaa
@@ -28,24 +28,8 @@ export locationiterator, findorfs, getorfdna, getorfaa
 include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
 
-include("biomarkovchains.jl")
-export transition_count_matrix,
-    transition_probability_matrix, 
-    initial_distribution, 
-    transition_model,
-    sequenceprobability,
-    iscoding,
-    perronfrobenius,
-    generatednaseq
-
-include("helpers.jl")
-export fasta_to_dna,
-    nucleotidefreqs,
-    dinucleotides,
-    hasprematurestop
-
-include("models/models.jl")
-export ECOLICDS, ECOLINOCDS
+include("utils.jl")
+export fasta_to_dna, nucleotidefreqs
 
 include("extended.jl")
 
@@ -53,17 +37,13 @@ include("extended.jl")
     # Putting some things in `@setup_workload` instead of `@compile_workload` can reduce the size of the
     # precompile file and potentially make loading faster.
     using BioSequences
-    seq = randdnaseq(10^3)
+    seq = randdnaseq(99)
     @compile_workload begin
         # all calls in this block will be precompiled, regardless of whether
         # they belong to your package or not (on Julia 1.8 and higher)
         findorfs(seq)
         getorfdna(seq)
         getorfaa(seq)
-        nucleotidefreqs(seq)
-        dinucleotides(seq)
-        sequenceprobability(seq, ECOLICDS)
-        perronfrobenius(seq)
     end
 end
 

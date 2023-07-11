@@ -5,6 +5,9 @@ DocTestSetup = quote
 end
 ```
 
+```@index
+```
+
 ```@autodocs
 Modules = [GeneFinder]
 ```
