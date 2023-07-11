@@ -6,6 +6,10 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.10...main)
 
+## [0.0.22]
+
+- Decoupling Markov chains to its own repo plus some general cleaning.
+
 ## [0.0.21]
 
 - Improve the orf prediction and add frame information see [#20](https://github.com/camilogarciabotero/GeneFinder.jl/pull/20)
