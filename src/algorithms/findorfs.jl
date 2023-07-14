@@ -16,7 +16,7 @@ This is an iterator function that uses regular expressions to search the entire 
 """
 function locationiterator(sequence::LongSequence{DNAAlphabet{4}}; alternative_start::Bool = false)
     regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
-    # regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG([N]{3})*T(AG|AA|GA)?"dna
+    # regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG([N]{3})*T(AG|AA|GA)?"dna # an attempt to make it non PCRE non-determinsitic
     finder(x) = findfirst(regorf, sequence, first(x) + 1) # + 3
     itr = takewhile(!isnothing, iterated(finder, findfirst(regorf, sequence)))
     return itr
