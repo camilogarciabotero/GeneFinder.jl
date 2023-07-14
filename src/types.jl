@@ -11,7 +11,7 @@ const LongNucOrView{N} = Union{LongSequence{<:NucleicAcidAlphabet{N}},LongSubSeq
         stop::Int64
         score::Float64
         strand::Char
-        frame::'.'
+        frame::'.' 
         attribute::
     end
 
@@ -25,7 +25,7 @@ struct GeneFeatures
     stop::Int64
     score::Float64
     strand::Char
-    frame::String
+    frame::Int8 # But maybe a Union to allow empty when reading a GFF? 
     attribute::String # Should be a Dict perhaps
 end
 
@@ -46,7 +46,6 @@ struct ORF <: Gene
     strand::Char
     frame::Integer # 1, 2, or 3
 end
-
 
 ##### The following implementation is from https://biojulia.dev/BioSequences.jl/stable/interfaces/ #####
 # """
