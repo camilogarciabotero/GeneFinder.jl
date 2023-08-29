@@ -19,7 +19,7 @@ This is the main Gene struct, based on the fields that could be found in a GFF3,
     The idea is correct the frame and attributes that will have something like a possible list (id=Char;name=;locus_tag).
     The `write` and `get` functions should have a dedicated method for this struct.
 """
-struct GeneFeatures
+struct GeneFeatures <: Gene
     seqname::String
     start::Int64
     stop::Int64

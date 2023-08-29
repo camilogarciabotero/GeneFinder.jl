@@ -22,8 +22,6 @@ function locationiterator(sequence::LongSequence{DNAAlphabet{4}}; alternative_st
     return itr
 end
 
-## todo check BioSequences.captured
-
 """
     findorfs(sequence::LongSequence{DNAAlphabet{4}}; kwargs...)::Vector{ORF}
     findorfs(sequence::String; kwargs...)::Vector{ORF} 
