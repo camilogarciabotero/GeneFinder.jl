@@ -1,24 +1,19 @@
 <p align="center">
   <img src="docs/src/assets/logo.svg" height="150"><br/>
-  <i>A Gene Finder framework for Julia.</i><br/><br/>
-  <a href="https://camilogarciabotero.github.io/GeneFinder.jl/dev/">
-    <img src="https://img.shields.io/badge/documentation-online-blue.svg?logo=Julia&logoColor=white">
-  </a>
-  <a href="https://github.com/camilogarciabotero/GeneFinder.jl/releases/latest"> 
-  <img src="https://img.shields.io/github/release/camilogarciabotero/GeneFinder.jl.svg">
-    <a href="https://doi.org/10.5281/zenodo.7519184"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7519184.svg" alt="DOI"></a>
-  </a>
-  <a href="https://app.travis-ci.com/camilogarciabotero/GeneFinder.jl">
-    <img src="https://app.travis-ci.com/camilogarciabotero/GeneFinder.jl.svg?branch=main">
-   <a href="https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml">
-    <img src="https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml/badge.svg">
-  <a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-green.svg">
-  </a>
-  <a href="https://www.repostatus.org/#wip">
-    <img src="https://www.repostatus.org/badges/latest/wip.svg">
-  </a>
+  <i>A Gene Finder framework for Julia.</i>
 </p>
+
+<div align="center">
+
+[![Documentation](https://img.shields.io/badge/documentation-online-blue.svg?logo=Julia&logoColor=white)](https://camilogarciabotero.github.io/GeneFinder.jl/dev/)
+[![Release](https://img.shields.io/github/release/camilogarciabotero/GeneFinder.jl.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/releases/latest)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7519184.svg)](https://doi.org/10.5281/zenodo.7519184)<br>
+[![GitHub Actions](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE)
+[![Repo Status](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/GeneFinder&label=downloads)](https://pkgs.genieframework.com?packages=GeneFinder)
+
+</div>
 
 ***
 
