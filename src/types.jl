@@ -11,7 +11,7 @@ const LongNucOrView{N} = Union{LongSequence{<:NucleicAcidAlphabet{N}},LongSubSeq
         stop::Int64
         score::Float64
         strand::Char
-        frame::'.'
+        frame::'.' 
         attribute::
     end
 
@@ -19,13 +19,13 @@ This is the main Gene struct, based on the fields that could be found in a GFF3,
     The idea is correct the frame and attributes that will have something like a possible list (id=Char;name=;locus_tag).
     The `write` and `get` functions should have a dedicated method for this struct.
 """
-struct GeneFeatures
+struct GeneFeatures <: Gene
     seqname::String
     start::Int64
     stop::Int64
     score::Float64
     strand::Char
-    frame::String
+    frame::Int8 # But maybe a Union to allow empty when reading a GFF? 
     attribute::String # Should be a Dict perhaps
 end
 
@@ -45,39 +45,6 @@ struct ORF <: Gene
     location::UnitRange{Int64} # Note that it is also called position for gene struct in GenomicAnotations
     strand::Char
     frame::Integer # 1, 2, or 3
-end
-
-"""
-    struct CDS
-        orf::ORF
-        sequence::LongSubSeq{DNAAlphabet{4}}
-    end
-
-The `CDS` struct represents a coding sequence in a DNA sequence. It has three fields:
-
-- `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) displaying the location of the ORF and the associate strand: forward ('+') or reverse ('-')
-- `sequence`: a `LongSequence{DNAAlphabet{4}}` sequence representing the actual sequence of the CDS
-"""
-struct CDS <: Gene
-    sequence::LongSubSeq{DNAAlphabet{4}} #LongSequence{DNAAlphabet{4}}
-    orf::ORF
-end
-
-"""
-    struct Protein
-        sequence::LongSequence
-        orf::ORF
-    end
-    
-Similarly to the `CDS` struct, the `Protein` struct represents a encoded protein sequence in a DNA sequence. 
-    It has three fields:
-
-- `orf`: is the basic composible type (`location::UnitRange{Int}`, strand::Char) of the sequence
-- `sequence`: a `LongSequence` sequence representing the actual translated sequence of the CDS
-"""
-struct Protein <: Gene
-    sequence::LongSubSeq{AminoAcidAlphabet}
-    orf::ORF
 end
 
 ##### The following implementation is from https://biojulia.dev/BioSequences.jl/stable/interfaces/ #####

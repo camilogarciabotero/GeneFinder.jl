@@ -1,7 +1,7 @@
 name = "GeneFinder"
 uuid = "2bc6ee46-2158-4f5a-a720-91cb2d7cee64"
 authors = ["Camilo García"]
-version = "0.0.22"
+version = "0.0.3"
 
 [deps]
 BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
@@ -13,14 +13,14 @@ TestItemRunner = "f8b46487-2199-4994-9208-9a1283c18c0a"
 TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
 [compat]
-BioSequences = "3"
+BioSequences = ">= 3"
 FASTX = "2"
 IterTools = "1.4"
 PrecompileTools = "1"
 StatsBase = "0.34.0"
 TestItemRunner = "0.2"
 TestItems = "0.1"
-julia = "1.9.0"
+julia = ">= 1.6.0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
