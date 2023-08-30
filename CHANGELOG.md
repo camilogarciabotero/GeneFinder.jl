@@ -7,7 +7,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 ## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.10...main)
 
 
-## [0.0.30]
+## [0.0.23]
 
 - Some cleanups and docs updates
 ## [0.0.22]
