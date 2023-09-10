@@ -1,5 +1,6 @@
 module GeneFinder
 
+using Automa: RegExp
 using BioSequences:
     DNA,
     NucleicAcidAlphabet,

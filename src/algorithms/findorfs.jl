@@ -14,7 +14,7 @@ This is an iterator function that uses regular expressions to search the entire 
     See more about the discussion [here](https://discourse.julialang.org/t/how-to-improve-a-generator-to-be-more-memory-efficient-when-it-is-collected/92932/8?u=camilogarciabotero)
 
 """
-function locationiterator(sequence::LongSequence{DNAAlphabet{4}}; alternative_start::Bool = false)
+function locationiterator(sequence::LongNucOrView{N}; alternative_start::Bool = false) where N
     regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
     # regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG([N]{3})*T(AG|AA|GA)?"dna # an attempt to make it non PCRE non-determinsitic
     finder(x) = findfirst(regorf, sequence, first(x) + 1) # + 3
@@ -40,7 +40,7 @@ The `findorfs` function takes a LongSequence{DNAAlphabet{4}} sequence and return
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
-function findorfs(sequence::LongSequence{DNAAlphabet{4}}; alternative_start::Bool = false, min_len::Int64 = 6)
+function findorfs(sequence::LongNucOrView{N}; alternative_start::Bool = false, min_len::Int64 = 6) where N
     orfs = Vector{ORF}()
     reversedseq = reverse_complement(sequence)
     seqlen = length(sequence)
@@ -141,10 +141,10 @@ This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and id
 
 """
 function getorfdna(
-    sequence::LongSequence{DNAAlphabet{4}};
+    sequence::LongNucOrView{N};
     alternative_start::Bool = false,
     min_len::Int64 = 6
-)
+) where N
     orfs = findorfs(sequence; alternative_start, min_len)
     seqs = Vector{LongSubSeq{DNAAlphabet{4}}}()
     @inbounds for i in orfs
@@ -185,11 +185,11 @@ This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and id
 
 """
 function getorfaa(
-    sequence::LongSequence{DNAAlphabet{4}};
+    sequence::LongNucOrView{N};
     alternative_start::Bool = false,
     code::GeneticCode = BioSequences.standard_genetic_code,
     min_len::Int64 = 6
-)
+) where N
     orfs = findorfs(sequence; alternative_start, min_len)
     aas = Vector{LongSubSeq{AminoAcidAlphabet}}()
     @inbounds for i in orfs
