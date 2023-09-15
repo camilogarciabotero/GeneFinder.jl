@@ -8,6 +8,8 @@ end
 ```@index
 ```
 
+***
+
 ```@autodocs
 Modules = [GeneFinder]
 ```
