@@ -1,8 +1,12 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.2"
+julia_version = "1.9.3"
 manifest_format = "2.0"
+<<<<<<< HEAD
 project_hash = "3ceb0d6a5b2dc07dc211cb96fbd69382b1e14a15"
+=======
+project_hash = "90542a933a63e92bc7dd9c7727fccb1a20cad5a7"
+>>>>>>> 9d307232ed30ffd9f4068b96bbbcb2a924e814e6
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -13,9 +17,9 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
 [[deps.Automa]]
 deps = ["PrecompileTools", "TranscodingStreams"]
-git-tree-sha1 = "bd653e59ff94b0dd47d58e0cdb50d862885a1b23"
+git-tree-sha1 = "9dca1d1632c4f7fb320b8a766feb6b8290695f7c"
 uuid = "67c07d97-cdcb-5c2c-af73-a7f9c32a568b"
-version = "1.0.0"
+version = "1.0.1"
 
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"

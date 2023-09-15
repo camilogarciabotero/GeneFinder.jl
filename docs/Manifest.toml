@@ -1,19 +1,31 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.0"
+julia_version = "1.9.3"
 manifest_format = "2.0"
-project_hash = "ae9c23967e629c7622ca20ba07303a0687b72242"
+project_hash = "6d443a9953f0c7dc7584294d2ada98dae33c8c16"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
 uuid = "a4c015fc-c6ff-483c-b24f-f7ea428134e9"
 version = "0.0.1"
 
+[[deps.AbstractTrees]]
+git-tree-sha1 = "faa260e4cb5aba097a73fab382dd4b5819d8ec8c"
+uuid = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
+version = "0.4.4"
+
+[[deps.ArgTools]]
+uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
+version = "1.1.1"
+
+[[deps.Artifacts]]
+uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
+
 [[deps.Automa]]
-deps = ["Printf", "ScanByte", "TranscodingStreams"]
-git-tree-sha1 = "d50976f217489ce799e366d9561d56a98a30d7fe"
+deps = ["PrecompileTools", "TranscodingStreams"]
+git-tree-sha1 = "9dca1d1632c4f7fb320b8a766feb6b8290695f7c"
 uuid = "67c07d97-cdcb-5c2c-af73-a7f9c32a568b"
-version = "0.8.2"
+version = "1.0.1"
 
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
@@ -26,9 +38,9 @@ version = "0.1.2"
 
 [[deps.BioSequences]]
 deps = ["BioSymbols", "PrecompileTools", "Random", "Twiddle"]
-git-tree-sha1 = "83dcdecdf02067ef75deba50c168e9657bb73392"
+git-tree-sha1 = "6cf406ea0d5bc901eabe55fca609007bce2db026"
 uuid = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
-version = "3.1.4"
+version = "3.1.5"
 
 [[deps.BioSymbols]]
 deps = ["PrecompileTools"]
@@ -36,24 +48,48 @@ git-tree-sha1 = "e32a61f028b823a172c75e26865637249bb30dff"
 uuid = "3c28c6f8-a34d-59c4-9654-267d177fcfa9"
 version = "5.1.3"
 
+[[deps.BitFlags]]
+git-tree-sha1 = "43b1a4a8f797c1cddadf60499a8a077d4af2cd2d"
+uuid = "d1d4a3ce-64b1-5f1a-9ba4-7e7e69966f35"
+version = "0.1.7"
+
+[[deps.CodecZlib]]
+deps = ["TranscodingStreams", "Zlib_jll"]
+git-tree-sha1 = "02aa26a4cf76381be7f66e020a3eddeb27b0a092"
+uuid = "944b1d66-785c-5afd-91f1-9de20f533193"
+version = "0.7.2"
+
 [[deps.Compat]]
 deps = ["UUIDs"]
-git-tree-sha1 = "7a60c856b9fa189eb34f5f8a6f6b5529b7942957"
+git-tree-sha1 = "e460f044ca8b99be31d35fe54fc33a5c33dd8ed7"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.6.1"
+version = "4.9.0"
+weakdeps = ["Dates", "LinearAlgebra"]
 
     [deps.Compat.extensions]
     CompatLinearAlgebraExt = "LinearAlgebra"
 
-    [deps.Compat.weakdeps]
-    Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-    LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+[[deps.CompilerSupportLibraries_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
+version = "1.0.5+0"
+
+[[deps.ConcurrentUtilities]]
+deps = ["Serialization", "Sockets"]
+git-tree-sha1 = "5372dbbf8f0bdb8c700db5367132925c0771ef7e"
+uuid = "f0e56b4a-5159-44fe-b623-3e5288b988bb"
+version = "2.2.1"
+
+[[deps.DataAPI]]
+git-tree-sha1 = "8da84edb865b0b5b0100c0666a9bc9a0b71c553c"
+uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
+version = "1.15.0"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "d1fff3a548102f48987a52a2e0d114fa97d730f0"
+git-tree-sha1 = "3dbd312d370723b6bb43ba9d02fc36abade4518d"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.18.13"
+version = "0.18.15"
 
 [[deps.Dates]]
 deps = ["Printf"]
@@ -66,32 +102,46 @@ uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 version = "0.9.3"
 
 [[deps.Documenter]]
-deps = ["ANSIColoredPrinters", "Base64", "Dates", "DocStringExtensions", "IOCapture", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "REPL", "Test", "Unicode"]
-git-tree-sha1 = "58fea7c536acd71f3eef6be3b21c0df5f3df88fd"
+deps = ["ANSIColoredPrinters", "AbstractTrees", "Base64", "Dates", "DocStringExtensions", "Downloads", "IOCapture", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "MarkdownAST", "Pkg", "PrecompileTools", "REPL", "RegistryInstances", "SHA", "Test", "Unicode"]
+git-tree-sha1 = "43a76dfac223a3a0d7d33443f7c9154fe75bb264"
 uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-version = "0.27.24"
+version = "1.0.0"
+
+[[deps.Downloads]]
+deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
+uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+version = "1.6.0"
+
+[[deps.ExceptionUnwrapping]]
+deps = ["Test"]
+git-tree-sha1 = "e90caa41f5a86296e014e148ee061bd6c3edec96"
+uuid = "460bff9d-24e4-43bc-9d9f-a8973cb893f4"
+version = "0.1.9"
 
 [[deps.FASTX]]
-deps = ["Automa", "BioGenerics", "PrecompileTools", "ScanByte", "StringViews", "TranscodingStreams"]
-git-tree-sha1 = "310745fd82f021e85d0fb7f10632ea0c7eceeff6"
+deps = ["Automa", "BioGenerics", "PrecompileTools", "StringViews", "TranscodingStreams"]
+git-tree-sha1 = "c05aede7ef67db392d9c779257e709de72504447"
 uuid = "c2308a5c-f048-11e8-3e8a-31650f418d12"
-version = "2.1.0"
+version = "2.1.3"
 weakdeps = ["BioSequences"]
 
     [deps.FASTX.extensions]
     BioSequencesExt = "BioSequences"
 
+[[deps.FileWatching]]
+uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
+
 [[deps.GeneFinder]]
-deps = ["BioSequences", "BioSymbols", "FASTX", "GenomicFeatures", "IterTools", "PrecompileTools", "TestItemRunner", "TestItems"]
+deps = ["BioSequences", "FASTX", "IterTools", "PrecompileTools", "StatsBase", "TestItemRunner", "TestItems"]
 path = ".."
 uuid = "2bc6ee46-2158-4f5a-a720-91cb2d7cee64"
-version = "0.0.15"
+version = "0.0.23"
 
-[[deps.GenomicFeatures]]
-deps = ["BioGenerics", "DataStructures", "IntervalTrees"]
-git-tree-sha1 = "720844f71f118dd2ab4898a89b2b4feca7730d81"
-uuid = "899a7d2d-5c61-547b-bef9-6698a8d05446"
-version = "3.0.0"
+[[deps.HTTP]]
+deps = ["Base64", "CodecZlib", "ConcurrentUtilities", "Dates", "ExceptionUnwrapping", "Logging", "LoggingExtras", "MbedTLS", "NetworkOptions", "OpenSSL", "Random", "SimpleBufferStream", "Sockets", "URIs", "UUIDs"]
+git-tree-sha1 = "19e974eced1768fb46fd6020171f2cec06b1edb5"
+uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+version = "1.9.15"
 
 [[deps.IOCapture]]
 deps = ["Logging", "Random"]
@@ -103,15 +153,21 @@ version = "0.2.3"
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
-[[deps.IntervalTrees]]
-git-tree-sha1 = "dc3b97bb5c9cb7c437f74027309f2c2f09a82aaf"
-uuid = "524e6230-43b7-53ae-be76-1e9e4d08d11b"
-version = "1.1.0"
+[[deps.IrrationalConstants]]
+git-tree-sha1 = "630b497eafcc20001bba38a4651b327dcfc491d2"
+uuid = "92d709cd-6900-40b7-9082-c6be49f344b6"
+version = "0.2.2"
 
 [[deps.IterTools]]
 git-tree-sha1 = "4ced6667f9974fc5c5943fa5e2ef1ca43ea9e450"
 uuid = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
 version = "1.8.0"
+
+[[deps.JLLWrappers]]
+deps = ["Artifacts", "Preferences"]
+git-tree-sha1 = "7e5d6779a1e09a36db2a7b6cff50942a0a7d0fca"
+uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
+version = "1.5.0"
 
 [[deps.JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]
@@ -119,43 +175,149 @@ git-tree-sha1 = "31e996f0a15c7b280ba9f76636b3ff9e2ae58c9a"
 uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 version = "0.21.4"
 
+[[deps.LazilyInitializedFields]]
+git-tree-sha1 = "410fe4739a4b092f2ffe36fcb0dcc3ab12648ce1"
+uuid = "0e77f7df-68c5-4e49-93ce-4cd80f5598bf"
+version = "1.2.1"
+
+[[deps.LibCURL]]
+deps = ["LibCURL_jll", "MozillaCACerts_jll"]
+uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
+version = "0.6.3"
+
+[[deps.LibCURL_jll]]
+deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
+uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
+version = "7.84.0+0"
+
 [[deps.LibGit2]]
 deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 
+[[deps.LibSSH2_jll]]
+deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
+uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
+version = "1.10.2+0"
+
 [[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
+[[deps.LinearAlgebra]]
+deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
+uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+
+[[deps.LiveServer]]
+deps = ["HTTP", "LoggingExtras", "MIMEs", "Pkg", "Sockets", "Test"]
+git-tree-sha1 = "24d05efe53436b22a42bf2ae459f47c48b0c2603"
+uuid = "16fef848-5104-11e9-1b77-fb7a48bbb589"
+version = "1.2.7"
+
+[[deps.LogExpFunctions]]
+deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
+git-tree-sha1 = "7d6dd4e9212aebaeed356de34ccf262a3cd415aa"
+uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
+version = "0.3.26"
+
+    [deps.LogExpFunctions.extensions]
+    LogExpFunctionsChainRulesCoreExt = "ChainRulesCore"
+    LogExpFunctionsChangesOfVariablesExt = "ChangesOfVariables"
+    LogExpFunctionsInverseFunctionsExt = "InverseFunctions"
+
+    [deps.LogExpFunctions.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+    ChangesOfVariables = "9e997f8a-9a97-42d5-a9f1-ce6bfc15e2c0"
+    InverseFunctions = "3587e190-3f89-42d0-90ee-14403ec27112"
+
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
+
+[[deps.LoggingExtras]]
+deps = ["Dates", "Logging"]
+git-tree-sha1 = "0d097476b6c381ab7906460ef1ef1638fbce1d91"
+uuid = "e6f89c97-d47a-5376-807f-9c37f3926c36"
+version = "1.0.2"
+
+[[deps.MIMEs]]
+git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
+uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
+version = "0.1.4"
 
 [[deps.Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
+[[deps.MarkdownAST]]
+deps = ["AbstractTrees", "Markdown"]
+git-tree-sha1 = "e8513266815200c0c8f522d6d44ffb5e9b366ae4"
+uuid = "d0879d2d-cac2-40c8-9cee-1863dc0c7391"
+version = "0.1.1"
+
+[[deps.MbedTLS]]
+deps = ["Dates", "MbedTLS_jll", "MozillaCACerts_jll", "Random", "Sockets"]
+git-tree-sha1 = "03a9b9718f5682ecb107ac9f7308991db4ce395b"
+uuid = "739be429-bea8-5141-9913-cc70e7f3736d"
+version = "1.1.7"
+
+[[deps.MbedTLS_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
+version = "2.28.2+0"
+
+[[deps.Missings]]
+deps = ["DataAPI"]
+git-tree-sha1 = "f66bdc5de519e8f8ae43bdc598782d35a25b1272"
+uuid = "e1d29d7a-bbdc-5cf2-9ac0-f12de2c33e28"
+version = "1.1.0"
+
 [[deps.Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
+
+[[deps.MozillaCACerts_jll]]
+uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
+version = "2022.10.11"
 
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
 
+[[deps.OpenBLAS_jll]]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
+uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
+version = "0.3.21+4"
+
+[[deps.OpenSSL]]
+deps = ["BitFlags", "Dates", "MozillaCACerts_jll", "OpenSSL_jll", "Sockets"]
+git-tree-sha1 = "51901a49222b09e3743c65b8847687ae5fc78eb2"
+uuid = "4d8831e6-92b7-49fb-bdf8-b643e874388c"
+version = "1.4.1"
+
+[[deps.OpenSSL_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "e78db7bd5c26fc5a6911b50a47ee302219157ea8"
+uuid = "458c3c95-2e84-50aa-8efc-19380b2a3a95"
+version = "3.0.10+0"
+
 [[deps.OrderedCollections]]
-git-tree-sha1 = "d321bf2de576bf25ec4d3e4360faca399afca282"
+git-tree-sha1 = "2e73fe17cac3c62ad1aebe70d44c963c3cfdc3e3"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
-version = "1.6.0"
+version = "1.6.2"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "a5aef8d4a6e8d81f171b2bd4be5265b01384c74c"
+git-tree-sha1 = "716e24b21538abc91f6205fd1d8363f39b442851"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.5.10"
+version = "2.7.2"
+
+[[deps.Pkg]]
+deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
+uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+version = "1.9.2"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
-git-tree-sha1 = "9673d39decc5feece56ef3940e5dafba15ba0f81"
+git-tree-sha1 = "03b4c25b43cb84cee5c90aa9b5ea0a78fd848d2f"
 uuid = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
-version = "1.1.2"
+version = "1.2.0"
 
 [[deps.Preferences]]
 deps = ["TOML"]
@@ -175,47 +337,83 @@ uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 deps = ["SHA", "Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
+[[deps.RegistryInstances]]
+deps = ["LazilyInitializedFields", "Pkg", "TOML", "Tar"]
+git-tree-sha1 = "ffd19052caf598b8653b99404058fce14828be51"
+uuid = "2792f1a3-b283-48e8-9a74-f99dce5104f3"
+version = "0.1.0"
+
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
 
-[[deps.SIMD]]
-deps = ["PrecompileTools"]
-git-tree-sha1 = "0e270732477b9e551d884e6b07e23bb2ec947790"
-uuid = "fdea26ae-647d-5447-a871-4b548cad5224"
-version = "3.4.5"
-
-[[deps.ScanByte]]
-deps = ["Libdl", "SIMD"]
-git-tree-sha1 = "2436b15f376005e8790e318329560dcc67188e84"
-uuid = "7b38b023-a4d7-4c5e-8d43-3f3097f304eb"
-version = "0.3.3"
-
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
+
+[[deps.SimpleBufferStream]]
+git-tree-sha1 = "874e8867b33a00e784c8a7e4b60afe9e037b74e1"
+uuid = "777ac1f9-54b0-4bf8-805c-2214025038e7"
+version = "1.1.0"
 
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
+[[deps.SortingAlgorithms]]
+deps = ["DataStructures"]
+git-tree-sha1 = "c60ec5c62180f27efea3ba2908480f8055e17cee"
+uuid = "a2af1166-a08f-5f64-846c-94a0d3cef48c"
+version = "1.1.1"
+
+[[deps.SparseArrays]]
+deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
+uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+
+[[deps.Statistics]]
+deps = ["LinearAlgebra", "SparseArrays"]
+uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+version = "1.9.0"
+
+[[deps.StatsAPI]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "1ff449ad350c9c4cbc756624d6f8a8c3ef56d3ed"
+uuid = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
+version = "1.7.0"
+
+[[deps.StatsBase]]
+deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
+git-tree-sha1 = "75ebe04c5bed70b91614d684259b661c9e6274a4"
+uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+version = "0.34.0"
+
 [[deps.StringViews]]
-git-tree-sha1 = "dcb71a103d35d73a9354e646e392a79500bc35dc"
+git-tree-sha1 = "f7b06677eae2571c888fd686ba88047d8738b0e3"
 uuid = "354b36f9-a18e-4713-926e-db85100087ba"
-version = "1.3.1"
+version = "1.3.3"
+
+[[deps.SuiteSparse_jll]]
+deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
+uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
+version = "5.10.1+6"
 
 [[deps.TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 version = "1.0.3"
 
+[[deps.Tar]]
+deps = ["ArgTools", "SHA"]
+uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
+version = "1.10.0"
+
 [[deps.Test]]
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[deps.TestItemRunner]]
-deps = ["TOML", "Test", "TestItems"]
-git-tree-sha1 = "724a24752f42117bf071df3fad3d4d0ea780d30e"
+deps = ["Pkg", "TOML", "Test", "TestItems", "UUIDs"]
+git-tree-sha1 = "7351f1f7389e048ce974b2c176513b817c94b15f"
 uuid = "f8b46487-2199-4994-9208-9a1283c18c0a"
-version = "0.2.1"
+version = "0.2.2"
 
 [[deps.TestItems]]
 git-tree-sha1 = "8621ba2637b49748e2dc43ba3d84340be2938022"
@@ -233,9 +431,34 @@ git-tree-sha1 = "29509c4862bfb5da9e76eb6937125ab93986270a"
 uuid = "7200193e-83a8-5a55-b20d-5d36d44a0795"
 version = "1.1.2"
 
+[[deps.URIs]]
+git-tree-sha1 = "b7a5e99f24892b6824a954199a45e9ffcc1c70f0"
+uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
+version = "1.5.0"
+
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+
+[[deps.Zlib_jll]]
+deps = ["Libdl"]
+uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
+version = "1.2.13+0"
+
+[[deps.libblastrampoline_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
+version = "5.8.0+0"
+
+[[deps.nghttp2_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
+version = "1.48.0+0"
+
+[[deps.p7zip_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
+version = "17.4.0+0"

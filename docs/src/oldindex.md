@@ -89,6 +89,6 @@ Must interact with or extend:
 
 ## Citing
 
-See [`CITATION.bib`](CITATION.bib) for the relevant reference(s).
+
 
 *Logo: gene analysis by Vector Points from the Noun Project*
