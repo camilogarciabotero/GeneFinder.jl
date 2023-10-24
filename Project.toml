@@ -5,6 +5,7 @@ version = "0.0.23"
 
 [deps]
 Automa = "67c07d97-cdcb-5c2c-af73-a7f9c32a568b"
+BioMarkovChains = "f861b655-cb5f-42ce-b66a-341b542d4f2c"
 BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
 FASTX = "c2308a5c-f048-11e8-3e8a-31650f418d12"
 IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"

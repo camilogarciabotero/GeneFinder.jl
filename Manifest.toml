@@ -2,8 +2,7 @@
 
 julia_version = "1.9.3"
 manifest_format = "2.0"
-project_hash = "90542a933a63e92bc7dd9c7727fccb1a20cad5a7"
-
+project_hash = "51fd5132cd6ba02b6fa80c05982319be6520bdf4"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -14,24 +13,37 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
 [[deps.Automa]]
 deps = ["PrecompileTools", "TranscodingStreams"]
-git-tree-sha1 = "9dca1d1632c4f7fb320b8a766feb6b8290695f7c"
+git-tree-sha1 = "0da671c730d79b8f9a88a391556ec695ea921040"
 uuid = "67c07d97-cdcb-5c2c-af73-a7f9c32a568b"
-version = "1.0.1"
+version = "1.0.2"
 
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[deps.BioGenerics]]
 deps = ["TranscodingStreams"]
-git-tree-sha1 = "0b581906418b93231d391b5dd78831fdc2da0c82"
+git-tree-sha1 = "7bbc085aebc6faa615740b63756e4986c9e85a70"
 uuid = "47718e42-2ac5-11e9-14af-e5595289c2ea"
-version = "0.1.2"
+version = "0.1.4"
+
+[[deps.BioMarkovChains]]
+deps = ["BioSequences", "PrecompileTools", "StatsAPI", "StatsBase", "TestItemRunner", "TestItems", "VectorizedKmers"]
+git-tree-sha1 = "758392483d8aa39b5a690c9b45a93f529796bcdf"
+uuid = "f861b655-cb5f-42ce-b66a-341b542d4f2c"
+version = "0.6.0"
+
+    [deps.BioMarkovChains.extensions]
+    DiscreteMarkovChainsExt = "DiscreteMarkovChains"
+
+    [deps.BioMarkovChains.weakdeps]
+    DiscreteMarkovChains = "8abcb7ef-b365-4f7b-ac38-56893fb62f9f"
+    MarkovChainHammer = "38c40fd0-bccb-4723-b30d-b2caea0ad8d9"
 
 [[deps.BioSequences]]
 deps = ["BioSymbols", "PrecompileTools", "Random", "Twiddle"]
-git-tree-sha1 = "6cf406ea0d5bc901eabe55fca609007bce2db026"
+git-tree-sha1 = "6fdba8b4279460fef5674e9aa2dac7ef5be361d5"
 uuid = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
-version = "3.1.5"
+version = "3.1.6"
 
 [[deps.BioSymbols]]
 deps = ["PrecompileTools"]
@@ -41,9 +53,9 @@ version = "5.1.3"
 
 [[deps.Compat]]
 deps = ["UUIDs"]
-git-tree-sha1 = "e460f044ca8b99be31d35fe54fc33a5c33dd8ed7"
+git-tree-sha1 = "8a62af3e248a8c4bad6b32cbbe663ae02275e32c"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.9.0"
+version = "4.10.0"
 weakdeps = ["Dates", "LinearAlgebra"]
 
     [deps.Compat.extensions]
@@ -82,9 +94,9 @@ version = "1.6.0"
 
 [[deps.FASTX]]
 deps = ["Automa", "BioGenerics", "PrecompileTools", "StringViews", "TranscodingStreams"]
-git-tree-sha1 = "c05aede7ef67db392d9c779257e709de72504447"
+git-tree-sha1 = "bff5d62bf5e1c382a370ac701bcaea9a24115ac6"
 uuid = "c2308a5c-f048-11e8-3e8a-31650f418d12"
-version = "2.1.3"
+version = "2.1.4"
 weakdeps = ["BioSequences"]
 
     [deps.FASTX.extensions]
@@ -198,9 +210,9 @@ version = "1.2.0"
 
 [[deps.Preferences]]
 deps = ["TOML"]
-git-tree-sha1 = "7eb1686b4f04b82f96ed7a4ea5890a4f0c7a09f1"
+git-tree-sha1 = "00805cd429dcb4870060ff49ef443486c262e38e"
 uuid = "21216c6a-2e73-6563-6e65-726566657250"
-version = "1.4.0"
+version = "1.4.1"
 
 [[deps.Printf]]
 deps = ["Unicode"]
@@ -226,9 +238,9 @@ uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
 [[deps.SortingAlgorithms]]
 deps = ["DataStructures"]
-git-tree-sha1 = "c60ec5c62180f27efea3ba2908480f8055e17cee"
+git-tree-sha1 = "5165dfb9fd131cf0c6957a3a7605dede376e7b63"
 uuid = "a2af1166-a08f-5f64-846c-94a0d3cef48c"
-version = "1.1.1"
+version = "1.2.0"
 
 [[deps.SparseArrays]]
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
@@ -247,9 +259,9 @@ version = "1.7.0"
 
 [[deps.StatsBase]]
 deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
-git-tree-sha1 = "75ebe04c5bed70b91614d684259b661c9e6274a4"
+git-tree-sha1 = "1d77abd07f617c4868c33d4f5b9e1dbb2643c9cf"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-version = "0.34.0"
+version = "0.34.2"
 
 [[deps.StringViews]]
 git-tree-sha1 = "f7b06677eae2571c888fd686ba88047d8738b0e3"
@@ -287,10 +299,13 @@ uuid = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 version = "0.1.1"
 
 [[deps.TranscodingStreams]]
-deps = ["Random", "Test"]
-git-tree-sha1 = "9a6ae7ed916312b41236fcef7e0af564ef934769"
+git-tree-sha1 = "49cbf7c74fafaed4c529d47d48c8f7da6a19eb75"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.9.13"
+version = "0.10.1"
+weakdeps = ["Random", "Test"]
+
+    [deps.TranscodingStreams.extensions]
+    TestExt = ["Test", "Random"]
 
 [[deps.Twiddle]]
 git-tree-sha1 = "29509c4862bfb5da9e76eb6937125ab93986270a"
@@ -303,6 +318,20 @@ uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+
+[[deps.VectorizedKmers]]
+git-tree-sha1 = "efb4ffc102a47fce6d9ad94c7689a7c65b408db8"
+uuid = "2ef45bd6-4c2b-43d8-88b3-40597287359a"
+version = "0.7.0"
+
+    [deps.VectorizedKmers.extensions]
+    BioSeqCUDAExt = ["BioSequences", "CUDA"]
+    BioSequencesExt = "BioSequences"
+    CUDAExt = "CUDA"
+
+    [deps.VectorizedKmers.weakdeps]
+    BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
+    CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
 
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
