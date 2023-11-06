@@ -27,13 +27,14 @@ uuid = "47718e42-2ac5-11e9-14af-e5595289c2ea"
 version = "0.1.4"
 
 [[deps.BioMarkovChains]]
-deps = ["BioSequences", "PrecompileTools", "StatsAPI", "StatsBase", "TestItemRunner", "TestItems", "VectorizedKmers"]
-git-tree-sha1 = "758392483d8aa39b5a690c9b45a93f529796bcdf"
+deps = ["BioSequences", "PrecompileTools", "StatsAPI", "TestItemRunner", "TestItems", "VectorizedKmers"]
+git-tree-sha1 = "90c8fbbb52b76ca687cdf64f2d547cd235f1f139"
 uuid = "f861b655-cb5f-42ce-b66a-341b542d4f2c"
-version = "0.6.0"
+version = "0.7.0"
 
     [deps.BioMarkovChains.extensions]
     DiscreteMarkovChainsExt = "DiscreteMarkovChains"
+    MarkovChainHammerExt = "MarkovChainHammer"
 
     [deps.BioMarkovChains.weakdeps]
     DiscreteMarkovChains = "8abcb7ef-b365-4f7b-ac38-56893fb62f9f"
@@ -299,9 +300,9 @@ uuid = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 version = "0.1.1"
 
 [[deps.TranscodingStreams]]
-git-tree-sha1 = "49cbf7c74fafaed4c529d47d48c8f7da6a19eb75"
+git-tree-sha1 = "1fbeaaca45801b4ba17c251dd8603ef24801dd84"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.10.1"
+version = "0.10.2"
 weakdeps = ["Random", "Test"]
 
     [deps.TranscodingStreams.extensions]

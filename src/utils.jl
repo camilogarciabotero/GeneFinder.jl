@@ -73,69 +73,6 @@ function hasprematurestop(sequence::LongNucOrView{N})::Bool where N
 end
 
 @doc raw"""
-    sequenceprobability(sequence::LongNucOrView{4}, model::BioMarkovChain)
-
-Compute the probability of a given sequence using a transition probability matrix and the initial probabilities distributions of a `BioMarkovModel`.
-
-```math
-P(X_1 = i_1, \ldots, X_T = i_T) = \pi_{i_1}^{T-1} \prod_{t=1}^{T-1} a_{i_t, i_{t+1}}
-```
-
-# Arguments
-- `sequence::LongNucOrView{4}`: The input sequence of nucleotides.
-- `tm::BioMarkovChain` is the actual data structure composed of a `tpm::Matrix{Float64}` the transition probability matrix and `initials=Vector{Float64}` the initial state probabilities.
-
-# Returns
-- `probability::Float64`: The probability of the input sequence.
-
-# Example
-
-```
-mainseq = LongDNA{4}("CCTCCCGGACCCTGGGCTCGGGAC")
-   
-bmc = BioMarkovChain(mainseq)
-
-BioMarkovChain with DNA Alphabet:
-  - Transition Probability Matrix -> Matrix{Float64}(4 × 4):
-   0.0     1.0     0.0     0.0
-   0.0     0.5     0.2     0.3
-   0.25    0.125   0.625   0.0
-   0.0     0.6667  0.3333  0.0
-  - Initial Probabilities -> Vector{Float64}(4 × 1):
-   0.087
-   0.4348
-   0.3478
-   0.1304
-  - Markov Chain Order -> Int64:
-   1
-
-newseq = LongDNA{4}("CCTG")
-
-    4nt DNA Sequence:
-    CCTG
-
-
-dnaseqprobability(newseq, bmc)
-    
-    0.0217
-```
-"""
-function dnaseqprobability(
-    sequence::LongNucOrView{4},
-    model::BioMarkovChain
-)
-    init = model.inits[NUCLEICINDEXES[sequence[1]]]
-
-    probability = init
-
-    for t in 1:length(sequence)-1
-        i, j = DINUCLEICINDEXES[@view sequence[t:t+1]]
-        probability *= model.tpm[i, j]
-    end
-    return probability
-end
-
-@doc raw"""
     iscoding(
         sequence::LongSequence{DNAAlphabet{4}}, 
         codingmodel::BioMarkovChain, 
@@ -174,24 +111,24 @@ noncodingmodel = BioMarkovChain()
 iscoding(sequence, codingmodel, noncodingmodel)  # Returns: true
 ```
 """
-function iscoding(
-    sequence::LongNucOrView{4},
-    codingmodel::BioMarkovChain,
-    noncodingmodel::BioMarkovChain,
-    η::Float64 = 1e-5
-)
-    pcoding = dnaseqprobability(sequence, codingmodel)
-    pnoncoding = dnaseqprobability(sequence, noncodingmodel)
+# function iscoding(
+#     sequence::LongNucOrView{4},
+#     codingmodel::BioMarkovChain,
+#     noncodingmodel::BioMarkovChain,
+#     η::Float64 = 1e-5
+# )
+#     pcoding = dnaseqprobability(sequence, codingmodel)
+#     pnoncoding = dnaseqprobability(sequence, noncodingmodel)
 
-    logodds = log(pcoding / pnoncoding)
+#     logodds = log(pcoding / pnoncoding)
 
-    length(sequence) % 3 == 0 || error("The sequence is not divisible by 3")
+#     length(sequence) % 3 == 0 || error("The sequence is not divisible by 3")
 
-    !hasprematurestop(sequence) || error("There is a premature stop codon in the sequence")
+#     !hasprematurestop(sequence) || error("There is a premature stop codon in the sequence")
 
-    if logodds > η
-        return true
-    else
-        false
-    end
-end
+#     if logodds > η
+#         return true
+#     else
+#         false
+#     end
+# end

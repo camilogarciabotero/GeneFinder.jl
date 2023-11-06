@@ -38,9 +38,6 @@ export fasta_to_dna, nucleotidefreqs, hasprematurestop, dnaseqprobability, iscod
 
 include("extended.jl")
 
-include("constants.jl")
-export NUCLEICINDEXES, DINUCLEICINDEXES
-
 @setup_workload begin
     # Putting some things in `@setup_workload` instead of `@compile_workload` can reduce the size of the
     # precompile file and potentially make loading faster.
