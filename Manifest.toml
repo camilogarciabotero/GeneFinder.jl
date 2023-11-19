@@ -1,6 +1,6 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.3"
+julia_version = "1.9.4"
 manifest_format = "2.0"
 project_hash = "51fd5132cd6ba02b6fa80c05982319be6520bdf4"
 
@@ -28,9 +28,9 @@ version = "0.1.4"
 
 [[deps.BioMarkovChains]]
 deps = ["BioSequences", "PrecompileTools", "StatsAPI", "TestItemRunner", "TestItems", "VectorizedKmers"]
-git-tree-sha1 = "90c8fbbb52b76ca687cdf64f2d547cd235f1f139"
+git-tree-sha1 = "8ba82351d84233c9d140df8df21dfe3fb535a251"
 uuid = "f861b655-cb5f-42ce-b66a-341b542d4f2c"
-version = "0.7.0"
+version = "0.8.0"
 
     [deps.BioMarkovChains.extensions]
     DiscreteMarkovChainsExt = "DiscreteMarkovChains"
@@ -123,12 +123,12 @@ version = "1.8.0"
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
 uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
-version = "0.6.3"
+version = "0.6.4"
 
 [[deps.LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
-version = "7.84.0+0"
+version = "8.4.0+0"
 
 [[deps.LibGit2]]
 deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
@@ -137,7 +137,7 @@ uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 [[deps.LibSSH2_jll]]
 deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
 uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
-version = "1.10.2+0"
+version = "1.11.0+1"
 
 [[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
@@ -347,7 +347,7 @@ version = "5.8.0+0"
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
-version = "1.48.0+0"
+version = "1.52.0+1"
 
 [[deps.p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
