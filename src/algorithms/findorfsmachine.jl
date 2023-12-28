@@ -1,18 +1,17 @@
-using Automa
-const re = Automa.RegExp
+# const re = Automa.RegExp
 
-start = re"ATG"
-codons = re"[ACGT]+"
-stop = re"(TAA|TAG|TGA)"
+# start = re"ATG"
+# codons = re"[ACGT]+"
+# stop = re"(TAA|TAG|TGA)"
 
-orf = re.cat(start, codons, stop)
+# orf = re.cat(start, codons, stop)
 
-machine = compile(orf)
+# machine = compile(orf)
 
-@eval function orfparser(data)
-    seqs = String[]
-    $(generate_code(machine))
-    return seqs
-end
+# @eval function orfparser(data)
+#     seqs = String[]
+#     $(generate_code(machine))
+#     return seqs
+# end
 
-orfparser("ATG")
+# orfparser("ATG")
