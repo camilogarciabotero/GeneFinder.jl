@@ -161,27 +161,3 @@ MKTKKQMSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNIN
 >location=41:505 strand=- frame=2
 MLSKYEDDNSNMKTKKQMSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
 ```
-
-## Algorithms
-
-### Coding genes (CDS - ORFs)
-
-- [x] [findorfs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/simplefinder/)
-- [ ] EasyGene
-- [ ] ORPHEUS
-- [ ] GLIMER3
-- [ ] Prodigal - Pyrodigal
-- [ ] PHANOTATE
-- [ ] k-mer based gene finders (?)
-- [ ] Augustus (?)
-
-### Non-coding genes (RNA)
-
-- [ ] Infernal
-- [ ] tRNAscan
-
-## Contributing
-
-## Citing
-
-See [`CITATION.bib`](CITATION.bib) for the relevant reference(s).
