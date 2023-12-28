@@ -4,7 +4,6 @@ authors = ["Camilo García-Botero"]
 version = "0.1.0"
 
 [deps]
-Automa = "67c07d97-cdcb-5c2c-af73-a7f9c32a568b"
 BioMarkovChains = "f861b655-cb5f-42ce-b66a-341b542d4f2c"
 BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
 FASTX = "c2308a5c-f048-11e8-3e8a-31650f418d12"
@@ -13,6 +12,7 @@ PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
+BioMarkovChains = "0.9.0"
 BioSequences = "3"
 FASTX = "2"
 IterTools = "1.4"
