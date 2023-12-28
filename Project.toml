@@ -1,7 +1,7 @@
 name = "GeneFinder"
 uuid = "2bc6ee46-2158-4f5a-a720-91cb2d7cee64"
 authors = ["Camilo García-Botero"]
-version = "0.0.23"
+version = "0.1.0"
 
 [deps]
 Automa = "67c07d97-cdcb-5c2c-af73-a7f9c32a568b"
