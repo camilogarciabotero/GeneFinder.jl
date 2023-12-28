@@ -10,6 +10,10 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - Clean up comments and docs.
 - Add `iscoding` method.
 
+## [0.1.0]
+
+- `GeneFinder` is now more reliable and load faster.
+
 ## [0.0.23]
 
 - Some cleanups and docs updates
