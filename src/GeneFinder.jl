@@ -11,6 +11,7 @@ using BioSequences:
     LongAA,
     LongSequence,
     LongSubSeq,
+    NucleicSeqOrView,
     @biore_str,
     @dna_str,
     GeneticCode,
@@ -22,13 +23,12 @@ using BioMarkovChains: BioMarkovChain
 using FASTX: FASTA, sequence, FASTAReader
 using IterTools: takewhile, iterated
 using PrecompileTools: @setup_workload, @compile_workload
-using StatsBase: countmap
 
 include("types.jl")
 export ORF
 
 include("algorithms/findorfs.jl")
-export locationiterator, findorfs, getorfdna, getorfaa
+export locationiterator, findorfs, getorfdna, getorfaa, getorfdna02
 
 include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
