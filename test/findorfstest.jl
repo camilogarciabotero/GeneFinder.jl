@@ -48,11 +48,11 @@ end
     @test orfseqs[1] == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
 end
 
-# @testset "getorfaa" begin
+@testset "getorfaa" begin
 
-#     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-#     aas = getorfaa(seq01)
+    seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+    aas = getorfaa(seq01)
 
-#     @test length(aas) == 5
-#     @test aas[1] == aa"MMHACMLVTS*"
-# end
+    @test length(aas) == 5
+    @test aas[1] == aa"MMHACMLVTS*"
+end

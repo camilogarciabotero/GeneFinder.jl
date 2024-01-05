@@ -16,7 +16,9 @@ using BioSequences:
     @dna_str,
     GeneticCode,
     reverse_complement,
-    randdnaseq
+    randdnaseq,
+    ncbi_trans_table,
+    translate
 
 
 using BioMarkovChains: BioMarkovChain

@@ -23,7 +23,7 @@ Determine whether the `sequence` of type `LongSequence{DNAAlphabet{4}}` contains
 
 Returns a boolean indicating whether the `sequence` has more than one stop codon.
 """
-function hasprematurestop(sequence::NucleicSeqOrView{N})::Bool where N
+function hasprematurestop(sequence::NucleicSeqOrView{N})::Bool where {N}
     
     stopcodons = [LongDNA{4}("TAA"), LongDNA{4}("TAG"), LongDNA{4}("TGA")]  # Create a set of stop codons
     

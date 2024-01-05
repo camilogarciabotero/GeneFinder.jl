@@ -17,7 +17,7 @@ This is an iterator function that uses regular expressions to search the entire 
 function locationiterator(
     sequence::NucleicSeqOrView{N};
     alternative_start::Bool = false
-) where N
+) where {N}
     regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
     # regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG([N]{3})*T(AG|AA|GA)?"dna # an attempt to make it non PCRE non-determinsitic
     finder(x) = findfirst(regorf, sequence, first(x) + 1) # + 3
@@ -47,7 +47,7 @@ function findorfs(
     sequence::NucleicSeqOrView{N};
     alternative_start::Bool = false, 
     min_len::Int64 = 6
-) where N
+) where {N}
     orfs = Vector{ORF}()
     reversedseq = reverse_complement(sequence)
     seqlen = length(sequence)
@@ -112,7 +112,7 @@ function getorfdna(
     sequence::NucleicSeqOrView{N};
     alternative_start::Bool = false,
     min_len::Int64 = 6
-) where N
+) where {N}
     orfs = findorfs(sequence; alternative_start, min_len)
     seqs = Vector{LongSubSeq{DNAAlphabet{4}}}(undef, length(orfs))
     @inbounds for i in eachindex(orfs)
@@ -126,7 +126,7 @@ function getorfdna(
     return seqs
 end
 
-import BioSequences.standard_genetic_code
+# import BioSequences.standard_genetic_code
 
 """
     getorfaa(input::LongSequence{DNAAlphabet{4}}; kwargs...)
@@ -147,17 +147,16 @@ This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and id
 function getorfaa(
     sequence::NucleicSeqOrView{N};
     alternative_start::Bool = false,
-    code::GeneticCode = standard_genetic_code,
+    code::GeneticCode = ncbi_trans_table[1],
     min_len::Int64 = 6
-) where N
+) where {N}
     orfs = findorfs(sequence; alternative_start, min_len)
-    aas = Vector{LongSubSeq{AminoAcidAlphabet}}()
-    @inbounds for i in orfs
-        if i.strand == '+'
-            push!(aas, translate(@view sequence[i.location]))
+    aas = Vector{LongSubSeq{AminoAcidAlphabet}}(undef, length(orfs))
+    @inbounds for i in eachindex(orfs)
+        if orfs[i].strand == '+'
+            aas[i] = translate(@view sequence[orfs[i].location])
         else
-            newaa = translate(reverse_complement(@view sequence[i.location]); code)
-            push!(aas, newaa)
+            aas[i] = translate(reverse_complement(@view sequence[orfs[i].location]); code)
         end
     end
     return aas
