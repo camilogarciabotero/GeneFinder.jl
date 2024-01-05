@@ -14,7 +14,10 @@ This is an iterator function that uses regular expressions to search the entire 
     See more about the discussion [here](https://discourse.julialang.org/t/how-to-improve-a-generator-to-be-more-memory-efficient-when-it-is-collected/92932/8?u=camilogarciabotero)
 
 """
-function locationiterator(sequence::LongNucOrView{N}; alternative_start::Bool = false) where N
+function locationiterator(
+    sequence::NucleicSeqOrView{N};
+    alternative_start::Bool = false
+) where N
     regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
     # regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG([N]{3})*T(AG|AA|GA)?"dna # an attempt to make it non PCRE non-determinsitic
     finder(x) = findfirst(regorf, sequence, first(x) + 1) # + 3
@@ -40,7 +43,11 @@ The `findorfs` function takes a LongSequence{DNAAlphabet{4}} sequence and return
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
-function findorfs(sequence::LongNucOrView{N}; alternative_start::Bool = false, min_len::Int64 = 6) where N
+function findorfs(
+    sequence::NucleicSeqOrView{N};
+    alternative_start::Bool = false, 
+    min_len::Int64 = 6
+) where N
     orfs = Vector{ORF}()
     reversedseq = reverse_complement(sequence)
     seqlen = length(sequence)
@@ -60,7 +67,11 @@ function findorfs(sequence::LongNucOrView{N}; alternative_start::Bool = false, m
     return sort(orfs)
 end
 
-function findorfs(sequence::String; alternative_start::Bool = false, min_len::Int64 = 6)
+function findorfs(
+    sequence::String;
+    alternative_start::Bool = false,
+    min_len::Int64 = 6
+)
     sequence = LongSequence{DNAAlphabet{4}}(sequence)
     orfs = Vector{ORF}()
     reversedseq = reverse_complement(sequence)
@@ -98,7 +109,7 @@ This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and id
 
 """
 function getorfdna(
-    sequence::LongNucOrView{N};
+    sequence::NucleicSeqOrView{N};
     alternative_start::Bool = false,
     min_len::Int64 = 6
 ) where N
@@ -110,6 +121,24 @@ function getorfdna(
         else
             newseq = reverse_complement(@view sequence[i.location])
             push!(seqs, newseq)
+        end
+    end
+    return seqs
+end
+
+function getorfdna02(
+    sequence::NucleicSeqOrView{N};
+    alternative_start::Bool = false,
+    min_len::Int64 = 6
+) where N
+    orfs = findorfs(sequence; alternative_start, min_len)
+    seqs = Vector{LongSubSeq{DNAAlphabet{4}}}(undef, length(orfs))
+    @inbounds for i in eachindex(orfs)
+        if orfs[i].strand == '+'
+            seqs[i] = @view sequence[orfs[i].location]
+        else
+            newseq = reverse_complement(@view sequence[orfs[i].location])
+            seqs[i] = newseq
         end
     end
     return seqs
@@ -134,7 +163,7 @@ This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and id
 
 """
 function getorfaa(
-    sequence::LongNucOrView{N};
+    sequence::NucleicSeqOrView{N};
     alternative_start::Bool = false,
     code::GeneticCode = standard_genetic_code,
     min_len::Int64 = 6
