@@ -114,24 +114,6 @@ function getorfdna(
     min_len::Int64 = 6
 ) where N
     orfs = findorfs(sequence; alternative_start, min_len)
-    seqs = Vector{LongSubSeq{DNAAlphabet{4}}}()
-    @inbounds for i in orfs
-        if i.strand == '+'
-            push!(seqs, @view sequence[i.location])
-        else
-            newseq = reverse_complement(@view sequence[i.location])
-            push!(seqs, newseq)
-        end
-    end
-    return seqs
-end
-
-function getorfdna02(
-    sequence::NucleicSeqOrView{N};
-    alternative_start::Bool = false,
-    min_len::Int64 = 6
-) where N
-    orfs = findorfs(sequence; alternative_start, min_len)
     seqs = Vector{LongSubSeq{DNAAlphabet{4}}}(undef, length(orfs))
     @inbounds for i in eachindex(orfs)
         if orfs[i].strand == '+'
