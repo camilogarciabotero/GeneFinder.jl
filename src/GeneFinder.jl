@@ -30,7 +30,7 @@ include("types.jl")
 export ORF
 
 include("algorithms/findorfs.jl")
-export locationiterator, findorfs, getorfdna, getorfaa, getorfdna02
+export locationiterator, findorfs, getorfdna, getorfaa
 
 include("io.jl")
 export write_cds, write_proteins, write_bed, write_gff
