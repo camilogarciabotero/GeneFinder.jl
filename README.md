@@ -66,10 +66,10 @@ findorfs(seq)
  ORF(695:706, '+', 2)
 ```
 
-Two other functions (`getorfdna` and `getorfaa`) pass the sequence to `findorfs` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or writteen into a file more conviniently using the `FASTX` IO system:
+Two other functions (`get_orfs_dna` and `get_orfs_aa`) pass the sequence to `findorfs` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or writteen into a file more conviniently using the `FASTX` IO system:
 
 ```julia
-getorfdna(seq)
+get_orfs_dna(seq)
 
 12-element Vector{LongSubSeq{DNAAlphabet{4}}}:
  ATGCAACCCTGA
@@ -87,7 +87,7 @@ getorfdna(seq)
 ```
 
 ```julia
-getorfaa(seq)
+get_orfs_aa(seq)
 
 12-element Vector{LongSubSeq{AminoAcidAlphabet}}:
  MQP*
@@ -144,7 +144,7 @@ ATGCAACCCTGA
 ```julia
 using FASTX
 
-write_proteins("test/data/NC_001884.fasta", "proteins.fasta")
+write_orfs_aa("test/data/NC_001884.fasta", "proteins.fasta")
 ```
 
 ```bash

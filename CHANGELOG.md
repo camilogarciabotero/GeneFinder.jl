@@ -6,7 +6,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.10...main)
 
-- Add `write_gff` methods.
+- Add `write_orfs_gff` methods.
 - Clean up comments and docs.
 - Add `iscoding` method.
 
@@ -57,7 +57,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [0.0.13]
 
-- Add `write_gff` methods
+- Add `write_orfs_gff` methods
 
 ## [0.0.12]
 
@@ -85,7 +85,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 ## [0.0.7]
 
 - Clean up comments.
-- New `write_bed` function.
+- New `write_orfs_bed` function.
 - Document methods.
 - Add Zenodo badge.
 
