@@ -48,7 +48,7 @@ function findorfs(
     alternative_start::Bool = false, 
     min_len::Int64 = 6
 ) where {N}
-    orfs = Vector{ORF}()
+    orfs = Vector{ORF}(undef, 0)
     reversedseq = reverse_complement(sequence)
     seqlen = length(sequence)
 
@@ -57,7 +57,7 @@ function findorfs(
     for strand in ('+', '-')
         seq = strand == '-' ? reversedseq : sequence
 
-        @inbounds for location in locationiterator(seq; alternative_start)
+        @inbounds for location in @views locationiterator(seq; alternative_start)
             if length(location) >= min_len
                 frame = strand == '+' ? frames[location.start % 3] : frames[(seqlen - location.stop + 1) % 3]
                 push!(orfs, ORF(strand == '+' ? location : (seqlen - location.stop + 1):(seqlen - location.start + 1), strand, frame))
@@ -119,8 +119,7 @@ function getorfdna(
         if orfs[i].strand == '+'
             seqs[i] = @view sequence[orfs[i].location]
         else
-            newseq = reverse_complement(@view sequence[orfs[i].location])
-            seqs[i] = newseq
+            seqs[i] = reverse_complement(@view sequence[orfs[i].location])
         end
     end
     return seqs
