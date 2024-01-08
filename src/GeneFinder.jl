@@ -20,7 +20,7 @@ using BioSequences:
     ncbi_trans_table,
     translate
 
-
+using FASTX: FASTARecord, description, sequence
 using BioMarkovChains: BioMarkovChain
 using FASTX: FASTA, sequence, FASTAReader
 using IterTools: takewhile, iterated
@@ -30,10 +30,10 @@ include("types.jl")
 export ORF
 
 include("algorithms/findorfs.jl")
-export locationiterator, findorfs, getorfdna, getorfaa
+export locationiterator, findorfs, get_orfs_dna, get_orfs_aa, record_orfs_dna
 
 include("io.jl")
-export write_cds, write_proteins, write_bed, write_gff
+export write_orfs_dna, write_orfs_aa, write_orfs_bed, write_orfs_gff
 
 include("utils.jl")
 export fasta_to_dna, nucleotidefreqs, hasprematurestop, dnaseqprobability, iscoding
@@ -48,8 +48,8 @@ include("extended.jl")
         # all calls in this block will be precompiled, regardless of whether
         # they belong to your package or not (on Julia 1.8 and higher)
         findorfs(seq)
-        getorfdna(seq)
-        # getorfaa(seq)
+        get_orfs_dna(seq)
+        # get_orfs_aa(seq)
     end
 end
 

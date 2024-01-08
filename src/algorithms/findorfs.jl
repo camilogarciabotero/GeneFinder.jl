@@ -15,7 +15,7 @@ This is an iterator function that uses regular expressions to search the entire 
 
 """
 function locationiterator(
-    sequence::NucleicSeqOrView{N};
+    sequence::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false
 ) where {N}
     regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
@@ -44,7 +44,7 @@ The `findorfs` function takes a LongSequence{DNAAlphabet{4}} sequence and return
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
 function findorfs(
-    sequence::NucleicSeqOrView{N};
+    sequence::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false, 
     min_len::Int64 = 6
 ) where {N}
@@ -93,8 +93,8 @@ function findorfs(
 end
 
 """
-    getorfdna(input::LongSequence{DNAAlphabet{4}}, output::String; kwargs...)
-    getorfdna(input::String; kwargs...) ## for strings per se
+    get_orfs_dna(input::LongSequence{DNAAlphabet{4}}, output::String; kwargs...)
+    get_orfs_dna(input::String; kwargs...) ## for strings per se
 
 This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and identifies the open reading frames (ORFs) using the `findorfs()` function. The function then extracts the DNA sequence of each ORF and stores it in a `Vector{LongSubSeq{DNAAlphabet{4}}}`.
 
@@ -108,8 +108,8 @@ This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and id
 - `min_len::Int64=6`: The minimum length of the allowed ORF. By default, it allows ORFs that can encode at least one amino acid (e.g., `aa"M*"`).
 
 """
-function getorfdna(
-    sequence::NucleicSeqOrView{N};
+function get_orfs_dna(
+    sequence::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
     min_len::Int64 = 6
 ) where {N}
@@ -125,11 +125,9 @@ function getorfdna(
     return seqs
 end
 
-# import BioSequences.standard_genetic_code
-
 """
-    getorfaa(input::LongSequence{DNAAlphabet{4}}; kwargs...)
-    getorfaa(input::String; kwargs...) ## for strings per se
+    get_orfs_aa(input::LongSequence{DNAAlphabet{4}}; kwargs...)
+    get_orfs_aa(input::String; kwargs...) ## for strings per se
 
 This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and identifies the open reading frames (ORFs) using the `findorfs()` function. The function then translates each ORF into an amino acid sequence and stores it in a `Vector{LongSubSeq{AminoAcidAlphabet}}`.
 
@@ -143,8 +141,8 @@ This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and id
 - `min_len::Int64=6`: The minimum length of the allowed ORF. By default, it allows ORFs that can encode at least one amino acid (e.g., `aa"M*"`).
 
 """
-function getorfaa(
-    sequence::NucleicSeqOrView{N};
+function get_orfs_aa(
+    sequence::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
     code::GeneticCode = ncbi_trans_table[1],
     min_len::Int64 = 6
@@ -159,4 +157,22 @@ function getorfaa(
         end
     end
     return aas
+end
+
+function record_orfs_dna(
+    sequence::NucleicSeqOrView{DNAAlphabet{N}}; 
+    alternative_start = false, 
+    min_len = 6
+) where {N}
+    orfs = findorfs(sequence; alternative_start, min_len)
+    norfs = length(orfs)
+    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
+    records = FASTARecord[]
+    @inbounds for (index, orf) in enumerate(orfs)
+        id = string(lpad(string(index), padding, "0"))
+        header = "ORF$(id) location=$(orf.location) strand=$(orf.strand) frame=$(orf.frame)"
+        record = FASTARecord(header, sequence[orf.location])
+        push!(records, record)
+    end
+    return records
 end
