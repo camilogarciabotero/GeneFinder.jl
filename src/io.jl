@@ -60,9 +60,9 @@ function write_orfs_fna(
     orfs = findorfs(input; alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
-    @inbounds for (index, i) in enumerate(orfs)
-        id = string(lpad(string(index), padding, "0"))
-        println(output, ">ORF$(id) location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location]))")
+    @inbounds for (i, orf) in enumerate(orfs)
+        id = string(lpad(string(i), padding, "0"))
+        println(output, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(input[orf])") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
     end
 end
 
@@ -76,9 +76,9 @@ function write_orfs_fna(
     orfs = findorfs(input; alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
-    @inbounds for (index, i) in enumerate(orfs)
-        id = string(lpad(string(index), padding, "0"))
-        println(output, ">ORF$(id) location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(i.strand == '+' ? dnaseq[i.location] : reverse_complement(@view dnaseq[i.location]))")
+    @inbounds for (i, orf) in enumerate(orfs)
+        id = string(lpad(string(i), padding, "0"))
+        println(output, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(dnaseq[orf])") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
     end
 end
 
@@ -88,9 +88,13 @@ function write_orfs_fna(
     alternative_start = false,
     min_len = 6
 ) where {N}
+    orfs = findorfs(input; alternative_start, min_len)
+    norfs = length(orfs)
+    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
-        for i in findorfs(input; alternative_start, min_len)
-            write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location]))\n")
+        for (i, orf) in enumerate(orfs)
+            id = string(lpad(string(i), padding, "0"))
+            write(f, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(input[orf])\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
         end
     end
 end
@@ -102,10 +106,13 @@ function write_orfs_fna(
     min_len = 6
 )
     dnaseq = fasta_to_dna(input)[1]
-
+    orfs = findorfs(input; alternative_start, min_len)
+    norfs = length(orfs)
+    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
-        for i in findorfs(dnaseq; alternative_start, min_len)
-            write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(i.strand == '+' ? dnaseq[i.location] : reverse_complement(@view dnaseq[i.location]))\n")
+        for (i, orf) in enumerate(orfs)
+            id = string(lpad(string(i), padding, "0"))
+            write(f, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(dnaseq[orf])\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
         end
     end
 end
@@ -146,10 +153,9 @@ function write_orfs_faa(
     orfs = findorfs(input; alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
-    @inbounds for (index, i) in enumerate(orfs)
-        id = string(lpad(string(index), padding, "0"))
-        translation = i.strand == '+' ? translate(input[i.location]; code) : translate(reverse_complement(@view input[i.location]); code)
-        println(output, ">ORF$(id) location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(translation)")
+    @inbounds for (i, orf) in enumerate(orfs)
+        id = string(lpad(string(i), padding, "0"))
+        println(output, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(translate(input[orf]; code))")
     end
 end
 
@@ -164,10 +170,9 @@ function write_orfs_faa(
     orfs = findorfs(dnaseq; alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
-    @inbounds for (index, i) in enumerate(orfs)
+    @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(index), padding, "0"))
-        translation = i.strand == '+' ? translate(dnaseq[i.location]; code) : translate(reverse_complement(@view dnaseq[i.location]); code)
-        println(output, ">ORF$(id) location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(translation)")
+        println(output, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(translate(dnaseq[orf]; code))")
     end
 end
 
@@ -178,10 +183,13 @@ function write_orfs_faa(
     code::GeneticCode = ncbi_trans_table[1],
     min_len = 6,
 ) where {N}
+    orfs = findorfs(input; alternative_start, min_len)
+    norfs = length(orfs)
+    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
-        for i in findorfs(input; alternative_start, min_len)
-            translation = i.strand == '+' ? translate(input[i.location]; code) : translate(reverse_complement(@view input[i.location]); code)
-            write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(translation)\n")
+        for (i, orf) in enumerate(orfs)
+            id = string(lpad(string(i), padding, "0"))
+            write(f, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(translate(input[orf]; code))\n")
         end
     end
 end
@@ -193,11 +201,13 @@ function write_orfs_faa(
     min_len = 6,
 )
     dnaseq = fasta_to_dna(input)[1]
-
+    orfs = findorfs(dnaseq; alternative_start, min_len)
+    norfs = length(orfs)
+    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
-        for i in findorfs(dnaseq; alternative_start, min_len)
-            translation = i.strand == '+' ? translate(dnaseq[i.location]) : translate(reverse_complement(@view dnaseq[i.location]))
-            write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(translation)\n")
+        for (i, orf) in enumerate(orfs)
+            id = string(lpad(string(i), padding, "0"))
+            write(f, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(translate(dnaseq[orf]; code))\n")
         end
     end
 end
@@ -213,25 +223,28 @@ Write GFF data to a file.
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
+function write_orfs_gff(input::LongSequence{DNAAlphabet{4}}, output::String; alternative_start = false, min_len = 6)
+    orfs = findorfs(input; alternative_start, min_len)
+    norfs = length(orfs)
+    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
+    open(output, "w") do f
+        write(f, "##gff-version 3\n##sequence-region Chr 1 $(length(input))\n") 
+        for (i, orf) in enumerate(orfs)
+            id = string("ORF", lpad(string(i), padding, "0"))
+            write(
+                f,
+                "Chr\t.\tORF\t$(orf.location.start)\t$(orf.location.stop)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame)\n",
+            )
+        end
+    end
+end
+
 function write_orfs_gff(input::String, output::String; alternative_start = false, min_len = 6)
     dnaseq = fasta_to_dna(input)[1]
 
     open(output, "w") do f
         write(f, "##gff-version 3\n##sequence-region Chr 1 $(length(dnaseq))\n")
         for (index, i) in enumerate(findorfs(dnaseq; alternative_start, min_len))
-            id = string("ORF", lpad(string(index), 5, "0"))
-            write(
-                f,
-                "Chr\t.\tORF\t$(i.location.start)\t$(i.location.stop)\t.\t$(i.strand)\t.\tID=$(id);Name=$(id);Frame=$(i.frame)\n",
-            )
-        end
-    end
-end
-
-function write_orfs_gff(input::LongSequence{DNAAlphabet{4}}, output::String; alternative_start = false, min_len = 6)
-    open(output, "w") do f
-        write(f, "##gff-version 3\n##sequence-region Chr 1 $(length(input))\n") 
-        for (index, i) in enumerate(findorfs(input; alternative_start, min_len))
             id = string("ORF", lpad(string(index), 5, "0"))
             write(
                 f,
