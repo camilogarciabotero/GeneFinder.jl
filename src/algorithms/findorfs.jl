@@ -92,9 +92,11 @@ function findorfs(
     return sort(orfs)
 end
 
+### get_orfs_* methods
+
 """
     get_orfs_dna(input::LongSequence{DNAAlphabet{4}}, output::String; kwargs...)
-    get_orfs_dna(input::String; kwargs...) ## for strings per se
+    get_orfs_dna(input::String; kwargs...)
 
 This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and identifies the open reading frames (ORFs) using the `findorfs()` function. The function then extracts the DNA sequence of each ORF and stores it in a `Vector{LongSubSeq{DNAAlphabet{4}}}`.
 
@@ -115,19 +117,29 @@ function get_orfs_dna(
 ) where {N}
     orfs = findorfs(sequence; alternative_start, min_len)
     seqs = Vector{LongSubSeq{DNAAlphabet{4}}}(undef, length(orfs))
-    @inbounds for i in eachindex(orfs)
-        if orfs[i].strand == '+'
-            seqs[i] = @view sequence[orfs[i].location]
-        else
-            seqs[i] = reverse_complement(@view sequence[orfs[i].location])
-        end
+    @inbounds for (i, orf) in enumerate(orfs)
+        seqs[i] = sequence[orf]
+    end
+    return seqs
+end
+
+function get_orfs_dna(
+    sequence::String;
+    alternative_start::Bool = false,
+    min_len::Int64 = 6
+)
+    dnaseq = LongSequence{DNAAlphabet{4}}(sequence)
+    orfs = findorfs(dnaseq; alternative_start, min_len)
+    seqs = Vector{LongSubSeq{DNAAlphabet{4}}}(undef, length(orfs))
+    @inbounds for (i, orf) in enumerate(orfs)
+        seqs[i] = dnaseq[orf]
     end
     return seqs
 end
 
 """
     get_orfs_aa(input::LongSequence{DNAAlphabet{4}}; kwargs...)
-    get_orfs_aa(input::String; kwargs...) ## for strings per se
+    get_orfs_aa(input::String; kwargs...)
 
 This function takes a `LongSequence{DNAAlphabet{4}}` or `String` sequence and identifies the open reading frames (ORFs) using the `findorfs()` function. The function then translates each ORF into an amino acid sequence and stores it in a `Vector{LongSubSeq{AminoAcidAlphabet}}`.
 
@@ -149,15 +161,28 @@ function get_orfs_aa(
 ) where {N}
     orfs = findorfs(sequence; alternative_start, min_len)
     aas = Vector{LongSubSeq{AminoAcidAlphabet}}(undef, length(orfs))
-    @inbounds for i in eachindex(orfs)
-        if orfs[i].strand == '+'
-            aas[i] = translate(@view sequence[orfs[i].location])
-        else
-            aas[i] = translate(reverse_complement(@view sequence[orfs[i].location]); code)
-        end
+    @inbounds for (i, orf) in enumerate(orfs)
+        aas[i] = translate(sequence[orf]; code)
     end
     return aas
 end
+
+function get_orfs_aa(
+    sequence::String;
+    alternative_start::Bool = false,
+    code::GeneticCode = ncbi_trans_table[1],
+    min_len::Int64 = 6
+)
+    dnaseq = LongSequence{DNAAlphabet{4}}(sequence)
+    orfs = findorfs(dnaseq; alternative_start, min_len)
+    aas = Vector{LongSubSeq{AminoAcidAlphabet}}(undef, length(orfs))
+    @inbounds for (i, orf) in enumerate(orfs)
+        aas[i] = translate(dnaseq[orf]; code)
+    end
+    return aas
+end
+
+### record_orfs_* methods
 
 function record_orfs_fna(
     sequence::NucleicSeqOrView{DNAAlphabet{N}}; 
@@ -170,8 +195,8 @@ function record_orfs_fna(
     records = FASTARecord[]
     @inbounds for (index, orf) in enumerate(orfs)
         id = string(lpad(string(index), padding, "0"))
-        header = "ORF$(id) location=$(orf.location) strand=$(orf.strand) frame=$(orf.frame)"
-        record = FASTARecord(header, sequence[orf.location])
+        header = ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(sequence[orf])"
+        record = FASTARecord(header, sequence[orf])
         push!(records, record)
     end
     return records
@@ -189,9 +214,8 @@ function record_orfs_faa(
     records = FASTARecord[]
     @inbounds for (index, orf) in enumerate(orfs)
         id = string(lpad(string(index), padding, "0"))
-        header = "ORF$(id) location=$(orf.location) strand=$(orf.strand) frame=$(orf.frame)"
-        translation = orf.strand == '+' ? translate(sequence[orf.location]; code) : translate(reverse_complement(@view sequence[orf.location]); code)
-        record = FASTARecord(header, translation)
+        header = ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(translate(sequence[orf]; code))"
+        record = FASTARecord(header, translate(sequence[orf]; code))
         push!(records, record)
     end
     return records
