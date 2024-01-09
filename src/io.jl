@@ -12,9 +12,9 @@ Write BED data to a file.
 """
 function write_orfs_bed(
     input::NucleicAcidAlphabet{DNAAlphabet{N}},
-    output::String; 
+    output::Union{IOStream, IOBuffer}; 
     alternative_start::Bool = false,
-    min_len = 6
+    min_len::Int64 = 6
 ) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     @inbounds for orf in orfs
@@ -181,7 +181,7 @@ function write_orfs_gff(
 end
 
 function write_orfs_gff(
-    input::NucleicSeqOrView{DNAAlphabet{N}}, 
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::String; 
     alternative_start::Bool = false, 
     min_len::Int64 = 6
