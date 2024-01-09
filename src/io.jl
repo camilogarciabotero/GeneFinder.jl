@@ -1,17 +1,37 @@
 """
-	write_orfs_bed(input::LongSequence{DNAAlphabet{4}}, output::String; kwargs...)
+    write_orfs_bed(input::NucleicAcidAlphabet{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}; kwargs...) where {N}
+    write_orfs_bed(input::NucleicAcidAlphabet{DNAAlphabet{N}}, output::String; kwargs...) where {N}
 
 Write BED data to a file.
 
-# Keywords
-
-- `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
-- `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
+# Arguments
+- `input::NucleicAcidAlphabet{DNAAlphabet{N}}`: The input DNA sequence.
+- `output::String`: The output file path.
+- `alternative_start::Bool=false`: If true, alternative start codons will be used when identifying CDSs. Default is `false`.
+- `min_len::Int64=6`: The minimum length that a CDS must have in order to be included in the output file. Default is `6`.
 """
-function write_orfs_bed(input::LongSequence{DNAAlphabet{4}}, output::String; alternative_start = false, min_len = 6)
+function write_orfs_bed(
+    input::NucleicAcidAlphabet{DNAAlphabet{N}},
+    output::String; 
+    alternative_start::Bool = false,
+    min_len = 6
+) where {N}
+    orfs = findorfs(input; alternative_start, min_len)
+    @inbounds for orf in orfs
+        println(output, "$(orf.location.start)\t$(orf.location.stop)\t$(orf.strand)\t$(orf.frame)")
+    end
+end
+
+function write_orfs_bed(
+    input::NucleicAcidAlphabet{DNAAlphabet{N}},
+    output::String;
+    alternative_start::Bool = false,
+    min_len::Int64 = 6
+) where {N}
+    orfs = findorfs(input; alternative_start, min_len)
     open(output, "w") do f
-        @simd for i in findorfs(input; alternative_start, min_len)
-            write(f, "$(i.location.start)\t$(i.location.stop)\t$(i.strand)\t$(i.frame)\n")
+        @inbounds for orf in orfs
+            write(f, "$(orf.location.start)\t$(orf.location.stop)\t$(orf.strand)\t$(orf.frame)\n")
         end
     end
 end
@@ -41,8 +61,8 @@ end
 function write_orfs_fna(
     input::NucleicSeqOrView{DNAAlphabet{N}},
     output::Union{IOStream, IOBuffer};
-    alternative_start = false, 
-    min_len = 6
+    alternative_start::Bool = false, 
+    min_len::Int64 = 6
 ) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     norfs = length(orfs)
@@ -56,8 +76,8 @@ end
 function write_orfs_fna(
     input::NucleicSeqOrView{DNAAlphabet{N}}, 
     output::String; 
-    alternative_start = false,
-    min_len = 6
+    alternative_start::Bool = false,
+    min_len::Int64 = 6
 ) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     norfs = length(orfs)
@@ -97,9 +117,9 @@ end
 function write_orfs_faa(
     input::NucleicSeqOrView{DNAAlphabet{N}},
     output::Union{IOStream, IOBuffer};
-    alternative_start = false,
+    alternative_start::Bool = false,
     code::GeneticCode = ncbi_trans_table[1],
-    min_len = 6
+    min_len::Int64 = 6
 ) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     norfs = length(orfs)
@@ -113,9 +133,9 @@ end
 function write_orfs_faa(
     input::NucleicSeqOrView{DNAAlphabet{N}},
     output::String;
-    alternative_start = false,
+    alternative_start::Bool = false,
     code::GeneticCode = ncbi_trans_table[1],
-    min_len = 6,
+    min_len::Int64 = 6,
 ) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     norfs = length(orfs)
@@ -129,16 +149,43 @@ function write_orfs_faa(
 end
 
 """
-	write_orfs_gff(input::LongSequence{DNAAlphabet{4}}, output::String; kwargs...)
+    write_orfs_gff(input::NucleicSeqOrView{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}; kwargs...) where {N}
+    write_orfs_gff(input::NucleicSeqOrView{DNAAlphabet{N}}, output::String; kwargs...) where {N}
 
 Write GFF data to a file.
 
-# Keywords
+# Arguments
+- `input`: The input DNA sequence.
+- `output`: The output file to write the GFF data to.
+- `alternative_start::Bool=false`: If true, extended start codons will be considered during the search, increasing the execution time.
+- `min_len::Int64=6`: The minimum length of the allowed ORF. The default value allows for possible encoding proteins with the `aa"M*"` sequence.
 
-- `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
-- `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
-function write_orfs_gff(input::LongSequence{DNAAlphabet{4}}, output::String; alternative_start = false, min_len = 6)
+function write_orfs_gff(
+    input::NucleicSeqOrView{DNAAlphabet{N}}, 
+    output::Union{IOStream, IOBuffer}; 
+    alternative_start::Bool = false, 
+    min_len::Int64 = 6
+) where {N}
+    orfs = findorfs(input; alternative_start, min_len)
+    norfs = length(orfs)
+    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
+    println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
+    for (i, orf) in enumerate(orfs)
+        id = string("ORF", lpad(string(i), padding, "0"))
+        println(
+            output,
+            "Chr\t.\tORF\t$(orf.location.start)\t$(orf.location.stop)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame)",
+        )
+    end
+end
+
+function write_orfs_gff(
+    input::NucleicSeqOrView{DNAAlphabet{N}}, 
+    output::String; 
+    alternative_start::Bool = false, 
+    min_len::Int64 = 6
+) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
