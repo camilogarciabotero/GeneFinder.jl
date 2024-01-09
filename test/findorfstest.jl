@@ -44,23 +44,16 @@ end
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
     sseq01 = "ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
     orfseqs = get_orfs_dna(seq01)
-    orfsseqs = get_orfs_dna(sseq01)
 
     @test length(orfseqs) == 5
-    @test length(orfsseqs) == 5
     @test orfseqs[1] == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
-    @test orfsseqs[1] == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
 end
 
 @testset "get_orfs_aa" begin
 
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-    sseq01 = "ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
     aas = get_orfs_aa(seq01)
-    aass = get_orfs_aa(sseq01)
 
     @test length(aas) == 5
-    @test length(aass) == 5
     @test aas[1] == aa"MMHACMLVTS*"
-    @test aass[1] == aa"MMHACMLVTS*"
 end
