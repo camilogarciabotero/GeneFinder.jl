@@ -159,7 +159,7 @@ function get_orfs_aa(
     return aas
 end
 
-function record_orfs_dna(
+function record_orfs_fna(
     sequence::NucleicSeqOrView{DNAAlphabet{N}}; 
     alternative_start = false, 
     min_len = 6
@@ -172,6 +172,26 @@ function record_orfs_dna(
         id = string(lpad(string(index), padding, "0"))
         header = "ORF$(id) location=$(orf.location) strand=$(orf.strand) frame=$(orf.frame)"
         record = FASTARecord(header, sequence[orf.location])
+        push!(records, record)
+    end
+    return records
+end
+
+function record_orfs_faa(
+    sequence::NucleicSeqOrView{DNAAlphabet{N}}; 
+    alternative_start = false, 
+    code::GeneticCode = ncbi_trans_table[1],
+    min_len = 6
+) where {N}
+    orfs = findorfs(sequence; alternative_start, min_len)
+    norfs = length(orfs)
+    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
+    records = FASTARecord[]
+    @inbounds for (index, orf) in enumerate(orfs)
+        id = string(lpad(string(index), padding, "0"))
+        header = "ORF$(id) location=$(orf.location) strand=$(orf.strand) frame=$(orf.frame)"
+        translation = orf.strand == '+' ? translate(sequence[orf.location]; code) : translate(reverse_complement(@view sequence[orf.location]); code)
+        record = FASTARecord(header, translation)
         push!(records, record)
     end
     return records

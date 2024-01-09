@@ -47,7 +47,7 @@ getproteins(seq)
 #| eval: false
 using FASTX
 
-write_orfs_aa("../../test/data/NC_001884.fasta", "proteins.fasta")
+write_orfs_faa("../../test/data/NC_001884.fasta", "proteins.fasta")
 ```
 
 ```bash
@@ -101,7 +101,7 @@ ATGCAACCCTGA
 ```
 
 ```julia
-write_orfs_aa("proteins.fasta", seq)
+write_orfs_faa("proteins.fasta", seq)
 ```
 
 ```bash

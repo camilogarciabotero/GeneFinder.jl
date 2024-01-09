@@ -28,10 +28,10 @@ function write_orfs_bed(input::String, output::String; alternative_start = false
 end
 
 """
-    write_orfs_dna(input::NucleicSeqOrView{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}; kwargs...) where {N}
-    write_orfs_dna(input::NucleicSeqOrView{DNAAlphabet{N}}, output::String; kwargs...) where {N}
-    write_orfs_dna(input::String, output::Union{IOStream, IOBuffer}; kwargs...)
-    write_orfs_dna(input::String, output::String; kwargs...)
+    write_orfs_fna(input::NucleicSeqOrView{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}; kwargs...) where {N}
+    write_orfs_fna(input::NucleicSeqOrView{DNAAlphabet{N}}, output::String; kwargs...) where {N}
+    write_orfs_fna(input::String, output::Union{IOStream, IOBuffer}; kwargs...)
+    write_orfs_fna(input::String, output::String; kwargs...)
 
 Write a file containing the coding sequences (CDSs) of a given DNA sequence to the specified file.
 
@@ -47,11 +47,11 @@ filename = "output.fna"
 seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
 
 open(filename, "w") do file
-     write_orfs_dna(seq, file)
+     write_orfs_fna(seq, file)
 end
 ```
 """
-function write_orfs_dna(
+function write_orfs_fna(
     input::NucleicSeqOrView{DNAAlphabet{N}},
     output::Union{IOStream, IOBuffer};
     alternative_start = false, 
@@ -62,12 +62,11 @@ function write_orfs_dna(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (index, i) in enumerate(orfs)
         id = string(lpad(string(index), padding, "0"))
-        # sequence = i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
         println(output, ">ORF$(id) location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location]))")
     end
 end
 
-function write_orfs_dna(
+function write_orfs_fna(
     input::String,
     output::Union{IOStream, IOBuffer};
     alternative_start = false, 
@@ -79,12 +78,11 @@ function write_orfs_dna(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (index, i) in enumerate(orfs)
         id = string(lpad(string(index), padding, "0"))
-        # sequence = i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
         println(output, ">ORF$(id) location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(i.strand == '+' ? dnaseq[i.location] : reverse_complement(@view dnaseq[i.location]))")
     end
 end
 
-function write_orfs_dna(
+function write_orfs_fna(
     input::NucleicSeqOrView{DNAAlphabet{N}}, 
     output::String; 
     alternative_start = false,
@@ -97,7 +95,7 @@ function write_orfs_dna(
     end
 end
 
-function write_orfs_dna(
+function write_orfs_fna(
     input::String, 
     output::String; 
     alternative_start = false,
@@ -107,14 +105,17 @@ function write_orfs_dna(
 
     open(output, "w") do f
         for i in findorfs(dnaseq; alternative_start, min_len)
-            # sequence = i.strand == '+' ? dnaseq[i.location] : reverse_complement(@view dnaseq[i.location])
             write(f, ">location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(i.strand == '+' ? dnaseq[i.location] : reverse_complement(@view dnaseq[i.location]))\n")
         end
     end
 end
 
 """
-	write_orfs_aa(input::LongSequence{DNAAlphabet{4}}, output::String; kwargs...)
+	write_orfs_faa(input::LongSequence{DNAAlphabet{4}}, output::Union{IOStream, IOBuffer}; kwargs...) where {N}
+	write_orfs_faa(input::LongSequence{DNAAlphabet{4}}, output::String; kwargs...) where {N}
+	write_orfs_faa(input::String, output::Union{IOStream, IOBuffer}; kwargs...)
+	write_orfs_faa(input::String, output::Union{IOStream, IOBuffer}; kwargs...)
+
 
 Write the protein sequences encoded by the coding sequences (CDSs) of a given DNA sequence to the specified file.
 
@@ -123,9 +124,55 @@ Write the protein sequences encoded by the coding sequences (CDSs) of a given DN
 - `code::GeneticCode=BioSequences.standard_genetic_code`: The genetic code by which codons will be translated. See `BioSequences.ncbi_trans_table` for more info. 
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
+# Examples 
+
+```julia
+filename = "output.faa"
+
+seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+
+open(filename, "w") do file
+     write_orfs_faa(seq, file)
+end
+```
 """
-function write_orfs_aa(
-    input::LongSequence{DNAAlphabet{N}},
+function write_orfs_faa(
+    input::NucleicSeqOrView{DNAAlphabet{N}},
+    output::Union{IOStream, IOBuffer};
+    alternative_start = false,
+    code::GeneticCode = ncbi_trans_table[1],
+    min_len = 6
+) where {N}
+    orfs = findorfs(input; alternative_start, min_len)
+    norfs = length(orfs)
+    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
+    @inbounds for (index, i) in enumerate(orfs)
+        id = string(lpad(string(index), padding, "0"))
+        translation = i.strand == '+' ? translate(input[i.location]; code) : translate(reverse_complement(@view input[i.location]); code)
+        println(output, ">ORF$(id) location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(translation)")
+    end
+end
+
+function write_orfs_faa(
+    input::String,
+    output::Union{IOStream, IOBuffer};
+    alternative_start = false,
+    code::GeneticCode = ncbi_trans_table[1],
+    min_len = 6
+)
+    dnaseq = fasta_to_dna(input)[1]
+    orfs = findorfs(dnaseq; alternative_start, min_len)
+    norfs = length(orfs)
+    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
+    @inbounds for (index, i) in enumerate(orfs)
+        id = string(lpad(string(index), padding, "0"))
+        translation = i.strand == '+' ? translate(dnaseq[i.location]; code) : translate(reverse_complement(@view dnaseq[i.location]); code)
+        println(output, ">ORF$(id) location=$(i.location) strand=$(i.strand) frame=$(i.frame)\n$(translation)")
+    end
+end
+
+function write_orfs_faa(
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::String;
     alternative_start = false,
     code::GeneticCode = ncbi_trans_table[1],
@@ -139,7 +186,7 @@ function write_orfs_aa(
     end
 end
 
-function write_orfs_aa(
+function write_orfs_faa(
     input::String,
     output::String;
     alternative_start = false,

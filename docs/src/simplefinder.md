@@ -107,7 +107,7 @@ ATGCAACCCTGA
 ```julia
 using FASTX
 
-write_orfs_aa("test/data/NC_001884.fasta", "proteins.fasta")
+write_orfs_faa("test/data/NC_001884.fasta", "proteins.fasta")
 ```
 
 ```bash

@@ -30,10 +30,10 @@ include("types.jl")
 export ORF
 
 include("algorithms/findorfs.jl")
-export locationiterator, findorfs, get_orfs_dna, get_orfs_aa, record_orfs_dna
+export locationiterator, findorfs, get_orfs_dna, get_orfs_aa, record_orfs_fna, record_orfs_faa
 
 include("io.jl")
-export write_orfs_dna, write_orfs_aa, write_orfs_bed, write_orfs_gff
+export write_orfs_fna, write_orfs_faa, write_orfs_bed, write_orfs_gff
 
 include("utils.jl")
 export fasta_to_dna, nucleotidefreqs, hasprematurestop, dnaseqprobability, iscoding
