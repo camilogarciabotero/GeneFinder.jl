@@ -20,9 +20,7 @@ using BioSequences:
     ncbi_trans_table,
     translate
 
-using FASTX: FASTARecord, description, sequence
-using BioMarkovChains: BioMarkovChain
-using FASTX: FASTA, sequence, FASTAReader
+using FASTX: FASTAReader, FASTARecord, description, sequence
 using IterTools: takewhile, iterated
 using PrecompileTools: @setup_workload, @compile_workload
 
@@ -36,7 +34,7 @@ include("io.jl")
 export write_orfs_fna, write_orfs_faa, write_orfs_bed, write_orfs_gff
 
 include("utils.jl")
-export fasta_to_dna, nucleotidefreqs, hasprematurestop, dnaseqprobability, iscoding
+export fasta_to_dna, hasprematurestop
 
 include("extended.jl")
 

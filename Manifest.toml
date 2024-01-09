@@ -2,7 +2,7 @@
 
 julia_version = "1.10.0"
 manifest_format = "2.0"
-project_hash = "b881dd48d80d6b19dfa1756a0b2d6e2e42d93e33"
+project_hash = "4f6774eaeaec568c8cb7a865a84c0c7d9a180727"
 
 [[deps.Automa]]
 deps = ["PrecompileTools", "TranscodingStreams"]
@@ -15,20 +15,6 @@ deps = ["TranscodingStreams"]
 git-tree-sha1 = "7bbc085aebc6faa615740b63756e4986c9e85a70"
 uuid = "47718e42-2ac5-11e9-14af-e5595289c2ea"
 version = "0.1.4"
-
-[[deps.BioMarkovChains]]
-deps = ["BioSequences", "PrecompileTools", "VectorizedKmers"]
-git-tree-sha1 = "44da2d71c2e9a68babb324c4df69d87b9ff7a835"
-uuid = "f861b655-cb5f-42ce-b66a-341b542d4f2c"
-version = "0.9.0"
-
-    [deps.BioMarkovChains.extensions]
-    DiscreteMarkovChainsExt = "DiscreteMarkovChains"
-    MarkovChainHammerExt = "MarkovChainHammer"
-
-    [deps.BioMarkovChains.weakdeps]
-    DiscreteMarkovChains = "8abcb7ef-b365-4f7b-ac38-56893fb62f9f"
-    MarkovChainHammer = "38c40fd0-bccb-4723-b30d-b2caea0ad8d9"
 
 [[deps.BioSequences]]
 deps = ["BioSymbols", "PrecompileTools", "Random", "Twiddle"]
@@ -114,12 +100,3 @@ version = "1.1.2"
 
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
-
-[[deps.VectorizedKmers]]
-git-tree-sha1 = "eaf497f1b720ae17dc52463dfe5fed5f74b0e4df"
-uuid = "2ef45bd6-4c2b-43d8-88b3-40597287359a"
-version = "0.8.1"
-weakdeps = ["BioSequences"]
-
-    [deps.VectorizedKmers.extensions]
-    BioSequencesExt = "BioSequences"
