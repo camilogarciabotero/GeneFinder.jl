@@ -4,7 +4,7 @@ This package facilitates the creation of `FASTA`, `BED`, and `GFF` files, specif
 
 Functionality:
 
-The package provides three distinct functions for writing files in different formats:
+The package provides four distinct functions for writing files in different formats:
 
 | Function          | Description                                            |
 |-------------------|--------------------------------------------------------|
@@ -14,7 +14,7 @@ The package provides three distinct functions for writing files in different for
 | `write_orfs_gff`    | Generates files in GFF format.                              |
 
 
-All these functions support processing both `BioSequence` instances and external `FASTA` files. In the case of a `BioSequence` instace into external files, simply provide the path to the `FASTA` file using a `String` to the path. To demonstrate the use of the `write_*` methods with a BioSequence object, consider the following example:
+All these functions support processing both `BioSequence` instances and external `FASTA` files. In the case of a `BioSequence` instace into external files, simply provide the path to the `FASTA` file using a `String` to the path. To demonstrate the use of the `write_*` methods with a `BioSequence`, consider the following example:
 
 ```julia
 using BioSequences, GeneFinder
