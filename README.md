@@ -67,7 +67,7 @@ findorfs(seq)
  ORF(695:706, '+', 2)
 ```
 
-Two other functions (`get_orfs_dna` and `get_orfs_aa`) are implemented to get the ORFs in DNA and amino acid sequences, respectively. They use the `findorfs` function to get the ORFs to first get the ORFs and then get the correspondance array of `BioSequence` objects.
+Two other functions (`get_orfs_dna` and `get_orfs_aa`) are implemented to get the ORFs in DNA and amino acid sequences, respectively. They use the `findorfs` function to first get the ORFs and then get the correspondance array of `BioSequence` objects.
 
 ```julia
 get_orfs_dna(seq)
