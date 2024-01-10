@@ -30,7 +30,7 @@ This is the main Gene struct, based on the fields that could be found in a GFF3,
     struct ORF
         location::UnitRange{Int64}
         strand::Char
-        frame::Int8
+        frame::Int
     end
 
 The ORF struct represents an open reading frame in a DNA sequence. It has two fields: 
