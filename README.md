@@ -121,3 +121,32 @@ open(outfile, "w") do io
     write_orfs_fna(seq, io)
 end
 ```
+
+```bash
+cat LFLS01000089.fna
+
+>ORF01 id=01 start=29 stop=40 strand=+ frame=2
+ATGCAACCCTGA
+>ORF02 id=02 start=137 stop=145 strand=+ frame=2
+ATGCGCTGA
+>ORF03 id=03 start=164 stop=184 strand=+ frame=2
+ATGCGTCGAATGGCACGGTGA
+>ORF04 id=04 start=173 stop=184 strand=+ frame=2
+ATGGCACGGTGA
+>ORF05 id=05 start=236 stop=241 strand=+ frame=2
+ATGTGA
+>ORF06 id=06 start=248 stop=268 strand=+ frame=2
+ATGTGTCCAACGGCAGTCTGA
+>ORF07 id=07 start=362 stop=373 strand=+ frame=2
+ATGCAACCCTGA
+>ORF08 id=08 start=470 stop=496 strand=+ frame=2
+ATGCACTGGCTGGTCCTGTCAATCTGA
+>ORF09 id=09 start=551 stop=574 strand=+ frame=2
+ATGTCACCGCACAAGGCAATGTGA
+>ORF10 id=10 start=569 stop=574 strand=+ frame=2
+ATGTGA
+>ORF11 id=11 start=581 stop=601 strand=+ frame=2
+ATGTGTCCAACGGCAGCCTGA
+>ORF12 id=12 start=695 stop=706 strand=+ frame=2
+ATGCAACCCTGA
+```
