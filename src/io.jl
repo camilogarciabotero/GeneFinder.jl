@@ -159,7 +159,8 @@ end
 """
 	write_orfs_faa(input::LongSequence{DNAAlphabet{4}}, output::Union{IOStream, IOBuffer}; kwargs...) where {N}
 	write_orfs_faa(input::LongSequence{DNAAlphabet{4}}, output::String; kwargs...) where {N}
-
+    write_orfs_faa(input::String, output::Union{IOStream, IOBuffer}; kwargs...)
+    write_orfs_faa(input::String, output::String; kwargs...)
 
 Write the protein sequences encoded by the coding sequences (CDSs) of a given DNA sequence to the specified file.
 
