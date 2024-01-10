@@ -6,6 +6,7 @@ using BioSequences:
     
     NucleicAcidAlphabet,
     DNAAlphabet,
+    RNAAlphabet,
     AminoAcidAlphabet,
     LongDNA,
     LongAA,
