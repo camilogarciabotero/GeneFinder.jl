@@ -150,3 +150,5 @@ ATGTGTCCAACGGCAGCCTGA
 >ORF12 id=12 start=695 stop=706 strand=+ frame=2
 ATGCAACCCTGA
 ```
+
+This could also be done to writting a `FASTA` file with the nucleotide sequences of the ORFs using the `write_orfs_fna` function. Similarly for the `BED` and `GFF` files using the `write_orfs_bed` and `write_orfs_gff` functions respectively.
