@@ -1,5 +1,6 @@
 """
     locationiterator(sequence::NucleicSeqOrView{DNAAlphabet{N}}; alternative_start::Bool=false) where {N}
+    locationiterator(sequence::NucleicSeqOrView{RNAAlphabet{N}}; alternative_start::Bool=false) where {N}
 
 This is an iterator function that uses regular expressions to search the entire ORF (instead of start and stop codons) in a `LongSequence{DNAAlphabet{4}}` sequence.
     It uses an anonymous function that will find the first regularly expressed ORF. Then using this anonymous function it creates an iterator that will apply it until there is no other CDS.
@@ -19,6 +20,17 @@ function locationiterator(
     alternative_start::Bool = false
 ) where {N}
     regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
+    # regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG([N]{3})*T(AG|AA|GA)?"dna # an attempt to make it non PCRE non-determinsitic
+    finder(x) = findfirst(regorf, sequence, first(x) + 1) # + 3
+    itr = takewhile(!isnothing, iterated(finder, findfirst(regorf, sequence)))
+    return itr
+end
+
+function locationiterator(
+    sequence::NucleicSeqOrView{RNAAlphabet{N}};
+    alternative_start::Bool = false
+) where {N}
+    regorf = alternative_start ? biore"DUG(?:[N]{3})*?U(AG|AA|GA)"rna : biore"AUG(?:[N]{3})*?U(AG|AA|GA)"rna
     # regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG([N]{3})*T(AG|AA|GA)?"dna # an attempt to make it non PCRE non-determinsitic
     finder(x) = findfirst(regorf, sequence, first(x) + 1) # + 3
     itr = takewhile(!isnothing, iterated(finder, findfirst(regorf, sequence)))
@@ -45,10 +57,10 @@ The `findorfs` function takes a LongSequence{DNAAlphabet{4}} sequence and return
 - `min_len::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 """
 function findorfs(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}};
+    sequence::NucleicSeqOrView{A};
     alternative_start::Bool = false, 
     min_len::Int64 = 6
-) where {N}
+) where {A}
     orfs = Vector{ORF}(undef, 0)
     reversedseq = reverse_complement(sequence)
     seqlen = length(sequence)
@@ -84,12 +96,12 @@ This function takes a `NucleicSeqOrView{DNAAlphabet{N}}` sequence and identifies
 
 """
 function get_orfs_dna(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}};
+    sequence::NucleicSeqOrView{A};
     alternative_start::Bool = false,
     min_len::Int64 = 6
-) where {N}
+) where {A}
     orfs = findorfs(sequence; alternative_start, min_len)
-    seqs = Vector{LongSubSeq{DNAAlphabet{4}}}(undef, length(orfs))
+    seqs = Vector{NucleicSeqOrView{A}}(undef, length(orfs)) # todo correct the output type
     @inbounds for (i, orf) in enumerate(orfs)
         seqs[i] = sequence[orf]
     end
@@ -112,11 +124,11 @@ This function takes a `NucleicSeqOrView{DNAAlphabet{N}}` sequence and identifies
 
 """
 function get_orfs_aa(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}};
+    sequence::NucleicSeqOrView{A};
     alternative_start::Bool = false,
     code::GeneticCode = ncbi_trans_table[1],
     min_len::Int64 = 6
-) where {N}
+) where {A}
     orfs = findorfs(sequence; alternative_start, min_len)
     aas = Vector{LongSubSeq{AminoAcidAlphabet}}(undef, length(orfs))
     @inbounds for (i, orf) in enumerate(orfs)
@@ -144,10 +156,10 @@ An array of `FASTARecord` objects representing the identified ORFs.
 This function searches for Open Reading Frames (ORFs) in a given nucleic acid sequence. An ORF is a sequence of DNA that starts with a start codon and ends with a stop codon, without any other stop codons in between. By default, only the standard start codon (ATG) is considered, but if `alternative_start` is set to `true`, alternative start codons are also considered. The minimum length of an ORF to be recorded can be specified using the `min_len` argument.
 """
 function record_orfs_fna(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}}; 
+    sequence::NucleicSeqOrView{A}; 
     alternative_start::Bool = false, 
     min_len::Int64 = 6
-) where {N}
+) where {A}
     orfs = findorfs(sequence; alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
@@ -178,11 +190,11 @@ The function returns a list of FASTA records, where each record represents an OR
 - A list of FASTA records representing the ORFs found in the sequence.
 """
 function record_orfs_faa(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}};
+    sequence::NucleicSeqOrView{A};
     alternative_start::Bool = false, 
     code::GeneticCode = ncbi_trans_table[1],
     min_len::Int64 = 6
-) where {N}
+) where {A}
     orfs = findorfs(sequence; alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
