@@ -20,6 +20,7 @@ coding based on these decision we use the predicate `iscoding` with the
 `ECOLICDS` and `ECOLINOCDS` models:
 
 ``` julia
+using GeneFinder, BioSequences
 randseq = get_orfs_dna(randdnaseq(99))[1] # this will retrieved a random coding ORF
 
 iscoding(randseq, ECOLICDS, ECOLINOCDS)

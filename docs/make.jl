@@ -19,7 +19,7 @@ makedocs(;
         "Home" => "index.md",
         "Finding ORFs" => "simplefinder.md",
         "Wrtiting ORFs in files" => "iodocs.md",
-        "A Simple coding rule" => "simplecodingrule.md",
+        # "A Simple coding rule" => "simplecodingrule.md",
         "Roadmap" => "roadmap.md",
         "API" => "api.md",
     ],

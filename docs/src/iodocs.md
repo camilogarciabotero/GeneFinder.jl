@@ -1,6 +1,7 @@
 ### Writting cds, proteins fastas, bed and gffs whether from a `LongSeq` or from a external fasta file.
 
-This package provides a set of functions to write `FASTA`, `BED` and `GFF` files from a `BioSequence` (more specifically `NucleicSeqOrView{DNAlphabet{N}} where N`) this 
+This package provides a set of functions to write `FASTA`, `BED` and `GFF` files with the ORF information out of a `BioSequence` (more specifically `NucleicSeqOrView{A} where A`). The `FASTA` files can be written with the `write_orfs_fna` or `write_orfs_faa` function, the `BED` files with the `write_orfs_bed` function and the `GFF` files with the `write_orfs_gff` function. All of these functions can be used with a `NucleicSeqOrView` or with a external `FASTA` file (using the `String` input as a path to a `FASTA` file containing a genome for instance). The `write_orfs_faa` function can also be used to write a `FASTA` file with the protein sequences of the ORFs.
+
 
 ```julia
 
