@@ -13,11 +13,11 @@ Write BED data to a file.
 - `min_len::Int64=6`: The minimum length that a CDS must have in order to be included in the output file. Default is `6`.
 """
 function write_orfs_bed(
-    input::NucleicSeqOrView{A},
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::Union{IOStream, IOBuffer}; 
     alternative_start::Bool = false,
     min_len::Int64 = 6
-) where {A}
+) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     @inbounds for orf in orfs
         println(output, "$(orf.location.start)\t$(orf.location.stop)\t$(orf.strand)\t$(orf.frame)")
@@ -25,11 +25,11 @@ function write_orfs_bed(
 end
 
 function write_orfs_bed(
-    input::NucleicSeqOrView{A},
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::String;
     alternative_start::Bool = false,
     min_len::Int64 = 6
-) where {A}
+) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     open(output, "w") do f
         @inbounds for orf in orfs
@@ -91,11 +91,11 @@ end
 ```
 """
 function write_orfs_fna(
-    input::NucleicSeqOrView{A},
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::Union{IOStream, IOBuffer};
     alternative_start::Bool = false, 
     min_len::Int64 = 6
-) where {A}
+) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
@@ -106,11 +106,11 @@ function write_orfs_fna(
 end
 
 function write_orfs_fna(
-    input::NucleicSeqOrView{A}, 
+    input::NucleicSeqOrView{DNAAlphabet{N}}, 
     output::String; 
     alternative_start::Bool = false,
     min_len::Int64 = 6
-) where {A}
+) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
@@ -181,12 +181,12 @@ end
 ```
 """
 function write_orfs_faa(
-    input::NucleicSeqOrView{A},
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::Union{IOStream, IOBuffer};
     alternative_start::Bool = false,
     code::GeneticCode = ncbi_trans_table[1],
     min_len::Int64 = 6
-) where {A}
+) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
@@ -197,12 +197,12 @@ function write_orfs_faa(
 end
 
 function write_orfs_faa(
-    input::NucleicSeqOrView{A},
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::String;
     alternative_start::Bool = false,
     code::GeneticCode = ncbi_trans_table[1],
     min_len::Int64 = 6,
-) where {A}
+) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
