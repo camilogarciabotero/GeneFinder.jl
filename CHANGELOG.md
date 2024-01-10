@@ -6,9 +6,16 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.10...main)
 
-- Add `write_orfs_gff` methods.
-- Clean up comments and docs.
-- Add `iscoding` method.
+
+## [0.2.0]
+
+- A more stable ORF type that asserts for incorrect ORFs.
+- Extended `Base.getindex` method to better handle ORF enabling: `seq[orf]` regardless of the ORF strand.
+- The `write_*` API is much more stable and its been rewriten to handle IOStreams and `IOBuffers` as well.
+- The new `record_orfs_fna` and `record_orfs_faa` methods intearact with the FASTX interface.
+- Codebase has been reduced. Direct String manipulation is not enabled for `findorfs` and `get_*` methods.
+- Docstrings have been updated following method updates.
+- Better tests and now `Aqua.jl` is used for several tests as well.
 
 ## [0.1.0]
 
@@ -57,7 +64,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [0.0.13]
 
-- Add `write_orfs_gff` methods
+- Add `write_gff` methods
 
 ## [0.0.12]
 
@@ -85,7 +92,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 ## [0.0.7]
 
 - Clean up comments.
-- New `write_orfs_bed` function.
+- New `write_bed` function.
 - Document methods.
 - Add Zenodo badge.
 
