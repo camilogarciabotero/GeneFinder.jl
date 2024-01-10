@@ -1,5 +1,5 @@
 
-## Finding complete and internal (overlapped) ORFs
+## Finding complete and overlapped ORFs
 
 The first implemented function is `findorfs` a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
 
@@ -69,4 +69,28 @@ get_orfs_aa(seq)
 
 ## The ORF type
 
-For convinience the ORF is 
+For convenience, the `ORF` type is more stringent in preventing the creation of incompatible instances. As a result, attempting to create an instance with incompatible parameters will result in an error. For instance, the following code snippet will trigger an error:
+
+```julia
+ORF(1:10, '+', 4)
+
+ERROR: AssertionError: Invalid frame value. Frame must be 1, 2, or 3.
+Stacktrace:
+ [1] ORF(location::UnitRange{Int64}, strand::Char, frame::Int64)
+   @ GeneFinder ~/.julia/dev/GeneFinder/src/types.jl:47
+ [2] top-level scope
+   @ REPL[25]:1
+```
+ 
+Similar behavior will be encountered when the strand is neither `+` nor `-`. This precautionary measure helps prevent the creation of invalid ORFs, ensuring greater stability and enabling the extension of its interface. For example, after creating a specific `ORF`, users can seamlessly iterate over a sequence of interest and verify whether the ORF is contained within the sequence.
+
+```julia
+orf = ORF(137:145, '+', 2)
+seq[orf]
+
+9nt DNA Sequence:
+ATGCGCTGA
+```
+
+!!! warning
+    It is still possible to create an `ORF` and pass it to a sequence that does not necessarily contain an actual open reading frame. This will be addressed in future versions of the package. But the benefit of having it is that it will retrieve the corresponding subsequence of the sequence in a convinient way (5' to 3') regardless of the strand.
