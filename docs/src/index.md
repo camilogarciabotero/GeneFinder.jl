@@ -32,6 +32,9 @@
 <a href="https://pkgs.genieframework.com?packages=GeneFinder">
   <img src="https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/GeneFinder&label=downloads" alt="Downloads">
 </a>
+<a href="https://github.com/JuliaTesting/Aqua.jl">
+  <img src="https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg" alt="Aqua QA">
+</a>
 
 </div>
 
@@ -63,7 +66,7 @@ add GeneFinder
 	author  = {Camilo García},
 	title   = {GeneFinder.jl},
 	url     = {https://github.com/camilogarciabotero/GeneFinder.jl},
-	version = {v0.0.23},
+	version = {v0.2.0},
 	year    = {2022},
 	month   = {11}
 }

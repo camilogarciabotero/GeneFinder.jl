@@ -12,6 +12,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE)
 [![Repo Status](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/GeneFinder&label=downloads)](https://pkgs.genieframework.com?packages=GeneFinder)
+[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 </div>
 
@@ -36,7 +37,7 @@ add GeneFinder
 If you are interested in the cutting edge of the development, please check out
 the master branch to try new features before release.
 
-## Finding complete and internal (overlapped) ORFs
+## Finding complete and overlapped ORFs
 
 The first implemented function is `findorfs` a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
 
@@ -66,10 +67,10 @@ findorfs(seq)
  ORF(695:706, '+', 2)
 ```
 
-Two other functions (`getorfdna` and `getorfaa`) pass the sequence to `findorfs` take the ORFs and act as generators of the sequence, so this way the can be `collect`ed in the REPL as an standard output or writteen into a file more conviniently using the `FASTX` IO system:
+Two other functions (`get_orfs_dna` and `get_orfs_aa`) are implemented to get the ORFs in DNA and amino acid sequences, respectively. They use the `findorfs` function to first get the ORFs and then get the correspondance array of `BioSequence` objects.
 
 ```julia
-getorfdna(seq)
+get_orfs_dna(seq)
 
 12-element Vector{LongSubSeq{DNAAlphabet{4}}}:
  ATGCAACCCTGA
@@ -86,78 +87,68 @@ getorfdna(seq)
  ATGCAACCCTGA
 ```
 
-```julia
-getorfaa(seq)
+## Writting ORF information into bioinformatic formats
 
-12-element Vector{LongSubSeq{AminoAcidAlphabet}}:
- MQP*
- MR*
- MRRMAR*
- MAR*
- M*
- MCPTAV*
- MQP*
- MHWLVLSI*
- MSPHKAM*
- M*
- MCPTAA*
- MQP*
+This package facilitates now the creation of `FASTA`, `BED`, and `GFF` files, specifically extracting Open Reading Frame (ORF) information from `BioSequence` instances, particularly those of type `NucleicSeqOrView{A} where A`, and then writing the information into the desired format.
+
+Functionality:
+
+The package provides four distinct functions for writing files in different formats:
+
+| Function          | Description                                            |
+|-------------------|--------------------------------------------------------|
+| `write_orfs_fna`    | Writes nucleotide sequences in FASTA format.     |
+| `write_orfs_faa`    | Writes amino acid sequences in FASTA format.  |
+| `write_orfs_bed`    | Outputs information in BED format.                           |
+| `write_orfs_gff`    | Generates files in GFF format.                              |
+
+
+All these functions support processing both `BioSequence` instances and external `FASTA` files. In the case of a `BioSequence` instace into external files, simply provide the path to the `FASTA` file using a `String` to the path. To demonstrate the use of the `write_*` methods with a `BioSequence`, consider the following example:
+
+```julia
+using BioSequences, GeneFinder
+
+# > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
+seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
 ```
 
-### Writting cds, proteins fastas, bed and gffs whether from a `LongSeq` or from a external fasta file.
+Once a `BioSequence` object has been instantiated, the `write_orfs_fna` function proves useful for generating a `FASTA` file containing the nucleotide sequences of the ORFs. Notably, the `write_orfs*` methods support either an `IOStream` or an `IOBuffer` as an output argument, allowing flexibility in directing the output either to a file or a buffer. In the following example, we demonstrate writing the output directly to a file.
 
 ```julia
-write_cds("cds.fasta", seq)
+outfile = "LFLS01000089.fna"
+
+open(outfile, "w") do io
+    write_orfs_fna(seq, io)
+end
 ```
 
 ```bash
-cat cds.fasta
+cat LFLS01000089.fna
 
->location=29:40 strand=+ frame=2
+>ORF01 id=01 start=29 stop=40 strand=+ frame=2
 ATGCAACCCTGA
->location=137:145 strand=+ frame=2
+>ORF02 id=02 start=137 stop=145 strand=+ frame=2
 ATGCGCTGA
->location=164:184 strand=+ frame=2
+>ORF03 id=03 start=164 stop=184 strand=+ frame=2
 ATGCGTCGAATGGCACGGTGA
->location=173:184 strand=+ frame=2
+>ORF04 id=04 start=173 stop=184 strand=+ frame=2
 ATGGCACGGTGA
->location=236:241 strand=+ frame=2
+>ORF05 id=05 start=236 stop=241 strand=+ frame=2
 ATGTGA
->location=248:268 strand=+ frame=2
+>ORF06 id=06 start=248 stop=268 strand=+ frame=2
 ATGTGTCCAACGGCAGTCTGA
->location=362:373 strand=+ frame=2
+>ORF07 id=07 start=362 stop=373 strand=+ frame=2
 ATGCAACCCTGA
->location=470:496 strand=+ frame=2
+>ORF08 id=08 start=470 stop=496 strand=+ frame=2
 ATGCACTGGCTGGTCCTGTCAATCTGA
->location=551:574 strand=+ frame=2
+>ORF09 id=09 start=551 stop=574 strand=+ frame=2
 ATGTCACCGCACAAGGCAATGTGA
->location=569:574 strand=+ frame=2
+>ORF10 id=10 start=569 stop=574 strand=+ frame=2
 ATGTGA
->location=581:601 strand=+ frame=2
+>ORF11 id=11 start=581 stop=601 strand=+ frame=2
 ATGTGTCCAACGGCAGCCTGA
->location=695:706 strand=+ frame=2
+>ORF12 id=12 start=695 stop=706 strand=+ frame=2
 ATGCAACCCTGA
 ```
 
-### Combining `FASTX` for reading and writing fastas
-
-```julia
-using FASTX
-
-write_proteins("test/data/NC_001884.fasta", "proteins.fasta")
-```
-
-```bash
-head proteins.fasta
-
->location=41:145 strand=- frame=2
-MTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
->location=41:172 strand=- frame=2
-MVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
->location=41:454 strand=- frame=2
-MSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
->location=41:472 strand=- frame=2
-MKTKKQMSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
->location=41:505 strand=- frame=2
-MLSKYEDDNSNMKTKKQMSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
-```
+This could also be done to writting a `FASTA` file with the nucleotide sequences of the ORFs using the `write_orfs_fna` function. Similarly for the `BED` and `GFF` files using the `write_orfs_bed` and `write_orfs_gff` functions respectively.

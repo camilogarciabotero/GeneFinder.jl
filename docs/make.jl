@@ -10,7 +10,7 @@ makedocs(;
     sitename = "GeneFinder.jl",
     format = Documenter.HTML(;
         mathengine=MathJax3(),
-        prettyurls = get(ENV, "CI", "false") == "true",
+        # prettyurls = get(ENV, "CI", "false") == "true",
         canonical = "https://camilogarciabotero.github.io/GeneFinder.jl",
         repolink = "https://github.com/camilogarciabotero/GeneFinder.jl",
         edit_link = "main",
@@ -18,6 +18,8 @@ makedocs(;
     pages = [
         "Home" => "index.md",
         "Finding ORFs" => "simplefinder.md",
+        "Wrtiting ORFs in files" => "iodocs.md",
+        # "A Simple coding rule" => "simplecodingrule.md",
         "Roadmap" => "roadmap.md",
         "API" => "api.md",
     ],

@@ -17,44 +17,13 @@ end
 # end
 
 """
-    nucleotidefreqs(sequence::LongSequence{DNAAlphabet{4}}) -> Dict{DNA, Float64}
-
-Calculate the frequency of each nucleotide in a DNA sequence.
-
-# Arguments
-- `sequence::LongSequence{DNAAlphabet{4}}`: A `LongSequence{DNAAlphabet{4}}` sequence.
-
-# Returns
-A dictionary with each nucleotide in the sequence as a key, and its frequency as a value.
-
-# Example
-``` 
-seq = dna"CCTCCCGGACCCTGGGCTCGGGAC"
-
-nucleotidefreqs(seq)
-
-Dict{DNA, Float64} with 4 entries:
-DNA_T => 0.125
-DNA_A => 0.0833333
-DNA_G => 0.333333
-DNA_C => 0.458333
-```
-"""
-function nucleotidefreqs(sequence::LongNucOrView{4})::Dict{DNA,Float64}
-    counts = countmap(sequence)
-    T = length(sequence)
-    F = Dict(i => counts[i] / T for i in keys(counts))
-    return F
-end
-
-"""
     hasprematurestop(sequence::LongNucOrView{4})::Bool
 
 Determine whether the `sequence` of type `LongSequence{DNAAlphabet{4}}` contains a premature stop codon.
 
 Returns a boolean indicating whether the `sequence` has more than one stop codon.
 """
-function hasprematurestop(sequence::LongNucOrView{N})::Bool where N
+function hasprematurestop(sequence::NucleicSeqOrView{A})::Bool where {A}
     
     stopcodons = [LongDNA{4}("TAA"), LongDNA{4}("TAG"), LongDNA{4}("TGA")]  # Create a set of stop codons
     

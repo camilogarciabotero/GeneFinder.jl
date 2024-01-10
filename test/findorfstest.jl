@@ -39,20 +39,21 @@
     @test length(NC_001416_orfs) == 885
 end
 
-@testset "getorfdna" begin
+@testset "get_orfs_dna" begin
 
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-    orfseqs = getorfdna(seq01)
+    sseq01 = "ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+    orfseqs = get_orfs_dna(seq01)
 
     @test length(orfseqs) == 5
     @test orfseqs[1] == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
 end
 
-# @testset "getorfaa" begin
+@testset "get_orfs_aa" begin
 
-#     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-#     aas = getorfaa(seq01)
+    seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+    aas = get_orfs_aa(seq01)
 
-#     @test length(aas) == 5
-#     @test aas[1] == aa"MMHACMLVTS*"
-# end
+    @test length(aas) == 5
+    @test aas[1] == aa"MMHACMLVTS*"
+end
