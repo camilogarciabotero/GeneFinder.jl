@@ -7,6 +7,7 @@ using GeneFinder
 using Aqua
 
 include("findorfstest.jl")
+include("iotest.jl")
 include("aquatest.jl")
 
 end

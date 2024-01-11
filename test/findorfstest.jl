@@ -33,7 +33,6 @@
     # findorfs (GeneFinder.jl) --> 885
     # NCBI ORFfinder --> 375 ORFs
     # orfipy --> 375 (`orfipy NC_001416.1.fasta --start ATG --include-stop --min 75`)
-    # NC_001416 = fasta_to_dna("../../test/data/NC_001416.1.fasta")[1]
     NC_001416 = fasta_to_dna("data/NC_001416.1.fasta")[1]
     NC_001416_orfs = findorfs(NC_001416, min_len=75)
     @test length(NC_001416_orfs) == 885
@@ -42,7 +41,6 @@ end
 @testset "get_orfs_dna" begin
 
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-    sseq01 = "ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
     orfseqs = get_orfs_dna(seq01)
 
     @test length(orfseqs) == 5

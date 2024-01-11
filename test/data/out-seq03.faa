@@ -1,0 +1,64 @@
+>ORF01 id=01 start=5 stop=22 strand=- frame=2
+MKQND*
+>ORF02 id=02 start=37 stop=156 strand=+ frame=1
+MYFSCISGGIVPSSIASRYPLIEVRGERKSWDTLATNFF*
+>ORF03 id=03 start=107 stop=136 strand=- frame=2
+MYPTISVPL*
+>ORF04 id=04 start=140 stop=160 strand=- frame=2
+MIRKSL*
+>ORF05 id=05 start=194 stop=223 strand=- frame=2
+MKSVIWLPV*
+>ORF06 id=06 start=194 stop=247 strand=- frame=2
+MNFRSIVRMKSVIWLPV*
+>ORF07 id=07 start=194 stop=268 strand=- frame=2
+MLPVICIMNFRSIVRMKSVIWLPV*
+>ORF08 id=08 start=194 stop=283 strand=- frame=2
+MPQSSMLPVICIMNFRSIVRMKSVIWLPV*
+>ORF09 id=09 start=249 stop=347 strand=+ frame=3
+MHITGSILLCGMSDLPQRNIYDLSEKDQNDQG*
+>ORF10 id=10 start=282 stop=347 strand=+ frame=3
+MSDLPQRNIYDLSEKDQNDQG*
+>ORF11 id=11 start=334 stop=375 strand=+ frame=1
+MIRDSRNRIARVI*
+>ORF12 id=12 start=383 stop=415 strand=- frame=2
+MIFRNPVTTC*
+>ORF13 id=13 start=426 stop=590 strand=+ frame=3
+MDDYIAFYLVVGGNGSKYSKYIRIKITEEITNNVIGAAGYGRIKILNDNHILHI*
+>ORF14 id=14 start=430 stop=441 strand=+ frame=1
+MTT*
+>ORF15 id=15 start=434 stop=439 strand=- frame=2
+M*
+>ORF16 id=16 start=446 stop=490 strand=- frame=2
+MYLLYLLPLPPTTR*
+>ORF17 id=17 start=466 stop=528 strand=+ frame=1
+MGANTVSTSESKLPKKSPTM*
+>ORF18 id=18 start=523 stop=528 strand=+ frame=1
+M*
+>ORF19 id=19 start=542 stop=577 strand=- frame=2
+MWLSLRILIRP*
+>ORF20 id=20 start=542 stop=586 strand=- frame=2
+MWRMWLSLRILIRP*
+>ORF21 id=21 start=565 stop=657 strand=+ frame=1
+MTTTFSTSKGLLVSSTSRPEGLMMRISEFR*
+>ORF22 id=22 start=631 stop=657 strand=+ frame=1
+MMRISEFR*
+>ORF23 id=23 start=634 stop=657 strand=+ frame=1
+MRISEFR*
+>ORF24 id=24 start=650 stop=727 strand=- frame=2
+MPADCTPVKQLWRPLKCSWTPWRST*
+>ORF25 id=25 start=786 stop=872 strand=+ frame=3
+MFFGHIGNKSCNNDETKYTKNKICEYKF*
+>ORF26 id=26 start=823 stop=876 strand=+ frame=1
+MMKPNTPKIKYASINFR*
+>ORF27 id=27 start=826 stop=876 strand=+ frame=1
+MKPNTPKIKYASINFR*
+>ORF28 id=28 start=854 stop=865 strand=+ frame=2
+MRV*
+>ORF29 id=29 start=887 stop=976 strand=- frame=2
+MPTGRSAPSGASAINSKYVIKSYQKQDLL*
+>ORF30 id=30 start=910 stop=918 strand=+ frame=1
+MT*
+>ORF31 id=31 start=943 stop=978 strand=+ frame=1
+MPQMVLIFQLA*
+>ORF32 id=32 start=952 stop=978 strand=+ frame=1
+MVLIFQLA*
