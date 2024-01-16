@@ -20,7 +20,7 @@ function write_orfs_bed(
 ) where {N}
     orfs = findorfs(input; alternative_start, min_len)
     @inbounds for orf in orfs
-        println(output, "$(orf.location.start)\t$(orf.location.stop)\t$(orf.strand)\t$(orf.frame)")
+        println(output, orf.location.start, "\t", orf.location.stop, "\t", orf.strand, "\t", orf.frame)
     end
 end
 
@@ -47,7 +47,7 @@ function write_orfs_bed(
     input = fasta_to_dna(input)[1] # rewrite input to be a DNA sequence
     orfs = findorfs(input; alternative_start, min_len)
     @inbounds for orf in orfs
-        println(output, "$(orf.location.start)\t$(orf.location.stop)\t$(orf.strand)\t$(orf.frame)")
+        println(output, orf.location.start, "\t", orf.location.stop, "\t", orf.strand, "\t", orf.frame)
     end
 end
 
@@ -101,7 +101,8 @@ function write_orfs_fna(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        println(output, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(input[orf])") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
+        println(output, ">ORF", id, " id=", id, " start=", orf.location.start, " stop=", orf.location.stop, " strand=", orf.strand, " frame=", orf.frame)
+        println(output, input[orf])
     end
 end
 
@@ -134,7 +135,8 @@ function write_orfs_fna(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        println(output, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(input[orf])") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
+        println(output, ">ORF", id, " id=", id, " start=", orf.location.start, " stop=", orf.location.stop, " strand=", orf.strand, " frame=", orf.frame)
+        println(output, input[orf])
     end
 end
 
@@ -193,7 +195,8 @@ function write_orfs_faa(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        println(output, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(translate(input[orf]; code))")
+        println(output, ">ORF", id, " id=", id, " start=", orf.location.start, " stop=", orf.location.stop, " strand=", orf.strand, " frame=", orf.frame)
+        println(output, translate(input[orf]; code))
     end
 end
 
@@ -228,7 +231,8 @@ function write_orfs_faa(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        println(output, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(translate(input[orf]; code))")
+        println(output, ">ORF", id, " id=", id, " start=", orf.location.start, " stop=", orf.location.stop, " strand=", orf.strand, " frame=", orf.frame)
+        println(output, translate(input[orf]; code))
     end
 end
 
@@ -278,11 +282,8 @@ function write_orfs_gff(
     println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
     for (i, orf) in enumerate(orfs)
         id = string("ORF", lpad(string(i), padding, "0"))
-        println(
-            output,
-            "Chr\t.\tORF\t$(orf.location.start)\t$(orf.location.stop)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame)",
-        )
-    end
+        println(output, "Chr\t.\tORF\t", orf.location.start, "\t", orf.location.stop, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame)
+        end
 end
 
 function write_orfs_gff(
@@ -319,10 +320,7 @@ function write_orfs_gff(
     println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
     for (i, orf) in enumerate(orfs)
         id = string("ORF", lpad(string(i), padding, "0"))
-        println(
-            output,
-            "Chr\t.\tORF\t$(orf.location.start)\t$(orf.location.stop)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame)",
-        )
+        println(output, "Chr\t.\tORF\t", orf.location.start, "\t", orf.location.stop, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame)
     end
 end
 
