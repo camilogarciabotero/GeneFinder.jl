@@ -1,6 +1,5 @@
 """
     locationiterator(sequence::NucleicSeqOrView{DNAAlphabet{N}}; alternative_start::Bool=false) where {N}
-    locationiterator(sequence::NucleicSeqOrView{RNAAlphabet{N}}; alternative_start::Bool=false) where {N}
 
 This is an iterator function that uses regular expressions to search the entire ORF (instead of start and stop codons) in a `LongSequence{DNAAlphabet{4}}` sequence.
     It uses an anonymous function that will find the first regularly expressed ORF. Then using this anonymous function it creates an iterator that will apply it until there is no other CDS.
