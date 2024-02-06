@@ -26,8 +26,6 @@ function locationiterator(
     return itr
 end
 
-const FRAMEDICT = Dict(0 => 3, 1 => 1, 2 => 2) # sets the int conversion for frame assignment later
-
 """
     findorfs(sequence::NucleicAlphabet{DNAAlphabet{N}}; alternative_start::Bool=false, min_len::Int64=6)::Vector{ORF} where {N}
 
@@ -53,13 +51,14 @@ function findorfs(
     orfs = Vector{ORF}(undef, 0)
     reversedseq = reverse_complement(sequence)
     seqlen = length(sequence)
+    framedict = Dict(0 => 3, 1 => 1, 2 => 2)
 
     for strand in ('+', '-')
         seq = strand == '-' ? reversedseq : sequence
 
         @inbounds for location in @views locationiterator(seq; alternative_start)
             if length(location) >= min_len
-                frame = strand == '+' ? FRAMEDICT[location.start % 3] : FRAMEDICT[(seqlen - location.stop + 1) % 3]
+                frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
                 push!(orfs, ORF(strand == '+' ? location : (seqlen - location.stop + 1):(seqlen - location.start + 1), strand, frame))
             end
         end
