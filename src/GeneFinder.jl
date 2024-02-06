@@ -47,7 +47,7 @@ include("extended.jl")
         # they belong to your package or not (on Julia 1.8 and higher)
         findorfs(seq)
         get_orfs_dna(seq)
-        # get_orfs_aa(seq)
+        get_orfs_aa(seq)
     end
 end
 
