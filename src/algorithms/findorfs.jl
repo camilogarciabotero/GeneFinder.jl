@@ -44,7 +44,7 @@ The `findorfs` function takes a LongSequence{DNAAlphabet{4}} sequence and return
 """
 function findorfs(
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
-    alternative_start::Bool = false, 
+    alternative_start::Bool = false,
     min_len::Int64 = 6
 ) where {N}
     orfs = Vector{ORF}(undef, 0)
@@ -58,7 +58,7 @@ function findorfs(
         @inbounds for location in @views locationiterator(seq; alternative_start)
             if length(location) >= min_len
                 frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
-                push!(orfs, ORF(strand == '+' ? location : (seqlen - location.stop + 1):(seqlen - location.start + 1), strand, frame))
+                push!(orfs, ORF(strand == '+' ? location : (seqlen - location.stop + 1):(seqlen - location.start + 1), strand, frame, 0.0))
             end
         end
     end
