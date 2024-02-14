@@ -194,3 +194,19 @@ function record_orfs_faa(
     end
     return records
 end
+
+## ideas to genefinder (this is the waay window function are implemented in the DSP.jl package)
+
+# function make_orf_finder(finderfunc::Function, sequence::NucleicSeqOrView{DNAAlphabet{N}}) where {N}
+#     ...
+# end
+
+# function locationiterator(sequence::NucleicSeqOrView{DNAAlphabet{N}}) where {N}
+#     make_orf_finder(sequence::NucleicSeqOrView{DNAAlphabet{N}}) do x
+#         ...
+#     end
+# end
+
+# function findorfs(sequence::NucleicSeqOrView{DNAAlphabet{N}}; finder::Function=locationiterator) where {N}
+#     ...
+# end
