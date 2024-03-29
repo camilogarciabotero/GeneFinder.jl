@@ -8,6 +8,7 @@ using Aqua
 
 include("findorfstest.jl")
 include("iotest.jl")
+include("getindextest.jl")
 include("aquatest.jl")
 
 end
