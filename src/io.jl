@@ -1,3 +1,5 @@
+export write_orfs_fna, write_orfs_faa, write_orfs_bed, write_orfs_gff
+
 """
     write_orfs_bed(input::NucleicAcidAlphabet{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}; kwargs...) where {N}
     write_orfs_bed(input::NucleicAcidAlphabet{DNAAlphabet{N}}, output::String; kwargs...) where {N}

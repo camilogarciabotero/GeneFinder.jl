@@ -1,3 +1,5 @@
+export ORF
+
 # Structs associated with gene models 
 abstract type AbstractGene end
 
@@ -48,6 +50,7 @@ The ORF struct represents an open reading frame in a DNA sequence. It has two fi
 - `score`: is a Union{Nothing, Float64} type indicating the score of the ORF. It can be a Float64 or nothing.
 """
 struct ORF <: AbstractGene
+    #TODOs:  location might be a complex Union allowing UnitRange or a Join of ranges (e.g. 1..100, 200..300)?
     location::UnitRange{Int64}  # Note that it is also called position for gene struct in GenomicAnotations
     strand::Char
     frame::Int # Use Int64 instead of Int

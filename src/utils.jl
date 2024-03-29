@@ -1,3 +1,4 @@
+export fasta_to_dna, hasprematurestop
 # General purposes methods supporting main functions
 """
     fasta_to_dna(input::String)

@@ -24,18 +24,12 @@ using FASTX: FASTAReader, FASTARecord, description, sequence
 using IterTools: takewhile, iterated
 using PrecompileTools: @setup_workload, @compile_workload
 
+include("algorithms/naivefinder.jl")
 include("types.jl")
-export ORF
-
-include("algorithms/findorfs.jl")
-export locationiterator, findorfs, get_orfs_dna, get_orfs_aa, record_orfs_fna, record_orfs_faa
-
+include("findorfs.jl")
+include("getorfs.jl")
 include("io.jl")
-export write_orfs_fna, write_orfs_faa, write_orfs_bed, write_orfs_gff
-
 include("utils.jl")
-export fasta_to_dna, hasprematurestop
-
 include("extended.jl")
 
 @setup_workload begin
