@@ -1,6 +1,6 @@
 # https://github.com/althonos/pyrodigal/blob/main/pyrodigal/_pyrodigal.pxd
 
-abstract type ProdigalPrediction{T<:GenomicFeature} end
+# abstract type ProdigalPrediction{T<:GenomicFeature} end
 
 # Remember to make the implementation similar to BioAlignments so to have multiple algortithms to call when using 
 # findgenes(string::DNAseq, algorithm::PredictionAlgorithms, type::GeneticCode)
