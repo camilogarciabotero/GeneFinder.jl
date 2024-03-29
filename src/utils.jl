@@ -1,4 +1,4 @@
-# export fasta_to_dna, hasprematurestop
+# export hasprematurestop
 # General purposes methods supporting main functions
 
 """
