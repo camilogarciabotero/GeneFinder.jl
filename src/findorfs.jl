@@ -20,6 +20,6 @@ function findorfs(
     min_len::Int64 = 6
     ) where {N}
 
-    return findermethod(sequence; alternative_start, min_len)#::Vector{ORF}
+    return findermethod(sequence; alternative_start, min_len)::Vector{ORF}
     
 end
