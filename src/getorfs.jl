@@ -19,10 +19,11 @@ This function takes a `NucleicSeqOrView{DNAAlphabet{N}}` sequence and identifies
 """
 function get_orfs_dna(
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
+    findermethod::Function = naivefinder,
     alternative_start::Bool = false,
     min_len::Int64 = 6
 ) where {N}
-    orfs = findorfs(sequence; alternative_start, min_len)
+    orfs = findorfs(sequence; findermethod, alternative_start, min_len)
     seqs = Vector{LongSubSeq{DNAAlphabet{N}}}(undef, length(orfs)) #Vector{}(undef, length(orfs)) # todo correct the output type
     @inbounds for (i, orf) in enumerate(orfs)
         seqs[i] = sequence[orf]
@@ -47,11 +48,12 @@ This function takes a `NucleicSeqOrView{DNAAlphabet{N}}` sequence and identifies
 """
 function get_orfs_aa(
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
+    findermethod::Function = naivefinder,
     alternative_start::Bool = false,
     code::GeneticCode = ncbi_trans_table[1],
     min_len::Int64 = 6
 ) where {N}
-    orfs = findorfs(sequence; alternative_start, min_len)
+    orfs = findorfs(sequence; findermethod, alternative_start, min_len)
     aas = Vector{LongSubSeq{AminoAcidAlphabet}}(undef, length(orfs))
     @inbounds for (i, orf) in enumerate(orfs)
         aas[i] = translate(sequence[orf]; code)
