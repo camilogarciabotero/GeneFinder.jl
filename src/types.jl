@@ -10,7 +10,7 @@ abstract type AbstractGene end
         stop::Int64
         strand::Char
         frame::Int8
-        score::Union{Float64, Nothing} # Add score field
+        score::Union{Nothing, Float64} # Add score field
         attribute::Dict
     end
 
@@ -39,7 +39,7 @@ This is the main Gene struct, based on the fields that could be found in a GFF3,
         location::UnitRange{Int64}
         strand::Char
         frame::Int
-        score::Union{Float64, Nothing} # Add score field
+        score::Union{Nothing, Float64}
     end
 
 The ORF struct represents an open reading frame in a DNA sequence. It has two fields: 
