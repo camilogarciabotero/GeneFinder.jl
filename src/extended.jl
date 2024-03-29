@@ -2,6 +2,7 @@
 import Base: length, iterate, sort, getindex
 
 Base.sort(v::Vector{<:ORF}) = sort(v, by = _orf_sort_key)
+#TODOs: how to make more robust the getindex method? confroning the frames?
 Base.getindex(sequence::NucleicSeqOrView{A}, orf::ORF) where {A} = orf.strand == '+' ? (@view sequence[orf.location]) : reverse_complement(@view sequence[orf.location])
 
 function _orf_sort_key(orf::ORF)
