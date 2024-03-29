@@ -20,7 +20,7 @@ using BioSequences:
     ncbi_trans_table,
     translate
 
-using FASTX: FASTAReader, FASTARecord, description, sequence
+# using FASTX: FASTAReader, FASTARecord, description, sequence
 using IterTools: takewhile, iterated
 using PrecompileTools: @setup_workload, @compile_workload
 

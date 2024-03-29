@@ -1,4 +1,4 @@
-export get_orfs_dna, get_orfs_aa, record_orfs_fna, record_orfs_faa
+export get_orfs_dna, get_orfs_aa
 
 #### get_orfs_* methods ####
 
@@ -77,23 +77,23 @@ An array of `FASTARecord` objects representing the identified ORFs.
 # Description
 This function searches for Open Reading Frames (ORFs) in a given nucleic acid sequence. An ORF is a sequence of DNA that starts with a start codon and ends with a stop codon, without any other stop codons in between. By default, only the standard start codon (ATG) is considered, but if `alternative_start` is set to `true`, alternative start codons are also considered. The minimum length of an ORF to be recorded can be specified using the `min_len` argument.
 """
-function record_orfs_fna(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}}; 
-    alternative_start::Bool = false, 
-    min_len::Int64 = 6
-) where {N}
-    orfs = findorfs(sequence; alternative_start, min_len)
-    norfs = length(orfs)
-    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
-    records = FASTARecord[]
-    @inbounds for (index, orf) in enumerate(orfs)
-        id = string(lpad(string(index), padding, "0"))
-        header = "ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)"
-        record = FASTARecord(header, sequence[orf])
-        push!(records, record)
-    end
-    return records
-end
+# function record_orfs_fna(
+#     sequence::NucleicSeqOrView{DNAAlphabet{N}}; 
+#     alternative_start::Bool = false, 
+#     min_len::Int64 = 6
+# ) where {N}
+#     orfs = findorfs(sequence; alternative_start, min_len)
+#     norfs = length(orfs)
+#     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
+#     records = FASTARecord[]
+#     @inbounds for (index, orf) in enumerate(orfs)
+#         id = string(lpad(string(index), padding, "0"))
+#         header = "ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)"
+#         record = FASTARecord(header, sequence[orf])
+#         push!(records, record)
+#     end
+#     return records
+# end
 
 """
     record_orfs_faa(sequence::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) where {N}
@@ -111,21 +111,21 @@ The function returns a list of FASTA records, where each record represents an OR
 # Returns
 - A list of FASTA records representing the ORFs found in the sequence.
 """
-function record_orfs_faa(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}};
-    alternative_start::Bool = false, 
-    code::GeneticCode = ncbi_trans_table[1],
-    min_len::Int64 = 6
-) where {N}
-    orfs = findorfs(sequence; alternative_start, min_len)
-    norfs = length(orfs)
-    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
-    records = FASTARecord[]
-    @inbounds for (index, orf) in enumerate(orfs)
-        id = string(lpad(string(index), padding, "0"))
-        header = "ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)"
-        record = FASTARecord(header, translate(sequence[orf]; code))
-        push!(records, record)
-    end
-    return records
-end
+# function record_orfs_faa(
+#     sequence::NucleicSeqOrView{DNAAlphabet{N}};
+#     alternative_start::Bool = false, 
+#     code::GeneticCode = ncbi_trans_table[1],
+#     min_len::Int64 = 6
+# ) where {N}
+#     orfs = findorfs(sequence; alternative_start, min_len)
+#     norfs = length(orfs)
+#     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
+#     records = FASTARecord[]
+#     @inbounds for (index, orf) in enumerate(orfs)
+#         id = string(lpad(string(index), padding, "0"))
+#         header = "ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)"
+#         record = FASTARecord(header, translate(sequence[orf]; code))
+#         push!(records, record)
+#     end
+#     return records
+# end

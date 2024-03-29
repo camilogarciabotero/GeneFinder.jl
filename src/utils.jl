@@ -1,15 +1,15 @@
-export fasta_to_dna, hasprematurestop
+# export fasta_to_dna, hasprematurestop
 # General purposes methods supporting main functions
-"""
-    fasta_to_dna(input::String)
+# """
+#     fasta_to_dna(input::String)
 
-Converts a FASTA formatted file (even if it is a multi-fasta) to an array of `LongSequence{DNAAlphabet{4}}` objects.
-"""
-function fasta_to_dna(input::AbstractString)::Vector{LongSequence{DNAAlphabet{4}}}
-    FASTAReader(open(input)) do reader
-        return [LongSequence{DNAAlphabet{4}}(sequence(record)) for record in reader]
-    end
-end
+# Converts a FASTA formatted file (even if it is a multi-fasta) to an array of `LongSequence{DNAAlphabet{4}}` objects.
+# """
+# function fasta_to_dna(input::AbstractString)::Vector{LongSequence{DNAAlphabet{4}}}
+#     FASTAReader(open(input)) do reader
+#         return [LongSequence{DNAAlphabet{4}}(sequence(record)) for record in reader]
+#     end
+# end
 
 # function gff_to_dna(input::AbstractString)
 #     GFF3.Reader(open(input)) do reader
@@ -24,23 +24,23 @@ Determine whether the `sequence` of type `LongSequence{DNAAlphabet{4}}` contains
 
 Returns a boolean indicating whether the `sequence` has more than one stop codon.
 """
-function hasprematurestop(sequence::NucleicSeqOrView{DNAAlphabet{N}})::Bool where {N}
+# function hasprematurestop(sequence::NucleicSeqOrView{DNAAlphabet{N}})::Bool where {N}
     
-    stopcodons = [LongDNA{4}("TAA"), LongDNA{4}("TAG"), LongDNA{4}("TGA")]  # Create a set of stop codons
+#     stopcodons = [LongDNA{4}("TAA"), LongDNA{4}("TAG"), LongDNA{4}("TGA")]  # Create a set of stop codons
     
-    length(sequence) % 3 == 0 || error("The sequence is not divisible by 3")
+#     length(sequence) % 3 == 0 || error("The sequence is not divisible by 3")
     
-    occursin(biore"T(AG|AA|GA)"dna, sequence[end-2:end]) || error("There is no stop codon at the end of the sequence")
+#     occursin(biore"T(AG|AA|GA)"dna, sequence[end-2:end]) || error("There is no stop codon at the end of the sequence")
 
-    @inbounds for i in 1:3:length(sequence) - 4
-        codon = sequence[i:i+2]
-        if codon in stopcodons
-            return true
-        end
-    end
+#     @inbounds for i in 1:3:length(sequence) - 4
+#         codon = sequence[i:i+2]
+#         if codon in stopcodons
+#             return true
+#         end
+#     end
 
-    return false
-end
+#     return false
+# end
 
 @doc raw"""
     iscoding(
