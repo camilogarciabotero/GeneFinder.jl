@@ -49,48 +49,24 @@ function naivefinder(
     alternative_start::Bool = false,
     min_len::Int64 = 6
 ) where {N}
-    orfs = Vector{ORF}(undef, 0)
-    reversedseq = reverse_complement(sequence)
     seqlen = length(sequence)
     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
+    orfs = Vector{ORF}()
 
     for strand in ('+', '-')
-        seq = strand == '-' ? reversedseq : sequence
+        seq = strand == '-' ? reverse_complement(sequence) : sequence
 
         @inbounds for location in @views _locationiterator(seq; alternative_start)
             if length(location) >= min_len
                 frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
-                push!(orfs, ORF(strand == '+' ? location : (seqlen - location.stop + 1):(seqlen - location.start + 1), strand, frame, 0.0))
+                start = strand == '+' ? location.start : seqlen - location.stop + 1
+                stop = start + length(location) - 1
+                push!(orfs, ORF(start:stop, strand, frame, 0.0))
             end
         end
     end
     return sort(orfs)
 end
-
-# function naivefinder(
-#     sequence::NucleicSeqOrView{DNAAlphabet{N}};
-#     alternative_start::Bool = false,
-#     min_len::Int64 = 6
-# ) where {N}
-#     seqlen = length(sequence)
-#     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
-#     orfs = Vector{ORF}()
-
-#     for strand in ('+', '-')
-#         seq = strand == '-' ? reverse_complement(sequence) : sequence
-
-#         @inbounds for location in @views _locationiterator(seq; alternative_start)
-#             if length(location) >= min_len
-#                 frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
-#                 start = strand == '+' ? location.start : seqlen - location.stop + 1
-#                 stop = start + length(location) - 1
-#                 push!(orfs, ORF(start:stop, strand, frame, 0.0))
-#             end
-#         end
-#     end
-
-#     return sort(orfs)
-# end
 
 ## Another alternative:
 
