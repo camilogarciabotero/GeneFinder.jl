@@ -1,3 +1,9 @@
+## Scoring a sequence using a Markov model
+
+The sequence probability given a transition probability model could (see )
+
+
+
 ## The *log-odds ratio* decision rule
 
 The sequence probability given a transition probability model (eq. 2) could be used as the source of a sequence classification based on a decision rule to classify whether a sequence correspond to a model or another. Now, imagine we got two DNA sequence transition models, a CDS model and a No-CDS model. The *log-odds ratio* decision rule could be establish as:
