@@ -15,18 +15,18 @@ Now lest us find the ORFs
 findorfs(seq)
 
 12-element Vector{ORF}:
- ORF(29:40, '+', 2)
- ORF(137:145, '+', 2)
- ORF(164:184, '+', 2)
- ORF(173:184, '+', 2)
- ORF(236:241, '+', 2)
- ORF(248:268, '+', 2)
- ORF(362:373, '+', 2)
- ORF(470:496, '+', 2)
- ORF(551:574, '+', 2)
- ORF(569:574, '+', 2)
- ORF(581:601, '+', 2)
- ORF(695:706, '+', 2)
+ ORF(29:40, '+', 2, 0.0)
+ ORF(137:145, '+', 2, 0.0)
+ ORF(164:184, '+', 2, 0.0)
+ ORF(173:184, '+', 2, 0.0)
+ ORF(236:241, '+', 2, 0.0)
+ ORF(248:268, '+', 2, 0.0)
+ ORF(362:373, '+', 2, 0.0)
+ ORF(470:496, '+', 2, 0.0)
+ ORF(551:574, '+', 2, 0.0)
+ ORF(569:574, '+', 2, 0.0)
+ ORF(581:601, '+', 2, 0.0)
+ ORF(695:706, '+', 2, 0.0)
 ```
 
 Two other functions (`get_orfs_dna` and `get_orfs_aa`) are implemented to get the ORFs in DNA and amino acid sequences, respectively. They use the `findorfs` function to first get the ORFs and then get the correspondance array of `BioSequence` objects.
