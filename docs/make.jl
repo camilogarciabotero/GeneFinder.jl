@@ -5,7 +5,7 @@ DocMeta.setdocmeta!(GeneFinder, :DocTestSetup, :(using GeneFinder); recursive = 
 
 makedocs(;
     modules = [GeneFinder],
-    authors = "Camilo García",
+    authors = "Camilo García-Botero",
     repo = "https://github.com/camilogarciabotero/GeneFinder.jl/",
     sitename = "GeneFinder.jl",
     format = Documenter.HTML(;
@@ -18,7 +18,7 @@ makedocs(;
     pages = [
         "Home" => "index.md",
         "Finding ORFs" => "naivefinder.md",
-        # "A Simple coding rule" => "simplecodingrule.md",
+        "A Simple coding rule" => "simplecodingrule.md",
         "Wrtiting ORFs in files" => "iodocs.md",
         "Roadmap" => "roadmap.md",
         "API" => "api.md",
