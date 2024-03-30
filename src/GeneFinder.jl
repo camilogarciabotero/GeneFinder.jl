@@ -20,11 +20,12 @@ using BioSequences:
     ncbi_trans_table,
     translate
 
-using BioMarkovChains: dnaseqprobability, ECOLICDS
+using BioMarkovChains: BioMarkovChain, dnaseqprobability, ECOLICDS, ECOLINOCDS, log_odds_ratio_score
 using IterTools: takewhile, iterated
 using PrecompileTools: @setup_workload, @compile_workload
 
 include("algorithms/naivefinder.jl")
+include("algorithms/naivescoringfinder.jl")
 include("types.jl")
 include("findorfs.jl")
 include("getorfs.jl")
