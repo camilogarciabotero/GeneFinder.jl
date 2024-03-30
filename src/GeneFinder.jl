@@ -21,7 +21,6 @@ using BioSequences:
     translate
 
 using BioMarkovChains: dnaseqprobability, ECOLICDS
-# using FASTX: FASTAReader, FASTARecord, description, sequence
 using IterTools: takewhile, iterated
 using PrecompileTools: @setup_workload, @compile_workload
 
