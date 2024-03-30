@@ -6,9 +6,9 @@ project_hash = "09236d1adac2c236fedffc219a24fdcbb4ada730"
 
 [[deps.BioMarkovChains]]
 deps = ["BioSequences", "PrecompileTools", "VectorizedKmers"]
-git-tree-sha1 = "7ca92f23b45b022e6be4d85a0491064e8c92cf16"
+git-tree-sha1 = "c48cc4efe18355a1a19ae627d05bf19df0a57253"
 uuid = "f861b655-cb5f-42ce-b66a-341b542d4f2c"
-version = "0.9.1"
+version = "0.9.3"
 
     [deps.BioMarkovChains.extensions]
     DiscreteMarkovChainsExt = "DiscreteMarkovChains"

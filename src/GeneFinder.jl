@@ -26,7 +26,6 @@ using IterTools: takewhile, iterated
 using PrecompileTools: @setup_workload, @compile_workload
 
 include("algorithms/naivefinder.jl")
-include("algorithms/naivefinderscoring.jl")
 include("types.jl")
 include("findorfs.jl")
 include("getorfs.jl")
