@@ -2,7 +2,21 @@
 
 julia_version = "1.10.2"
 manifest_format = "2.0"
-project_hash = "0426921543f1f35e1faa99ad2688f4a61508977b"
+project_hash = "09236d1adac2c236fedffc219a24fdcbb4ada730"
+
+[[deps.BioMarkovChains]]
+deps = ["BioSequences", "PrecompileTools", "VectorizedKmers"]
+git-tree-sha1 = "7ca92f23b45b022e6be4d85a0491064e8c92cf16"
+uuid = "f861b655-cb5f-42ce-b66a-341b542d4f2c"
+version = "0.9.1"
+
+    [deps.BioMarkovChains.extensions]
+    DiscreteMarkovChainsExt = "DiscreteMarkovChains"
+    MarkovChainHammerExt = "MarkovChainHammer"
+
+    [deps.BioMarkovChains.weakdeps]
+    DiscreteMarkovChains = "8abcb7ef-b365-4f7b-ac38-56893fb62f9f"
+    MarkovChainHammer = "38c40fd0-bccb-4723-b30d-b2caea0ad8d9"
 
 [[deps.BioSequences]]
 deps = ["BioSymbols", "PrecompileTools", "Random", "Twiddle"]
@@ -49,6 +63,11 @@ uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
 
+[[deps.StaticArraysCore]]
+git-tree-sha1 = "36b3d696ce6366023a0ea192b4cd442268995a0d"
+uuid = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
+version = "1.4.2"
+
 [[deps.TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
@@ -61,3 +80,13 @@ version = "1.1.2"
 
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+
+[[deps.VectorizedKmers]]
+deps = ["StaticArraysCore"]
+git-tree-sha1 = "c2a7ec780efdf917088b5b65f78f402f72a2eb01"
+uuid = "2ef45bd6-4c2b-43d8-88b3-40597287359a"
+version = "0.9.2"
+weakdeps = ["BioSequences"]
+
+    [deps.VectorizedKmers.extensions]
+    BioSequencesExt = "BioSequences"

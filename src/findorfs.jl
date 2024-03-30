@@ -20,6 +20,7 @@ function findorfs(
     min_len::Int64 = 6
     ) where {N}
 
+    # println("Finding ORFs in sequence using $findermethod...")
     return findermethod(sequence; alternative_start, min_len)::Vector{ORF}
     
 end
