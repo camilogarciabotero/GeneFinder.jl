@@ -1,21 +1,23 @@
 ## Scoring a sequence using a Markov model
 
-A sequence of DNA could be scored using a Markov model of the transition probabilities of a known sequence. This is could be done using a *log-odds ratio* score, which is the logarithm of the ratio of the transition probabilities of the sequence given a model and. The log-odds ratio score is defined as:
+A sequence of DNA could be scored using a Markov model of the transition probabilities of a known sequence. This could be done using a *log-odds ratio* score, which is the logarithm of the ratio of the transition probabilities of the sequence given a model and. The log-odds ratio score is defined as:
 
 ```math
+\begin{align}
 S(x) = \sum_{i=1}^{L} \beta_{x_{i}x} = \sum_{i=1} \log \frac{a^{\mathscr{m}_{1}}_{i-1} x_i}{a^{\mathscr{m}_{2}}_{i-1} x_i}
+\end{align}
 ```
 
-Where the `a^{\mathscr{m}_{1}}_{i-1} x_i` is the transition probability of the first model (in this case the calculated for the given sequence) from the state `x_{i-1}` to the state `x_i` and `a^{\mathscr{m}_{2}}_{i-1} x_i` is the transition probability of the second model from the state `x_{i-1}` to the state `x_i`. The score is the sum of the log-odds ratio of the transition probabilities of the sequence given the two models.
+Where the ``a^{\mathscr{m}_{1}}_{i-1} x_i`` is the transition probability of the first model (in this case the calculated for the given sequence) from the state ``x_{i-1}`` to the state ``x_i`` and ``a^{\mathscr{m}_{2}}_{i-1} x_i`` is the transition probability of the second model from the state ``x_{i-1}`` to the state ``x_i``. The score is the sum of the log-odds ratio of the transition probabilities of the sequence given the two models.
 
-In the current implementation the second model is a CDS transition probability model of *E. coli* this classification score is implemented in the `naivescorefinder` method. This method will return a score of the sequence given the CDS model of *E. coli*.
+In the current implementation the second model is a CDS transition probability model of *E. coli*. This classification score is implemented in the `naivescorefinder` method. This method will return ORFs with the associated score of the sequence given the CDS model of *E. coli*.
 
 ```julia
 using GeneFinder, BioSequences
 
 seq = dna"TTCGTCAGTCGTTCTGTTTCATTCAATACGATAGTAATGTATTTTTCGTGCATTTCCGGTGGAATCGTGCCGTCCAGCATAGCCTCCAGATATCCCCTTATAGAGGTCAGAGGGGAACGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGATCATCCTCGGAACGGGCAATTTCGCTTGCCATATAATTCAGACAGGAAGCCAGATAACCGATTTCATCCTCACTATCGACCTGAAATTCATAATGCATATTACCGGCAGCATACTGCTCTGTGGCATGAGTGATCTTCCTCAGAGGAATATATACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAGCAGGAACAGGATTGCCAGGGTGATATAGGAAATATTCAGCAGGTTGTTACAGGATTTCTGAATATCATTCATATCAGTATGGATGACTACATAGCCTTTTACCTTGTAGTTGGAGGTAATGGGAGCAAATACAGTAAGTACATCCGAATCAAAATTACCGAAGAAATCACCAACAATGTAATAGGAGCCGCTGGTTACGGTCGAATCAAAATTCTCAATGACAACCACATTCTCCACATCTAAGGGACTATTGGTATCCAGTACCAGTCGTCCGGAGGGATTGATGATGCGAATCTCGGAATTCAGGTAGACCGCCAGGGAGTCCAGCTGCATTTTAACGGTCTCCAAAGTTGTTTCACTGGTGTACAATCCGCCGGCATAGGTTCCGGCGATCAGGGTTGCTTCGGAATAGAGACTTTCTGCCTTTTCCCGGATCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAACAATGATGAAACCAAATACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAAAGTGTTTTTTTCATAACAAATCCTGCTTTTGGTATGACTTAATTACGTACTTCGAATTTATAGCCGATGCCCCAGATGGTGCTGATCTTCCAGTTGGCATGATCCTTGATCTTCTC"
 
-orfs = findorfs(seq, min_len=75, findermethod=naivescoringfinder)
+orfs = findorfs(seq, min_len=75, findermethod=naivefinderscored)
 9-element Vector{ORF}:
  ORF(37:156, '+', 1, -0.0024384392084479912)
  ORF(194:268, '-', 2, -0.003991702119459298)
@@ -30,7 +32,7 @@ orfs = findorfs(seq, min_len=75, findermethod=naivescoringfinder)
 
 ## The *log-odds ratio* decision rule
 
-The sequence probability given a transition probability model (eq. 2) could be used as the source of a sequence classification based on a decision rule to classify whether a sequence correspond to a model or another. Now, imagine we got two DNA sequence transition models, a CDS model and a No-CDS model. The *log-odds ratio* decision rule could be establish as:
+The sequence probability given a transition probability model could be used as the source of a sequence classification based on a decision rule to classify whether a sequence correspond to a model or another. Now, imagine we got two DNA sequence transition models, a CDS model and a No-CDS model. The *log-odds ratio* decision rule could be establish as:
 
 ``` math
 \begin{align}
@@ -40,10 +42,10 @@ S(X) = \log \frac{{P_C(X_1=i_1, \ldots, X_T=i_T)}}{{P_N(X_1=i_1, \ldots, X_T=i_T
 
 Where the ``P_{C}`` is the probability of the sequence given a CDS model, ``P_{N}`` is the probability of the sequence given a No-CDS model, the decision rule is finally based on whether the ratio is greater or lesser than a given threshold *η* of significance level.
 
-In the GeneFinder we have implemented this rule and a couple of basic transition probability models of CDS and No-CDS of *E. coli* from Axelson-Fisk (2015) work. To check whether a random sequence could be coding based on these decision we use the predicate `isnaivecoding` with the `ECOLICDS` and `ECOLINOCDS` models:
+In this package we have implemented this rule and call some basic models of CDS and No-CDS of *E. coli* from Axelson-Fisk (2015) work (implemented in `BioMarkovChains.jl` package). To check whether a random sequence could be coding based on these decision we use the predicate `isnaivecoding` with the `ECOLICDS` and `ECOLINOCDS` models:
 
 ```julia
-orfsdna = get_orfs_dna(seq, findermethod=naivescoringfinder, min_len=75, alternative_start=true);
+orfsdna = get_orfs_dna(seq, findermethod=naivefinderscored, min_len=75, alternative_start=true);
 isnaivecoding.(orfsdna)
 ```
 ```julia

@@ -20,9 +20,10 @@ makedocs(;
         "Finding ORFs" => "naivefinder.md",
         "A Simple coding rule" => "simplecodingrule.md",
         "Wrtiting ORFs in files" => "iodocs.md",
-        "Roadmap" => "roadmap.md",
         "API" => "api.md",
+        # "Roadmap" => "roadmap.md",
     ],
+    warnonly = true,
 )
 
 deploydocs(; repo = "https://github.com/camilogarciabotero/GeneFinder.jl", devbranch = "main")
