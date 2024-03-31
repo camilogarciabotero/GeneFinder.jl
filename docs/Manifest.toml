@@ -21,8 +21,20 @@ version = "1.1.1"
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
+[[deps.Automa]]
+deps = ["PrecompileTools", "TranscodingStreams"]
+git-tree-sha1 = "588e0d680ad1d7201d4c6a804dcb1cd9cba79fbb"
+uuid = "67c07d97-cdcb-5c2c-af73-a7f9c32a568b"
+version = "1.0.3"
+
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
+
+[[deps.BioGenerics]]
+deps = ["TranscodingStreams"]
+git-tree-sha1 = "7bbc085aebc6faa615740b63756e4986c9e85a70"
+uuid = "47718e42-2ac5-11e9-14af-e5595289c2ea"
+version = "0.1.4"
 
 [[deps.BioMarkovChains]]
 deps = ["BioSequences", "PrecompileTools", "VectorizedKmers"]
@@ -100,11 +112,21 @@ git-tree-sha1 = "4558ab818dcceaab612d1bb8c19cee87eda2b83c"
 uuid = "2e619515-83b5-522b-bb60-26c02a35a201"
 version = "2.5.0+0"
 
+[[deps.FASTX]]
+deps = ["Automa", "BioGenerics", "PrecompileTools", "StringViews", "TranscodingStreams"]
+git-tree-sha1 = "bff5d62bf5e1c382a370ac701bcaea9a24115ac6"
+uuid = "c2308a5c-f048-11e8-3e8a-31650f418d12"
+version = "2.1.4"
+weakdeps = ["BioSequences"]
+
+    [deps.FASTX.extensions]
+    BioSequencesExt = "BioSequences"
+
 [[deps.FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.GeneFinder]]
-deps = ["BioMarkovChains", "BioSequences", "IterTools", "PrecompileTools"]
+deps = ["BioMarkovChains", "BioSequences", "FASTX", "IterTools", "PrecompileTools"]
 path = ".."
 uuid = "2bc6ee46-2158-4f5a-a720-91cb2d7cee64"
 version = "0.2.0"
@@ -321,6 +343,11 @@ uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 git-tree-sha1 = "36b3d696ce6366023a0ea192b4cd442268995a0d"
 uuid = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
 version = "1.4.2"
+
+[[deps.StringViews]]
+git-tree-sha1 = "f7b06677eae2571c888fd686ba88047d8738b0e3"
+uuid = "354b36f9-a18e-4713-926e-db85100087ba"
+version = "1.3.3"
 
 [[deps.TOML]]
 deps = ["Dates"]
