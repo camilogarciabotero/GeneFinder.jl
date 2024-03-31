@@ -21,11 +21,12 @@ using BioSequences:
     translate
 
 using BioMarkovChains: BioMarkovChain, dnaseqprobability, ECOLICDS, ECOLINOCDS, log_odds_ratio_score
+using FASTX: FASTAReader, sequence
 using IterTools: takewhile, iterated
 using PrecompileTools: @setup_workload, @compile_workload
 
 include("algorithms/naivefinder.jl")
-include("algorithms/naivescoringfinder.jl")
+include("algorithms/naivefinderscored.jl")
 include("types.jl")
 include("findorfs.jl")
 include("getorfs.jl")
