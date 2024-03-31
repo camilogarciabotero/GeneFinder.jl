@@ -5,7 +5,7 @@ export findorfs
 
 This is the main interface method for finding open reading frames (ORFs) in a DNA sequence.
 
-    It takes the following arguments:
+It takes the following arguments:
 - `sequence`: The nucleic acid sequence to search for ORFs.
 - `findermethod`: The algorithm used to find ORFs. Default is `naivefinder`.
 - `alternative_start`: A boolean indicating whether to consider alternative start codons. Default is `false`.
