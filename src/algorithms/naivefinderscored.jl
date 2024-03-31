@@ -1,8 +1,28 @@
 
 # uses _locationiterator
-export naivescoringfinder, isnaivecoding
+export naivefinderscored, isnaivecoding
 
-function naivescoringfinder(
+
+
+@doc raw"""
+    naivefinderscored(sequence::NucleicSeqOrView{DNAAlphabet{N}}; alternative_start=false, min_len=6) where {N}
+
+Find open reading frames (ORFs) in a nucleic acid sequence using a naive scoring algorithm. In this method the scoring is a log-odds ratio score defines as:
+
+```math
+S(x) = \sum_{i=1}^{L} \beta_{x_{i}x} = \sum_{i=1} \log \frac{a^{\mathscr{m}_{1}}_{i-1} x_i}{a^{\mathscr{m}_{2}}_{i-1} x_i}
+```
+
+## Arguments
+- `sequence`: The nucleic acid sequence to search for ORFs.
+- `alternative_start`: A boolean indicating whether to consider alternative start codons. Default is `false`.
+- `min_len`: The minimum length of an ORF to be considered. Default is `6`.
+
+## Returns
+A sorted vector of `ORF` objects representing the identified open reading frames.
+
+"""
+function naivefinderscored(
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
     min_len::Int64 = 6
@@ -44,9 +64,11 @@ S(X) = \log \left( \frac{{P_C(X_1=i_1, \ldots, X_T=i_T)}}{{P_N(X_1=i_1, \ldots, 
 ```
 
 # Arguments
-- `sequence::LongSequence{DNAAlphabet{4}}`: The DNA sequence to be evaluated.
-- `codingmodel::BioMarkovChain`: The transition model for coding regions.
-- `noncodingmodel::BioMarkovChain`: The transition model for non-coding regions.
+- `sequence::NucleicSeqOrView{DNAAlphabet{N}}`: The DNA sequence to be evaluated.
+
+## Keyword Arguments
+- `codingmodel::BioMarkovChain`: The transition model for coding regions, (default: `ECOLICDS`).
+- `noncodingmodel::BioMarkovChain`: The transition model for non-coding regions, (default: `ECOLINOCDS`)
 - `η::Float64 = 1e-5`: The threshold value (eta) for the log-odds ratio (default: 1e-5).
 
 # Returns
@@ -60,10 +82,8 @@ S(X) = \log \left( \frac{{P_C(X_1=i_1, \ldots, X_T=i_T)}}{{P_N(X_1=i_1, \ldots, 
 # Example
 
 ```
-sequence = LondDNA("ATGGCATCTAG")
-codingmodel = BioMarkovChain()
-noncodingmodel = BioMarkovChain()
-iscoding(sequence, codingmodel, noncodingmodel)  # Returns: true
+sequence = dna"ATGGCATCTAG"
+iscoding(sequence)  # Returns: true or false
 ```
 """
 function isnaivecoding(
