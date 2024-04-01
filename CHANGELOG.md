@@ -6,6 +6,12 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.0.10...main)
 
+## [0.3.0]
+
+- `ORF` has a new `score` field that can be used to rank ORFs.
+- `findorfs` is now felixible and can be expanded to more gene finding methods/algorithms.
+- A new (and quite simple) finding method with a scoring scheme has been implemented.
+- Docuemntation has been updated and improved.
 
 ## [0.2.0]
 
