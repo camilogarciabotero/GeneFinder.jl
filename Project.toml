@@ -1,7 +1,7 @@
 name = "GeneFinder"
 uuid = "2bc6ee46-2158-4f5a-a720-91cb2d7cee64"
 authors = ["Camilo García-Botero"]
-version = "0.2.0"
+version = "0.3.0"
 
 [deps]
 BioMarkovChains = "f861b655-cb5f-42ce-b66a-341b542d4f2c"
