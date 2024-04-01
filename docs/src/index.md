@@ -43,11 +43,7 @@
 ***
 ## Overview
 
-> This is a species-agnostic, algorithm extensible, sequence-anonymous
-> (genome, metagenomes) *gene finder* library for the Julia Language.
-
-The main goal is to create a versatile module that enables apply
-different implemented algorithm to DNA sequences.
+> This is a species-agnostic and algorithm extensible *gene finder* library for the Julia Language.
 
 ## Installation
 
@@ -66,8 +62,8 @@ add GeneFinder
 	author  = {Camilo García},
 	title   = {GeneFinder.jl},
 	url     = {https://github.com/camilogarciabotero/GeneFinder.jl},
-	version = {v0.2.0},
-	year    = {2022},
-	month   = {11}
+	version = {v0.3.0},
+	year    = {2024},
+	month   = {04}
 }
 ```

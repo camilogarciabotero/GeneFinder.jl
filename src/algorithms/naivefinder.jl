@@ -28,7 +28,7 @@ function _locationiterator(
 end
 
 """
-naivefinder(sequence::NucleicAlphabet{DNAAlphabet{N}}; alternative_start::Bool=false, min_len::Int64=6)::Vector{ORF} where {N}
+    naivefinder(sequence::NucleicAlphabet{DNAAlphabet{N}}; alternative_start::Bool=false, min_len::Int64=6)::Vector{ORF} where {N}
 
 A simple implementation that finds ORFs in a DNA sequence.
 
@@ -67,7 +67,6 @@ function naivefinder(
     end
     return sort(orfs)
 end
-
 ## Another alternative:
 
 ## This is the way window function are implemented in the DSP.jl package

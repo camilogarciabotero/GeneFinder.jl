@@ -1,4 +1,4 @@
-## Writting ORF information into bioinformatic formats
+## Writting ORFs into bioinformatic formats
 
 This package facilitates the creation of `FASTA`, `BED`, and `GFF` files, specifically extracting Open Reading Frame (ORF) information from `BioSequence` instances, particularly those of type `NucleicSeqOrView{A} where A`, and then writing the information into the desired format.
 
