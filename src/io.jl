@@ -43,12 +43,12 @@ end
 function write_orfs_bed(
     input::String,
     output::Union{IOStream, IOBuffer}; 
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false,
     min_len::Int64 = 6
 )
     input = fasta_to_dna(input)[1] # rewrite input to be a DNA sequence
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     @inbounds for orf in orfs
         println(output, orf.location.start, "\t", orf.location.stop, "\t", orf.strand, "\t", orf.frame)
     end
@@ -57,12 +57,12 @@ end
 function write_orfs_bed(
     input::String,
     output::String;
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false,
     min_len::Int64 = 6
 )
     input = fasta_to_dna(input)[1]
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     open(output, "w") do f
         @inbounds for orf in orfs
             write(f, "$(orf.location.start)\t$(orf.location.stop)\t$(orf.strand)\t$(orf.frame)\n")
@@ -97,11 +97,11 @@ end
 function write_orfs_fna(
     input::NucleicSeqOrView{DNAAlphabet{N}},
     output::Union{IOStream, IOBuffer};
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false, 
     min_len::Int64 = 6
 ) where {N}
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
@@ -114,11 +114,11 @@ end
 function write_orfs_fna(
     input::NucleicSeqOrView{DNAAlphabet{N}}, 
     output::String;
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false,
     min_len::Int64 = 6
 ) where {N}
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
@@ -132,12 +132,12 @@ end
 function write_orfs_fna(
     input::String,
     output::Union{IOStream, IOBuffer};
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false, 
     min_len::Int64 = 6
 )
     input = fasta_to_dna(input)[1]
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
@@ -150,12 +150,12 @@ end
 function write_orfs_fna(
     input::String, 
     output::String; 
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false,
     min_len::Int64 = 6
 ) 
     input = fasta_to_dna(input)[1]
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
@@ -194,12 +194,12 @@ end
 function write_orfs_faa(
     input::NucleicSeqOrView{DNAAlphabet{N}},
     output::Union{IOStream, IOBuffer};
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false,
     code::GeneticCode = ncbi_trans_table[1],
     min_len::Int64 = 6
 ) where {N}
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
@@ -212,12 +212,12 @@ end
 function write_orfs_faa(
     input::NucleicSeqOrView{DNAAlphabet{N}},
     output::String;
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false,
     code::GeneticCode = ncbi_trans_table[1],
     min_len::Int64 = 6,
 ) where {N}
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
@@ -231,13 +231,13 @@ end
 function write_orfs_faa(
     input::String,
     output::Union{IOStream, IOBuffer};
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false,
     code::GeneticCode = ncbi_trans_table[1],
     min_len::Int64 = 6
 ) 
     input = fasta_to_dna(input)[1]
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
@@ -250,13 +250,13 @@ end
 function write_orfs_faa(
     input::String,
     output::String;
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false,
     code::GeneticCode = ncbi_trans_table[1],
     min_len::Int64 = 6,
 )
     input = fasta_to_dna(input)[1]
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
@@ -285,11 +285,11 @@ Write GFF data to a file.
 function write_orfs_gff(
     input::NucleicSeqOrView{A}, 
     output::Union{IOStream, IOBuffer};
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false, 
     min_len::Int64 = 6
 ) where {A}
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
@@ -302,11 +302,11 @@ end
 function write_orfs_gff(
     input::NucleicSeqOrView{A},
     output::String; 
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false, 
     min_len::Int64 = 6
 ) where {A}
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
@@ -324,12 +324,12 @@ end
 function write_orfs_gff(
     input::String, 
     output::Union{IOStream, IOBuffer};
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false, 
     min_len::Int64 = 6
 )
     input = fasta_to_dna(input)[1]
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
@@ -342,12 +342,12 @@ end
 function write_orfs_gff(
     input::String,
     output::String;
-    findermethod::Function = naivefinder,
+    method::Function = naivefinder,
     alternative_start::Bool = false, 
     min_len::Int64 = 6
 ) 
     input = fasta_to_dna(input)[1]
-    orfs = findorfs(input; findermethod, alternative_start, min_len)
+    orfs = findorfs(input; method, alternative_start, min_len)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
