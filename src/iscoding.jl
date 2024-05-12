@@ -1,3 +1,6 @@
+export iscoding
+
+
 @doc raw"""
     isnaivecoding(
         sequence::LongSequence{DNAAlphabet{4}};
@@ -37,25 +40,14 @@ sequence = dna"ATGGCATCTAG"
 iscoding(sequence)  # Returns: true or false
 ```
 """
+function iscoding end
+
 function iscoding(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}};
-    
+    sequence::NucleicSeqOrView{DNAAlphabet{N}},
+    ::NaiveScoringScheme;
     codingmodel::BioMarkovChain = ECOLICDS,
     noncodingmodel::BioMarkovChain = ECOLINOCDS,
     η::Float64 = 1e-5
 ) where {N}
-    pcoding = dnaseqprobability(sequence, codingmodel)
-    pnoncoding = dnaseqprobability(sequence, noncodingmodel)
-
-    logodds = log(pcoding / pnoncoding)
-
-    length(sequence) % 3 == 0 || error("The sequence is not divisible by 3")
-
-    !hasprematurestop(sequence) || error("There is a premature stop codon in the sequence")
-
-    if logodds > η
-        return true
-    else
-        false
-    end
+    return isnaivecoding(sequence; codingmodel, noncodingmodel, η)
 end

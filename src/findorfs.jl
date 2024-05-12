@@ -13,14 +13,29 @@ It takes the following arguments:
 
 Returns a vector of `ORF` objects representing the found ORFs.
 """
+function findorfs end
+
 function findorfs(
-    ::NaiveFinder,
-    sequence::NucleicSeqOrView{DNAAlphabet{N}};
+    sequence::NucleicSeqOrView{DNAAlphabet{N}},
+    ::NaiveFinder;
     alternative_start::Bool = false,
     min_len::Int64 = 6
     ) where {N}
 
     # println("Finding ORFs in sequence using $method...")
     return naivefinder(sequence; alternative_start, min_len)::Vector{ORF}
+    
+end
+
+function findorfs(
+    sequence::NucleicSeqOrView{DNAAlphabet{N}},
+    ::NaiveFinderScored;
+    alternative_start::Bool = false,
+    min_len::Int64 = 6,
+    scoringscheme::BioMarkovChain = ECOLICDS
+    ) where {N}
+
+    # println("Finding ORFs in sequence using $method...")
+    return naivefinderscored(sequence; alternative_start, min_len, scoringscheme)::Vector{ORF}
     
 end
