@@ -17,10 +17,10 @@ It takes the following arguments:
 ## Keyword Arguments for `NaiveFinderScored()`:
 - `scoringscheme::BioMarkovChain`: The scoring scheme to use for the scoring algorithm. Default is `ECOLICDS`.
 
-##Returns
+## Returns
 A vector of `ORF` objects representing the found ORFs.
 
-##Example
+## Example
 
 ```julia
 sequence = randdnaseq(120)

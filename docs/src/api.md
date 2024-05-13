@@ -23,18 +23,11 @@ Modules = [GeneFinder]
 Pages = ["findorfs.jl"]
 ```
 
-## Finding ORFs using BioRegex
+## Finding ORFs using BioRegex and scoring
 
 ```@autodocs
 Modules = [GeneFinder]
 Pages = ["algorithms/naivefinder.jl"]
-```
-
-## Finding ORFs and simple scoring
-
-```@autodocs
-Modules = [GeneFinder]
-Pages = ["algorithms/naivefinderscored.jl"]
 ```
 
 ## Geting ORFs sequences
