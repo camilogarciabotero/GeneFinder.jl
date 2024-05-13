@@ -20,7 +20,7 @@ function findorfs(
     ::NaiveFinder;
     alternative_start::Bool = false,
     min_len::Int64 = 6
-    ) where {N}
+) where {N}
 
     # println("Finding ORFs in sequence using $method...")
     return naivefinder(sequence; alternative_start, min_len)::Vector{ORF}
@@ -33,9 +33,8 @@ function findorfs(
     alternative_start::Bool = false,
     min_len::Int64 = 6,
     scoringscheme::BioMarkovChain = ECOLICDS
-    ) where {N}
+) where {N}
 
-    # println("Finding ORFs in sequence using $method...")
     return naivefinderscored(sequence; alternative_start, min_len, scoringscheme)::Vector{ORF}
     
 end

@@ -1,6 +1,5 @@
 export iscoding
 
-
 @doc raw"""
     isnaivecoding(
         sequence::LongSequence{DNAAlphabet{4}};
@@ -51,3 +50,18 @@ function iscoding(
 ) where {N}
     return isnaivecoding(sequence; codingmodel, noncodingmodel, η)
 end
+
+
+# function iscoding(
+#     orf::ORF,
+#     sequence::NucleicSeqOrView{DNAAlphabet{N}};
+#     scoring::NaiveScoringScheme = NaiveScoringScheme(),
+#     codingmodel::BioMarkovChain = ECOLICDS,
+#     noncodingmodel::BioMarkovChain = ECOLINOCDS,
+#     η::Float64 = 1e-5
+# ) where {N}
+#     return isnaivecoding(sequence[orf]; codingmodel, noncodingmodel, η)
+# end
+
+
+# iscoding.(seq[i for i in allorfs])
