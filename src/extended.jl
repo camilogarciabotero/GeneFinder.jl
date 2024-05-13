@@ -1,10 +1,25 @@
 # Methods from main packages that expand their fuctions to this package structs
-import Base: length, iterate, sort, getindex
+import Base: isless, iterate, sort, getindex
 
-Base.sort(v::Vector{<:ORF}) = sort(v, by = _orf_sort_key)
+
+Base.isless(a::ORF, b::ORF) = isless(a.location, b.location)
+# Base.isless(a::ORF, b::ORF) = isless(a.score, b.score)
+
+# Base.sort(v::Vector{<:ORF}; kwargs...) = sort(v, by = _orf_sort_key)
+# Base.sort!(v::Vector{<:ORF}; kwargs...) = sort!(v, by = _orf_sort_key)
+
+
 #TODOs: how to make more robust the getindex method? confroning the frames?
-Base.getindex(sequence::NucleicSeqOrView{A}, orf::ORF) where {A} = orf.strand == '+' ? (@view sequence[orf.location]) : reverse_complement(@view sequence[orf.location])
+# Base.getindex(sequence::NucleicSeqOrView{A}, orf::ORF) where {A} = orf.strand == '+' ? (@view sequence[orf.location]) : reverse_complement(@view sequence[orf.location])
 
-function _orf_sort_key(orf::ORF)
-    return (orf.location, orf.strand)
+function getindex(sequence::NucleicSeqOrView{A}, orf::ORF) where {A}
+    if orf.strand == '+'
+        return @view sequence[orf.location]
+    else
+        return reverse_complement(@view sequence[orf.location])
+    end
 end
+
+# function _orf_sort_key(orf::ORF)
+#     return (orf.location, orf.strand, orf.score)
+# end
