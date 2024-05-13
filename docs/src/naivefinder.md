@@ -41,7 +41,7 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
 Now lest us find the ORFs
 
 ```julia
-findorfs(seq)
+findorfs(seq, NaiveFinder())
 
 12-element Vector{ORF}:
  ORF(29:40, '+', 2, 0.0)
@@ -58,10 +58,10 @@ findorfs(seq)
  ORF(695:706, '+', 2, 0.0)
 ```
 
-Two other functions (`get_orfs_dna` and `get_orfs_aa`) are implemented to get the ORFs in DNA and amino acid sequences, respectively. They use the `findorfs` function to first get the ORFs and then get the correspondance array of `BioSequence` objects.
+Two other methods where implemented into `getorfs` to get the ORFs in DNA or aminoacid sequences, respectively. They use the `findorfs` function to first get the ORFs and then get the correspondance array of `BioSequence` objects.
 
 ```julia
-get_orfs_dna(seq)
+getorfs(seq, DNAAlphabet{4}(), NaiveFinder())
 
 12-element Vector{LongSubSeq{DNAAlphabet{4}}}:
  ATGCAACCCTGA
@@ -79,7 +79,7 @@ get_orfs_dna(seq)
 ```
 
 ```julia
-get_orfs_aa(seq)
+getorfs(seq, AminoAcidAlphabet(), NaiveFinder())
 
 12-element Vector{LongSubSeq{AminoAcidAlphabet}}:
  MQP*

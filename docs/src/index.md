@@ -29,8 +29,8 @@
 <a href="https://www.repostatus.org/#wip">
   <img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Repo Status">
 </a>
-<a href="https://pkgs.genieframework.com?packages=GeneFinder">
-  <img src="https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/GeneFinder&label=downloads" alt="Downloads">
+<a href="http://juliapkgstats.com/pkg/GeneFinder">
+  <img src="https://img.shields.io/badge/dynamic/json?url=http%3A%2F%2Fjuliapkgstats.com%2Fapi%2Fv1%2Fmonthly_downloads%2FGeneFinder&query=total_requests&suffix=%2Fmonth&label=Downloads" alt="Downloads">
 </a>
 <a href="https://github.com/JuliaTesting/Aqua.jl">
   <img src="https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg" alt="Aqua QA">
