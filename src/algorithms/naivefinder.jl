@@ -47,12 +47,12 @@ The `naivefinder` function takes a LongSequence{DNAAlphabet{4}} sequence and ret
 function naivefinder(
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
-    min_len::Int64 = 6
+    min_len::Int64 = 6,
+    kwargs...
 ) where {N}
     seqlen = length(sequence)
     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
     orfs = Vector{ORF}()
-
     for strand in ('+', '-')
         seq = strand == '-' ? reverse_complement(sequence) : sequence
 
@@ -65,7 +65,7 @@ function naivefinder(
             end
         end
     end
-    return sort(orfs)
+    return sort!(orfs; kwargs...)
 end
 
 @doc raw"""
@@ -91,12 +91,12 @@ function naivefinderscored(
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
     min_len::Int64 = 6,
-    scoringscheme::BioMarkovChain = ECOLICDS
+    scoringscheme::BioMarkovChain = ECOLICDS,
+    kwargs...
 ) where {N}
     seqlen = length(sequence)
     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
     orfs = Vector{ORF}()
-
     for strand in ('+', '-')
         seq = strand == '-' ? reverse_complement(sequence) : sequence
 
@@ -105,12 +105,13 @@ function naivefinderscored(
                 frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
                 start = strand == '+' ? location.start : seqlen - location.stop + 1
                 stop = start + length(location) - 1
-                score = -10log10(dnaseqprobability(seq[start:stop], scoringscheme)) # orfs[argmax([orf.score for orf in orfs])]
+                score = -10log10(dnaseqprobability(seq[start:stop], scoringscheme))
                 push!(orfs, ORF(start:stop, strand, frame, score))
             end
         end
     end
-    return sort(orfs)
+
+    return sort!(orfs; kwargs...) 
 end
 
 @doc raw"""

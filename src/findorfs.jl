@@ -1,7 +1,7 @@
 export findorfs
 
 """
-    findorfs(sequence::NucleicSeqOrView{DNAAlphabet{N}}; ::M, alternative_start=false, min_len=6) where {N, M<:GeneFinderMethod}
+    findorfs(sequence::NucleicSeqOrView{DNAAlphabet{N}}; ::M, kwargs...) where {N, M<:GeneFinderMethod}
 
 This is the main interface method for finding open reading frames (ORFs) in a DNA sequence.
 
@@ -41,23 +41,70 @@ function findorfs end
 function findorfs(
     sequence::NucleicSeqOrView{DNAAlphabet{N}},
     ::NaiveFinder;
-    alternative_start::Bool = false,
-    min_len::Int64 = 6
+    kwargs...
 ) where {N}
-
-    # println("Finding ORFs in sequence using $method...")
-    return naivefinder(sequence; alternative_start, min_len)::Vector{ORF}
-    
+    return naivefinder(sequence; kwargs...)::Vector{ORF}
 end
 
 function findorfs(
     sequence::NucleicSeqOrView{DNAAlphabet{N}},
     ::NaiveFinderScored;
-    alternative_start::Bool = false,
-    min_len::Int64 = 6,
-    scoringscheme::BioMarkovChain = ECOLICDS
+    kwargs...
 ) where {N}
-
-    return naivefinderscored(sequence; alternative_start, min_len, scoringscheme)::Vector{ORF}
-    
+    return naivefinderscored(sequence; kwargs...)::Vector{ORF} #alternative_start, min_len, scoringscheme
 end
+
+
+### Some possible ideas:
+
+# function findorfs(
+#     sequence::NucleicSeqOrView{DNAAlphabet{N}},
+#     method::Type{M};
+#     kwargs...
+# ) where {N, M<:GeneFinderMethod}
+#     return method(sequence; kwargs...)::Vector{ORF} #alternative_start, min_len, scoringscheme
+# end
+
+# This general implementation would allow for the addition of new finder methods without changing the findorfs method.
+# The general method have some advantages:
+# - It is more flexible and extensible.
+# - It is more robust to changes in the method implementations.
+# - It is more readable and maintainable.
+# - We can set a default method to be used when no method is provided.
+
+# The general method also have some disadvantages:
+# The `kwargs` argument is not type-stable, which can lead to performance issues. (?)
+# The `kwargs` are not discoverable from the method when its called.
+# Will need that finder methods be created inside the struct:
+
+# struct NaiveFinderScored <: GeneFinderMethod
+
+#     function NaiveFinderScored(
+#         sequence::NucleicSeqOrView{DNAAlphabet{N}};
+#         alternative_start::Bool = false,
+#         min_len::Int64 = 6,
+#         scoringscheme::BioMarkovChain = ECOLICDS,
+#         byf::Symbol = :location,
+#         kwargs...
+#     ) where {N}
+#         seqlen = length(sequence)
+#         framedict = Dict(0 => 3, 1 => 1, 2 => 2)
+#         orfs = Vector{ORF}()
+#         for strand in ('+', '-')
+#             seq = strand == '-' ? reverse_complement(sequence) : sequence
+
+#             @inbounds for location in @views _locationiterator(seq; alternative_start)
+#                 if length(location) >= min_len
+#                     frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
+#                     start = strand == '+' ? location.start : seqlen - location.stop + 1
+#                     stop = start + length(location) - 1
+#                     score = -10log10(dnaseqprobability(seq[start:stop], scoringscheme)) # orfs[argmax([orf.score for orf in orfs])]
+#                     push!(orfs, ORF(start:stop, strand, frame, score))
+#                 end
+#             end
+#         end
+        
+#         return sort!(orfs; by = orf -> getproperty(orf, byf), alg=QuickSort, kwargs...)
+#     end
+
+# end
