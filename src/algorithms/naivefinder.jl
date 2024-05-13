@@ -81,6 +81,7 @@ S(x) = \sum_{i=1}^{L} \beta_{x_{i}x} = \sum_{i=1} \log \frac{a^{\mathscr{m}_{1}}
 - `sequence`: The nucleic acid sequence to search for ORFs.
 - `alternative_start`: A boolean indicating whether to consider alternative start codons. Default is `false`.
 - `min_len`: The minimum length of an ORF to be considered. Default is `6`.
+- `scoringscheme`: The scoring scheme to use for the scoring algorithm. Default is `ECOLICDS`.
 
 ## Returns
 A sorted vector of `ORF` objects representing the identified open reading frames.
