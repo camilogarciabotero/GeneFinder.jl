@@ -133,27 +133,64 @@ The function returns a list of FASTA records, where each record represents an OR
 #     return records
 # end
 
+# function getorfs(
+#     sequence::NucleicSeqOrView{DNAAlphabet{N}},
+#     outseqtype::A,
+#     method::M;
+#     alternative_start::Bool = false,
+#     min_len::Int64 = 6,
+#     code::GeneticCode = ncbi_trans_table[1],
+# ) where {N, A<:Alphabet, M<:GeneFinderMethod}
+#     orfs = findorfs(sequence, method; alternative_start, min_len)
+#     # seqs = Vector{LongSubSeq{DNAAlphabet{N}}}(undef, length(orfs)) #Vector{}(undef, length(orfs)) # todo correct the output type
+    
+#     if outseqtype == DNAAlphabet{N}()
+#         seqs = Vector{LongSubSeq{DNAAlphabet{N}}}(undef, length(orfs)) #Vector{}(undef, length(orfs)) # todo correct the output type
+#         @inbounds for (i, orf) in enumerate(orfs)
+#             seqs[i] = sequence[orf]
+#         end
+#     elseif  outseqtype == AminoAcidAlphabet()
+#         seqs = Vector{LongSubSeq{AminoAcidAlphabet}}(undef, length(orfs))
+#         @inbounds for (i, orf) in enumerate(orfs)
+#             seqs[i] = translate(sequence[orf]; code)
+#         end
+#     end
+
+#     return seqs
+# end
+
+
 function getorfs(
     sequence::NucleicSeqOrView{DNAAlphabet{N}},
-    outseqtype::A,
+    ::DNAAlphabet{N},
+    method::M;
+    alternative_start::Bool = false,
+    min_len::Int64 = 6
+) where {N,M<:GeneFinderMethod}
+    orfs = findorfs(sequence, method; alternative_start, min_len)
+    seqs = Vector{LongSubSeq{DNAAlphabet{N}}}(undef, length(orfs)) #Vector{}(undef, length(orfs)) # todo correct the output type
+    
+    @inbounds for (i, orf) in enumerate(orfs)
+        seqs[i] = sequence[orf]
+    end
+
+    return seqs
+end
+
+
+function getorfs(
+    sequence::NucleicSeqOrView{DNAAlphabet{N}},
+    ::AminoAcidAlphabet,
     method::M;
     alternative_start::Bool = false,
     min_len::Int64 = 6,
-    code::GeneticCode = ncbi_trans_table[1],
-) where {N, A<:Alphabet, M<:GeneFinderMethod}
+    code::GeneticCode = ncbi_trans_table[1]
+) where {N,M<:GeneFinderMethod}
     orfs = findorfs(sequence, method; alternative_start, min_len)
-    # seqs = Vector{LongSubSeq{DNAAlphabet{N}}}(undef, length(orfs)) #Vector{}(undef, length(orfs)) # todo correct the output type
+    seqs = Vector{LongSubSeq{AminoAcidAlphabet}}(undef, length(orfs))
     
-    if outseqtype == DNAAlphabet{N}()
-        seqs = Vector{LongSubSeq{DNAAlphabet{N}}}(undef, length(orfs)) #Vector{}(undef, length(orfs)) # todo correct the output type
-        @inbounds for (i, orf) in enumerate(orfs)
-            seqs[i] = sequence[orf]
-        end
-    elseif  outseqtype == AminoAcidAlphabet()
-        seqs = Vector{LongSubSeq{AminoAcidAlphabet}}(undef, length(orfs))
-        @inbounds for (i, orf) in enumerate(orfs)
-            seqs[i] = translate(sequence[orf]; code)
-        end
+    @inbounds for (i, orf) in enumerate(orfs)
+        seqs[i] = translate(sequence[orf]; code)
     end
 
     return seqs
