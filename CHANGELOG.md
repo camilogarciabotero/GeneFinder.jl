@@ -4,7 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
-## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.3.0...main)
+## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.4.0...main)
+
+## [0.4.0]
+
+- `findorfs` now has a new `method` argument that can be used to select the gene finding method.
+- The `getorf` method has been updated to handle the new `method` argument.
+- The `write_*` API has been updated to handle the new `method` argument.
+- A `NaiveFinder` method has been implemented with a scoring scheme as well (`NaiveFinderScored`).
+- `iscoding` has been updated to handle the new `method` argument.
 
 ## [0.3.0]
 
