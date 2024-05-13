@@ -1,5 +1,6 @@
 export ORF
-
+export NaiveFinder, NaiveFinderScored
+export NaiveScoringScheme
 # Structs associated with gene models 
 abstract type AbstractGene end
 
@@ -65,4 +66,16 @@ struct ORF <: AbstractGene
         return new(location, strand, frame, score)
     end
 end
+
+## Interfaces for gene finders
+
+abstract type GeneFinderMethod end
+struct NaiveFinder <: GeneFinderMethod end
+struct NaiveFinderScored <: GeneFinderMethod end
+
+
+## Interfaces for gene scoring schemes
+
+abstract type GeneScoringScheme end
+struct NaiveScoringScheme <: GeneScoringScheme end
 

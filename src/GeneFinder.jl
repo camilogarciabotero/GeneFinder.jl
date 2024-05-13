@@ -4,6 +4,7 @@ using BioSequences:
     DNA,
     DNA_Gap, DNA_A, DNA_C, DNA_M, DNA_G, DNA_R, DNA_S, DNA_V, DNA_T, DNA_W, DNA_Y, DNA_H, DNA_K, DNA_D, DNA_B, DNA_N,
     
+    Alphabet,
     NucleicAcidAlphabet,
     DNAAlphabet,
     AminoAcidAlphabet,
@@ -26,9 +27,9 @@ using IterTools: takewhile, iterated
 using PrecompileTools: @setup_workload, @compile_workload
 
 include("algorithms/naivefinder.jl")
-include("algorithms/naivefinderscored.jl")
 include("types.jl")
 include("findorfs.jl")
+include("iscoding.jl")
 include("getorfs.jl")
 include("io.jl")
 include("utils.jl")
@@ -41,7 +42,7 @@ include("extended.jl")
     @compile_workload begin
         # all calls in this block will be precompiled, regardless of whether
         # they belong to your package or not (on Julia 1.8 and higher)
-        findorfs(seq)
+        findorfs(seq, NaiveFinder())
     end
 end
 

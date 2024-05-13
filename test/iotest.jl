@@ -15,7 +15,7 @@
     
     seq03fna = "data/out-seq03.fna"
     open(seq03fna, "w") do io
-        write_orfs_fna(seq03, io)
+        write_orfs_fna(seq03, io, NaiveFinder())
     end
 
     seq03fnarecords = open(collect, FASTAReader, "data/out-seq03.fna")
@@ -30,7 +30,7 @@
 
     seq03faa = "data/out-seq03.faa"
     open(seq03faa, "w") do io
-        write_orfs_faa(seq03, io)
+        write_orfs_faa(seq03, io, NaiveFinder())
     end
 
     seq03faarecords = open(collect, FASTAReader, "data/out-seq03.faa")

@@ -11,7 +11,7 @@
 [![GitHub Actions](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/actions/workflows/CI.yml)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/camilogarciabotero/GeneFinder.jl/blob/main/LICENSE)
 [![Repo Status](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/GeneFinder&label=downloads)](https://pkgs.genieframework.com?packages=GeneFinder)
+[![Downloads](https://img.shields.io/badge/dynamic/json?url=http%3A%2F%2Fjuliapkgstats.com%2Fapi%2Fv1%2Fmonthly_downloads%2FGeneFinder&query=total_requests&suffix=%2Fmonth&label=Downloads)](http://juliapkgstats.com/pkg/GeneFinder)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 </div>
@@ -50,7 +50,7 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
 Now lest us find the ORFs
 
 ```julia
-findorfs(seq)
+findorfs(seq, NaiveFinder())
 
 12-element Vector{ORF}:
  ORF(29:40, '+', 2, 0.0)
@@ -67,10 +67,10 @@ findorfs(seq)
  ORF(695:706, '+', 2, 0.0)
 ```
 
-Two other functions (`get_orfs_dna` and `get_orfs_aa`) are implemented to get the ORFs in DNA and amino acid sequences, respectively. They use the `findorfs` function to first get the ORFs and then get the correspondance array of `BioSequence` objects.
+Two other methods where implemented into `getorfs` to get the ORFs in DNA or aminoacid sequences, respectively. They use the `findorfs` function to first get the ORFs and then get the correspondance array of `BioSequence` objects.
 
 ```julia
-get_orfs_dna(seq)
+getorfs(seq, DNAAlphabet{4}(), NaiveFinder())
 
 12-element Vector{LongSubSeq{DNAAlphabet{4}}}:
  ATGCAACCCTGA
@@ -118,7 +118,7 @@ Once a `BioSequence` object has been instantiated, the `write_orfs_fna` function
 outfile = "LFLS01000089.fna"
 
 open(outfile, "w") do io
-    write_orfs_fna(seq, io)
+    write_orfs_fna(seq, io, NaiveFinder())
 end
 ```
 

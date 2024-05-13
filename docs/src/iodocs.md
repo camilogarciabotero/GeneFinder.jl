@@ -29,7 +29,7 @@ Once a `BioSequence` object has been instantiated, the `write_orfs_fna` function
 outfile = "LFLS01000089.fna"
 
 open(outfile, "w") do io
-    write_orfs_fna(seq, io)
+    write_orfs_fna(seq, io, NaiveFinder())
 end
 ```
 
@@ -71,7 +71,7 @@ infile = "test/data/NC_001884.fasta"
 outfile = "test/data/NC_001884-orfs.faa"
 
 open(inputfile) do io
-    write_orfs_faa(infile, outfile)
+    write_orfs_faa(infile, outfile, NaiveFinder())
 end
 ```
 

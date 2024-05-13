@@ -1,64 +1,72 @@
-export get_orfs_dna, get_orfs_aa
+export getorfs
 
 #### get_orfs_* methods ####
 
 """
-    get_orfs_dna(sequence::NucleicSeqOrView{DNAAlphabet{N}}, output::String; kwargs...) where {N}
+    getorfs(sequence::NucleicSeqOrView{DNAAlphabet{N}}, ::Alphabet, method::M; kwargs...) where {N, M<:GeneFinderMethod}
 
-This function takes a `NucleicSeqOrView{DNAAlphabet{N}}` sequence and identifies the open reading frames (ORFs) using the `findorfs()` function. The function then extracts the DNA sequence of each ORF and stores it in a `Vector{LongSubSeq{DNAAlphabet{4}}}`.
+This function takes a `NucleicSeqOrView{DNAAlphabet{N}}` sequence and identifies the open reading frames (ORFs) using the `findorfs()` function under the selected finder method. The function then extracts the DNA or aminoacid sequence of each ORF and stores it in a `Vector{LongSubSeq{A}}`.
 
 # Arguments
 
 - `sequence`: The input sequence as a `NucleicSeqOrView{DNAAlphabet{N}}`
+- `alphabet`: The output sequence alphabet. It can be either `DNAAlphabet{4}()` or `AminoAcidAlphabet()`.
+- `method`: The method used to find ORFs. It must be a subtype of `GeneFinderMethod`. (e.g., `NaiveFinder()`)
 
 # Keyword Arguments
 
 - `alternative_start::Bool=false`: If set to `true`, the function considers alternative start codons when searching for ORFs. This increases the execution time by approximately 3x.
 - `min_len::Int64=6`: The minimum length of the allowed ORF. By default, it allows ORFs that can encode at least one amino acid (e.g., `aa"M*"`).
 
+# Examples
+
+```julia
+sequence = randdnaseq(120)
+
+    120nt DNA Sequence:
+    GCCGGACAGCGAAGGCTAATAAATGCCCGTGCCAGTATC…TCTGAGTTACTGTACACCCGAAAGACGTTGTACGCATTT
+
+
+getorfs(sequence, DNAAlphabet{4}(), NaiveFinder())
+
+    1-element Vector{LongSubSeq{DNAAlphabet{4}}}:
+     ATGCGTACAACGTCTTTCGGGTGTACAGTAACTCAGAGCTAA
+
+```
 """
-function get_orfs_dna(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}};
-    findermethod::Function = naivefinder,
+function getorfs(
+    sequence::NucleicSeqOrView{DNAAlphabet{N}},
+    ::DNAAlphabet{N},
+    method::M;
     alternative_start::Bool = false,
     min_len::Int64 = 6
-) where {N}
-    orfs = findorfs(sequence; findermethod, alternative_start, min_len)
+) where {N,M<:GeneFinderMethod}
+    orfs = findorfs(sequence, method; alternative_start, min_len)
     seqs = Vector{LongSubSeq{DNAAlphabet{N}}}(undef, length(orfs)) #Vector{}(undef, length(orfs)) # todo correct the output type
+    
     @inbounds for (i, orf) in enumerate(orfs)
         seqs[i] = sequence[orf]
     end
+
     return seqs
 end
 
-"""
-    get_orfs_aa(sequence::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) where {N}
-
-This function takes a `NucleicSeqOrView{DNAAlphabet{N}}` sequence and identifies the open reading frames (ORFs) using the `findorfs()` function. The function then translates each ORF into an amino acid sequence and stores it in a `Vector{LongSubSeq{AminoAcidAlphabet}}`.
-
-# Arguments
-
-- `sequence`: The input sequence as a `NucleicSeqOrView{DNAAlphabet{N}}`
-
-# Keyword Arguments
-
-- `alternative_start::Bool=false`: If set to `true`, the function considers alternative start codons when searching for ORFs. This increases the execution time by approximately 3x.
-- `min_len::Int64=6`: The minimum length of the allowed ORF. By default, it allows ORFs that can encode at least one amino acid (e.g., `aa"M*"`).
-
-"""
-function get_orfs_aa(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}};
-    findermethod::Function = naivefinder,
+function getorfs(
+    sequence::NucleicSeqOrView{DNAAlphabet{N}},
+    ::AminoAcidAlphabet,
+    method::M;
     alternative_start::Bool = false,
-    code::GeneticCode = ncbi_trans_table[1],
-    min_len::Int64 = 6
-) where {N}
-    orfs = findorfs(sequence; findermethod, alternative_start, min_len)
-    aas = Vector{LongSubSeq{AminoAcidAlphabet}}(undef, length(orfs))
+    min_len::Int64 = 6,
+    code::GeneticCode = ncbi_trans_table[1]
+) where {N,M<:GeneFinderMethod}
+    orfs = findorfs(sequence, method; alternative_start, min_len)
+    seqs = Vector{LongSubSeq{AminoAcidAlphabet}}(undef, length(orfs))
+    
     @inbounds for (i, orf) in enumerate(orfs)
-        aas[i] = translate(sequence[orf]; code)
+        seqs[i] = translate(sequence[orf]; code)
     end
-    return aas
+
+    return seqs
 end
 
 #### record_orfs_* methods ####

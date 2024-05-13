@@ -1,6 +1,6 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.2"
+julia_version = "1.10.3"
 manifest_format = "2.0"
 project_hash = "b881dd48d80d6b19dfa1756a0b2d6e2e42d93e33"
 
@@ -48,9 +48,9 @@ uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
 [[deps.FASTX]]
 deps = ["Automa", "BioGenerics", "PrecompileTools", "StringViews", "TranscodingStreams"]
-git-tree-sha1 = "bff5d62bf5e1c382a370ac701bcaea9a24115ac6"
+git-tree-sha1 = "24ce37a228990be0cb69b3a2dbcfb656f32fc679"
 uuid = "c2308a5c-f048-11e8-3e8a-31650f418d12"
-version = "2.1.4"
+version = "2.1.5"
 weakdeps = ["BioSequences"]
 
     [deps.FASTX.extensions]
@@ -101,9 +101,9 @@ uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 version = "1.0.3"
 
 [[deps.TranscodingStreams]]
-git-tree-sha1 = "71509f04d045ec714c4748c785a59045c3736349"
+git-tree-sha1 = "5d54d076465da49d6746c647022f3b3674e64156"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.10.7"
+version = "0.10.8"
 
     [deps.TranscodingStreams.extensions]
     TestExt = ["Test", "Random"]
