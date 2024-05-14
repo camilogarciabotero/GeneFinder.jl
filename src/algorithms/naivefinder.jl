@@ -91,7 +91,7 @@ function naivefinderscored(
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
     min_len::Int64 = 6,
-    scoringscheme::BioMarkovChain = ECOLICDS,
+    scoringscheme::BioMarkovChain = ECOLICDS, # ECOLINOCDS
     kwargs...
 ) where {N}
     seqlen = length(sequence)
