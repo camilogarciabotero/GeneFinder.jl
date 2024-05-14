@@ -56,9 +56,11 @@ function getorfs(
     sequence::NucleicSeqOrView{DNAAlphabet{N}},
     ::AminoAcidAlphabet,
     method::M;
-    kwargs...
+    alternative_start::Bool = false,
+    min_len::Int64 = 6,
+    code::GeneticCode = ncbi_trans_table[1]
 ) where {N,M<:GeneFinderMethod}
-    orfs = findorfs(sequence, method; kwargs...)
+    orfs = findorfs(sequence, method; alternative_start, min_len)
     seqs = Vector{LongSubSeq{AminoAcidAlphabet}}(undef, length(orfs))
     
     @inbounds for (i, orf) in enumerate(orfs)
