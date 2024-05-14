@@ -50,12 +50,13 @@ The ORF struct represents an open reading frame in a DNA sequence. It has two fi
 - `frame`: is an Int type indicating the reading frame of the ORF. The frame is the position of the first nucleotide of the codon that starts the ORF, relative to the start of the sequence. It can be 1, 2, or 3.
 - `score`: is a Union{Nothing, Float64} type indicating the score of the ORF. It can be a Float64 or nothing.
 """
-struct ORF <: AbstractGene
+struct ORF <: AbstractGene # could also be mutable so that scores can be updated later, but tests fails
     #TODOs:  location might be a complex Union allowing UnitRange or a Join of ranges (e.g. 1..100, 200..300)?
     location::UnitRange{Int64}  # Note that it is also called position for gene struct in GenomicAnotations
     strand::Char
     frame::Int # Use Int64 instead of Int
-    score::Union{Nothing, Float64} # Add score field
+    score::Union{Nothing, Float64} # Add score field shold be a namedtuple with the score and the method used to score
+    # rbs::Union{Nothing, Vector{UnitRange{Int64}}} # Add RBS field  see https://github.com/deprekate/PHANOTATE/blob/c77e80caef8dc3264f7dc698b087bcd486216bcb/phanotate_modules/functions.py#L48
 
     function ORF(location::UnitRange{Int64}, strand::Char, frame::Int, score::Union{Nothing, Float64} = nothing)
         @assert frame in (1, 2, 3) "Invalid frame value. Frame must be 1, 2, or 3."
