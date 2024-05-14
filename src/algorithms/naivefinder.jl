@@ -1,4 +1,4 @@
-export naivefinder, naivefinderscored, isnaivecoding
+export naivefinder, naivefinderscored, log_odds_ratio_decision_rule, lordr
 
 """
     locationiterator(sequence::NucleicSeqOrView{DNAAlphabet{N}}; alternative_start::Bool=false) where {N}
@@ -116,7 +116,7 @@ function naivefinderscored(
 end
 
 @doc raw"""
-    isnaivecoding(
+    log_odds_ratio_decision_rule(
         sequence::LongSequence{DNAAlphabet{4}};
         codingmodel::BioMarkovChain,
         noncodingmodel::BioMarkovChain,
@@ -154,7 +154,7 @@ sequence = dna"ATGGCATCTAG"
 iscoding(sequence)  # Returns: true or false
 ```
 """
-function isnaivecoding(
+function log_odds_ratio_decision_rule( #log_odds_ratio_decision lordr/cudr/kfdr/aadr
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
     codingmodel::BioMarkovChain = ECOLICDS,
     noncodingmodel::BioMarkovChain = ECOLINOCDS,
@@ -175,6 +175,8 @@ function isnaivecoding(
         false
     end
 end
+
+const lordr = log_odds_ratio_decision_rule # criteria
 
 ## Another alternative:
 
