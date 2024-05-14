@@ -39,7 +39,8 @@ function getorfs(
     ::DNAAlphabet{N},
     method::M;
     alternative_start::Bool = false,
-    min_len::Int64 = 6
+    min_len::Int64 = 6,
+    kwargs...
 ) where {N,M<:GeneFinderMethod}
     orfs = findorfs(sequence, method; alternative_start, min_len)
     seqs = Vector{LongSubSeq{DNAAlphabet{N}}}(undef, length(orfs)) #Vector{}(undef, length(orfs)) # todo correct the output type
@@ -55,11 +56,9 @@ function getorfs(
     sequence::NucleicSeqOrView{DNAAlphabet{N}},
     ::AminoAcidAlphabet,
     method::M;
-    alternative_start::Bool = false,
-    min_len::Int64 = 6,
-    code::GeneticCode = ncbi_trans_table[1]
+    kwargs...
 ) where {N,M<:GeneFinderMethod}
-    orfs = findorfs(sequence, method; alternative_start, min_len)
+    orfs = findorfs(sequence, method; kwargs...)
     seqs = Vector{LongSubSeq{AminoAcidAlphabet}}(undef, length(orfs))
     
     @inbounds for (i, orf) in enumerate(orfs)
