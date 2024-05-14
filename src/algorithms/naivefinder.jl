@@ -105,7 +105,8 @@ function naivefinderscored(
                 frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
                 start = strand == '+' ? location.start : seqlen - location.stop + 1
                 stop = start + length(location) - 1
-                score = -10log10(dnaseqprobability(seq[start:stop], scoringscheme))
+                # score = -10log10(dnaseqprobability(seq[start:stop], scoringscheme))
+                score = log_odds_ratio_score(seq[start:stop], scoringscheme)
                 push!(orfs, ORF(start:stop, strand, frame, score))
             end
         end
