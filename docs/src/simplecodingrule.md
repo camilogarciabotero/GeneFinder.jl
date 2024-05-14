@@ -22,15 +22,15 @@ orfs = findorfs(seq, min_len=75, NaiveFinderScored())
 
 ```julia
 9-element Vector{ORF}:
- ORF(37:156, '+', 1, 731.0630113217583)
- ORF(194:268, '-', 2, 451.39296840114787)
- ORF(194:283, '-', 2, 539.7348273169179)
- ORF(249:347, '+', 3, 603.7889048870026)
- ORF(426:590, '+', 3, 1005.854258504278)
- ORF(565:657, '+', 1, 573.9794470785512)
- ORF(650:727, '-', 2, 482.1313855694985)
- ORF(786:872, '+', 3, 514.7538884163761)
- ORF(887:976, '-', 2, 539.2671724379366)
+ ORF(37:156, '+', 1, -0.0024384392084479912)
+ ORF(194:268, '-', 2, -0.026759927376272922)
+ ORF(194:283, '-', 2, -0.010354615336667268)
+ ORF(249:347, '+', 3, -0.02024959025464718)
+ ORF(426:590, '+', 3, -0.003289228147424537)
+ ORF(565:657, '+', 1, -0.014806468147370438)
+ ORF(650:727, '-', 2, -0.04303976584597201)
+ ORF(786:872, '+', 3, -0.03486633273294755)
+ ORF(887:976, '-', 2, -0.021989277630330317)
 ```
 
 ## The *log-odds ratio* decision rule
@@ -45,12 +45,41 @@ S(X) = \log \frac{{P_C(X_1=i_1, \ldots, X_T=i_T)}}{{P_N(X_1=i_1, \ldots, X_T=i_T
 
 Where the ``P_{C}`` is the probability of the sequence given a CDS model, ``P_{N}`` is the probability of the sequence given a No-CDS model, the decision rule is finally based on whether the ratio is greater or lesser than a given threshold *η* of significance level.
 
-In this package we have implemented this rule and call some basic models of CDS and No-CDS of *E. coli* from Axelson-Fisk (2015) work (implemented in `BioMarkovChains.jl` package). To check whether a random sequence could be coding based on these decision we use the predicate `isnaivecoding` with the `ECOLICDS` and `ECOLINOCDS` models:
+In this package we have implemented this rule and call some basic models of CDS and No-CDS of *E. coli* from Axelson-Fisk (2015) work (implemented in `BioMarkovChains.jl` package). To check whether a random sequence could be coding based on these decision we use the predicate `log_odds_ratio_decision_rule` with the `ECOLICDS` and `ECOLINOCDS` models:
 
 ```julia
-orfsdna = getorfs(seq,DNAAlphabet{4}(),  NaiveFinderScored(), min_len=75, alternative_start=true)
-isnaivecoding.(orfsdna)
+orfsdna = getorfs(seq,DNAAlphabet{4}(),  NaiveFinder(), min_len=75, alternative_start=true)
+
+    20-element Vector{LongSubSeq{DNAAlphabet{4}}}:
+     ATGTATTTTTCGTGCATTTCCGGTGGAATCGTGCCGTCC…CGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGA
+     GTGCATTTCCGGTGGAATCGTGCCGTCCAGCATAGCCTC…TACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAG
+     GTGCCGTCCAGCATAGCCTCCAGATATCCCCTTATAGAG…CGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGA
+     GTGGGATACATTGGCTACAAACTTTTTCTGATCATCCTC…TACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAG
+     TTGCCATATAATTCAGACAGGAAGCCAGATAACCGATTT…GCATATTACCGGCAGCATACTGCTCTGTGGCATGAGTGA
+     ATGCTGCCGGTAATATGCATTATGAATTTCAGGTCGATAGTGAGGATGAAATCGGTTATCTGGCTTCCTGTCTGA
+     ATGCCACAGAGCAGTATGCTGCCGGTAATATGCATTATG…ATAGTGAGGATGAAATCGGTTATCTGGCTTCCTGTCTGA
+     ATGCATATTACCGGCAGCATACTGCTCTGTGGCATGAGT…TACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAG
+     GTGATCTTCCTCAGAGGAATATATACGATCTCAGTGAAA…ATCAGGGATAGCAGGAACAGGATTGCCAGGGTGATATAG
+     ATGGATGACTACATAGCCTTTTACCTTGTAGTTGGAGGT…ATCAAAATTCTCAATGACAACCACATTCTCCACATCTAA
+     TTGGTGATTTCTTCGGTAATTTTGATTCGGATGTACTTACTGTATTTGCTCCCATTACCTCCAACTACAAGGTAA
+     TTGTTGGTGATTTCTTCGGTAATTTTGATTCGGATGTACTTACTGTATTTGCTCCCATTACCTCCAACTACAAGGTAA
+     ATGACAACCACATTCTCCACATCTAAGGGACTATTGGTA…CCGGAGGGATTGATGATGCGAATCTCGGAATTCAGGTAG
+     ATGCCGGCGGATTGTACACCAGTGAAACAACTTTGGAGACCGTTAAAATGCAGCTGGACTCCCTGGCGGTCTACCTGA
+     TTGTTTCACTGGTGTACAATCCGCCGGCATAGGTTCCGG…TCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAA
+     TTGCTTCGGAATAGAGACTTTCTGCCTTTTCCCGGATCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAA
+     ATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAACAAT…AAATACACCAAAAATAAAATATGCGAGTATAAATTTTAG
+     TTGGTCATATTGGGAACAAAAGTTGTAACAATGATGAAA…ACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAA
+     TTGGGAACAAAAGTTGTAACAATGATGAAACCAAATACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAA
+     ATGCCAACTGGAAGATCAGCACCATCTGGGGCATCGGCT…TACGTAATTAAGTCATACCAAAAGCAGGATTTGTTATGA
+
 ```
+
+Now the question is which of those sequences can we consider as coding sequences. We can use the `iscoding` predicate to check whether a sequence is coding or not based on the *log-odds ratio* decision rule:
+
+```julia
+iscoding.(orfsdna) # criteria = log_odds_ratio_decision_rule
+```
+
 ```julia
 20-element BitVector:
  0
@@ -75,4 +104,25 @@ isnaivecoding.(orfsdna)
  0
 ```
 
-In this case, the sequence has 20 ORFs and only 3 of them are classified as coding sequences. The classification is based on the *log-odds ratio* decision rule and the transition probability models of *E. coli* CDS and No-CDS. The `isnaivecoding` method will return a boolean vector with the classification of each ORF in the sequence.
+In this case, the sequence has 20 ORFs and only 3 of them are classified as coding sequences. The classification is based on the *log-odds ratio* decision rule and the transition probability models of *E. coli* CDS and No-CDS. The `log_odds_ratio_decision_rule` method will return a boolean vector with the classification of each ORF in the sequence. Now we can simply filter the ORFs that are coding sequences:
+
+```julia
+orfs = filter(orf -> iscoding(orf), orfsdna)
+
+    3-element Vector{LongSubSeq{DNAAlphabet{4}}}:
+    ATGCTGCCGGTAATATGCATTATGAATTTCAGGTCGATAGTGAGGATGAAATCGGTTATCTGGCTTCCTGTCTGA
+    ATGCCACAGAGCAGTATGCTGCCGGTAATATGCATTATG…ATAGTGAGGATGAAATCGGTTATCTGGCTTCCTGTCTGA
+    ATGCCGGCGGATTGTACACCAGTGAAACAACTTTGGAGACCGTTAAAATGCAGCTGGACTCCCTGGCGGTCTACCTGA
+```
+
+Or in terms of the `ORF` object:
+
+```julia
+orfs = findorfs(seq, min_len=75, NaiveFinderScored(), alternative_start=true) # find ORFs with alternative start as well
+orfs[iscoding.(orfsdna)]
+
+    3-element Vector{ORF}:
+     ORF(194:268, '-', 2, -0.026759927376272922)
+     ORF(194:283, '-', 2, -0.010354615336667268)
+     ORF(650:727, '-', 2, -0.04303976584597201)
+```
