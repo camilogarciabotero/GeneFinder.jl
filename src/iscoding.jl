@@ -20,26 +20,21 @@ iscoding(sequence)  # Returns: true or false
 function iscoding end
 
 function iscoding(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}},
-    ::NaiveScoringScheme;
-    codingmodel::BioMarkovChain = ECOLICDS,
-    noncodingmodel::BioMarkovChain = ECOLINOCDS,
-    η::Float64 = 1e-5
+    sequence::NucleicSeqOrView{DNAAlphabet{N}};
+    criteria::Function = lordr,
+    kwargs...
 ) where {N}
-    return isnaivecoding(sequence; codingmodel, noncodingmodel, η)
+    return criteria(sequence; kwargs...)
 end
 
-
-# function iscoding(
-#     orf::ORF,
-#     sequence::NucleicSeqOrView{DNAAlphabet{N}};
-#     scoring::NaiveScoringScheme = NaiveScoringScheme(),
-#     codingmodel::BioMarkovChain = ECOLICDS,
-#     noncodingmodel::BioMarkovChain = ECOLINOCDS,
-#     η::Float64 = 1e-5
-# ) where {N}
-#     return isnaivecoding(sequence[orf]; codingmodel, noncodingmodel, η)
-# end
+function iscoding(
+    sequence::NucleicSeqOrView{DNAAlphabet{N}},
+    orf::ORF;
+    criteria::Function = lordr,
+    kwargs...
+) where {N}
+    return criteria(sequence[orf]; kwargs...)
+end
 
 
 # iscoding.(seq[i for i in allorfs])
