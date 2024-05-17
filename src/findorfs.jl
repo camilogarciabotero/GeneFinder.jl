@@ -48,7 +48,7 @@ end
 
 function findorfs(
     sequence::NucleicSeqOrView{DNAAlphabet{N}},
-    ::NaiveFinderScored;
+    ::NaiveFinderScored; # Should we decoupled the FinderMethod from the ScoringMethod? if so, what strategy to use for add the parameter (as a kwargs, as a ::SpecificScoringMethod or as a ::Type{M} where M<:ScoringMethod)?
     kwargs...
 ) where {N}
     return naivefinderscored(sequence; kwargs...)::Vector{ORF} #alternative_start, min_len, scoringscheme
