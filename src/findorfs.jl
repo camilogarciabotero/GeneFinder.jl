@@ -25,14 +25,13 @@ A vector of `ORF` objects representing the found ORFs.
 ```julia
 sequence = randdnaseq(120)
 
-    120nt DNA Sequence:
-    GCCGGACAGCGAAGGCTAATAAATGCCCGTGCCAGTATC…TCTGAGTTACTGTACACCCGAAAGACGTTGTACGCATTT
-
+120nt DNA Sequence:
+ GCCGGACAGCGAAGGCTAATAAATGCCCGTGCCAGTATC…TCTGAGTTACTGTACACCCGAAAGACGTTGTACGCATTT
 
 findorfs(sequence, NaiveFinder())
 
-    1-element Vector{ORF}:
-    ORF(77:118, '-', 2, 0.0)
+1-element Vector{ORF}:
+ ORF(77:118, '-', 2, 0.0)
 ```
 
 """
