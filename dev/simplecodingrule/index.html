@@ -18,27 +18,27 @@ orfs = findorfs(seq, min_len=75, NaiveFinderScored())</code></pre><pre><code cla
 S(X) = \log \frac{{P_C(X_1=i_1, \ldots, X_T=i_T)}}{{P_N(X_1=i_1, \ldots, X_T=i_T)}}  \begin{cases} &gt; \eta &amp; \Rightarrow \text{coding} \\ &lt; \eta &amp; \Rightarrow \text{noncoding} \end{cases}
 \end{align}\]</p><p>Where the <span>$P_{C}$</span> is the probability of the sequence given a CDS model, <span>$P_{N}$</span> is the probability of the sequence given a No-CDS model, the decision rule is finally based on whether the ratio is greater or lesser than a given threshold <em>η</em> of significance level.</p><p>In this package we have implemented this rule and call some basic models of CDS and No-CDS of <em>E. coli</em> from Axelson-Fisk (2015) work (implemented in <code>BioMarkovChains.jl</code> package). To check whether a random sequence could be coding based on these decision we use the predicate <code>log_odds_ratio_decision_rule</code> with the <code>ECOLICDS</code> and <code>ECOLINOCDS</code> models:</p><pre><code class="language-julia hljs">orfsdna = getorfs(seq,DNAAlphabet{4}(),  NaiveFinder(), min_len=75, alternative_start=true)
 
-    20-element Vector{LongSubSeq{DNAAlphabet{4}}}:
-     ATGTATTTTTCGTGCATTTCCGGTGGAATCGTGCCGTCC…CGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGA
-     GTGCATTTCCGGTGGAATCGTGCCGTCCAGCATAGCCTC…TACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAG
-     GTGCCGTCCAGCATAGCCTCCAGATATCCCCTTATAGAG…CGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGA
-     GTGGGATACATTGGCTACAAACTTTTTCTGATCATCCTC…TACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAG
-     TTGCCATATAATTCAGACAGGAAGCCAGATAACCGATTT…GCATATTACCGGCAGCATACTGCTCTGTGGCATGAGTGA
-     ATGCTGCCGGTAATATGCATTATGAATTTCAGGTCGATAGTGAGGATGAAATCGGTTATCTGGCTTCCTGTCTGA
-     ATGCCACAGAGCAGTATGCTGCCGGTAATATGCATTATG…ATAGTGAGGATGAAATCGGTTATCTGGCTTCCTGTCTGA
-     ATGCATATTACCGGCAGCATACTGCTCTGTGGCATGAGT…TACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAG
-     GTGATCTTCCTCAGAGGAATATATACGATCTCAGTGAAA…ATCAGGGATAGCAGGAACAGGATTGCCAGGGTGATATAG
-     ATGGATGACTACATAGCCTTTTACCTTGTAGTTGGAGGT…ATCAAAATTCTCAATGACAACCACATTCTCCACATCTAA
-     TTGGTGATTTCTTCGGTAATTTTGATTCGGATGTACTTACTGTATTTGCTCCCATTACCTCCAACTACAAGGTAA
-     TTGTTGGTGATTTCTTCGGTAATTTTGATTCGGATGTACTTACTGTATTTGCTCCCATTACCTCCAACTACAAGGTAA
-     ATGACAACCACATTCTCCACATCTAAGGGACTATTGGTA…CCGGAGGGATTGATGATGCGAATCTCGGAATTCAGGTAG
-     ATGCCGGCGGATTGTACACCAGTGAAACAACTTTGGAGACCGTTAAAATGCAGCTGGACTCCCTGGCGGTCTACCTGA
-     TTGTTTCACTGGTGTACAATCCGCCGGCATAGGTTCCGG…TCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAA
-     TTGCTTCGGAATAGAGACTTTCTGCCTTTTCCCGGATCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAA
-     ATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAACAAT…AAATACACCAAAAATAAAATATGCGAGTATAAATTTTAG
-     TTGGTCATATTGGGAACAAAAGTTGTAACAATGATGAAA…ACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAA
-     TTGGGAACAAAAGTTGTAACAATGATGAAACCAAATACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAA
-     ATGCCAACTGGAAGATCAGCACCATCTGGGGCATCGGCT…TACGTAATTAAGTCATACCAAAAGCAGGATTTGTTATGA
+20-element Vector{LongSubSeq{DNAAlphabet{4}}}:
+ ATGTATTTTTCGTGCATTTCCGGTGGAATCGTGCCGTCC…CGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGA
+ GTGCATTTCCGGTGGAATCGTGCCGTCCAGCATAGCCTC…TACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAG
+ GTGCCGTCCAGCATAGCCTCCAGATATCCCCTTATAGAG…CGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGA
+ GTGGGATACATTGGCTACAAACTTTTTCTGATCATCCTC…TACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAG
+ TTGCCATATAATTCAGACAGGAAGCCAGATAACCGATTT…GCATATTACCGGCAGCATACTGCTCTGTGGCATGAGTGA
+ ATGCTGCCGGTAATATGCATTATGAATTTCAGGTCGATAGTGAGGATGAAATCGGTTATCTGGCTTCCTGTCTGA
+ ATGCCACAGAGCAGTATGCTGCCGGTAATATGCATTATG…ATAGTGAGGATGAAATCGGTTATCTGGCTTCCTGTCTGA
+ ATGCATATTACCGGCAGCATACTGCTCTGTGGCATGAGT…TACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAG
+ GTGATCTTCCTCAGAGGAATATATACGATCTCAGTGAAA…ATCAGGGATAGCAGGAACAGGATTGCCAGGGTGATATAG
+ ATGGATGACTACATAGCCTTTTACCTTGTAGTTGGAGGT…ATCAAAATTCTCAATGACAACCACATTCTCCACATCTAA
+ TTGGTGATTTCTTCGGTAATTTTGATTCGGATGTACTTACTGTATTTGCTCCCATTACCTCCAACTACAAGGTAA
+ TTGTTGGTGATTTCTTCGGTAATTTTGATTCGGATGTACTTACTGTATTTGCTCCCATTACCTCCAACTACAAGGTAA
+ ATGACAACCACATTCTCCACATCTAAGGGACTATTGGTA…CCGGAGGGATTGATGATGCGAATCTCGGAATTCAGGTAG
+ ATGCCGGCGGATTGTACACCAGTGAAACAACTTTGGAGACCGTTAAAATGCAGCTGGACTCCCTGGCGGTCTACCTGA
+ TTGTTTCACTGGTGTACAATCCGCCGGCATAGGTTCCGG…TCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAA
+ TTGCTTCGGAATAGAGACTTTCTGCCTTTTCCCGGATCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAA
+ ATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAACAAT…AAATACACCAAAAATAAAATATGCGAGTATAAATTTTAG
+ TTGGTCATATTGGGAACAAAAGTTGTAACAATGATGAAA…ACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAA
+ TTGGGAACAAAAGTTGTAACAATGATGAAACCAAATACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAA
+ ATGCCAACTGGAAGATCAGCACCATCTGGGGCATCGGCT…TACGTAATTAAGTCATACCAAAAGCAGGATTTGTTATGA
 </code></pre><p>Now the question is which of those sequences can we consider as coding sequences. We can use the <code>iscoding</code> predicate to check whether a sequence is coding or not based on the <em>log-odds ratio</em> decision rule:</p><pre><code class="language-julia hljs">iscoding.(orfsdna) # criteria = log_odds_ratio_decision_rule</code></pre><pre><code class="language-julia hljs">20-element BitVector:
  0
  0
@@ -61,13 +61,13 @@ S(X) = \log \frac{{P_C(X_1=i_1, \ldots, X_T=i_T)}}{{P_N(X_1=i_1, \ldots, X_T=i_T
  0
  0</code></pre><p>In this case, the sequence has 20 ORFs and only 3 of them are classified as coding sequences. The classification is based on the <em>log-odds ratio</em> decision rule and the transition probability models of <em>E. coli</em> CDS and No-CDS. The <code>log_odds_ratio_decision_rule</code> method will return a boolean vector with the classification of each ORF in the sequence. Now we can simply filter the ORFs that are coding sequences:</p><pre><code class="language-julia hljs">orfs = filter(orf -&gt; iscoding(orf), orfsdna)
 
-    3-element Vector{LongSubSeq{DNAAlphabet{4}}}:
-    ATGCTGCCGGTAATATGCATTATGAATTTCAGGTCGATAGTGAGGATGAAATCGGTTATCTGGCTTCCTGTCTGA
-    ATGCCACAGAGCAGTATGCTGCCGGTAATATGCATTATG…ATAGTGAGGATGAAATCGGTTATCTGGCTTCCTGTCTGA
-    ATGCCGGCGGATTGTACACCAGTGAAACAACTTTGGAGACCGTTAAAATGCAGCTGGACTCCCTGGCGGTCTACCTGA</code></pre><p>Or in terms of the <code>ORF</code> object:</p><pre><code class="language-julia hljs">orfs = findorfs(seq, min_len=75, NaiveFinderScored(), alternative_start=true) # find ORFs with alternative start as well
+3-element Vector{LongSubSeq{DNAAlphabet{4}}}:
+ ATGCTGCCGGTAATATGCATTATGAATTTCAGGTCGATAGTGAGGATGAAATCGGTTATCTGGCTTCCTGTCTGA
+ ATGCCACAGAGCAGTATGCTGCCGGTAATATGCATTATG…ATAGTGAGGATGAAATCGGTTATCTGGCTTCCTGTCTGA
+ ATGCCGGCGGATTGTACACCAGTGAAACAACTTTGGAGACCGTTAAAATGCAGCTGGACTCCCTGGCGGTCTACCTGA</code></pre><p>Or in terms of the <code>ORF</code> object:</p><pre><code class="language-julia hljs">orfs = findorfs(seq, min_len=75, NaiveFinderScored(), alternative_start=true) # find ORFs with alternative start as well
 orfs[iscoding.(orfsdna)]
 
     3-element Vector{ORF}:
      ORF(194:268, &#39;-&#39;, 2, -0.026759927376272922)
      ORF(194:283, &#39;-&#39;, 2, -0.010354615336667268)
-     ORF(650:727, &#39;-&#39;, 2, -0.04303976584597201)</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../naivefinder/">« Finding ORFs</a><a class="docs-footer-nextpage" href="../iodocs/">Wrtiting ORFs In Files »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Friday 17 May 2024 16:40">Friday 17 May 2024</span>. Using Julia version 1.10.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+     ORF(650:727, &#39;-&#39;, 2, -0.04303976584597201)</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../naivefinder/">« Finding ORFs</a><a class="docs-footer-nextpage" href="../iodocs/">Wrtiting ORFs In Files »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Friday 17 May 2024 16:43">Friday 17 May 2024</span>. Using Julia version 1.10.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
