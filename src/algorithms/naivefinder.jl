@@ -1,4 +1,6 @@
-export naivefinder, naivefinderscored, log_odds_ratio_decision_rule, lordr
+export naivefinder, naivefinderscored, log_odds_ratio_decision_rule, lordr, lors
+
+const lors = log_odds_ratio_score
 
 """
     locationiterator(sequence::NucleicSeqOrView{DNAAlphabet{N}}; alternative_start::Bool=false) where {N}
@@ -48,11 +50,13 @@ function naivefinder(
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
     min_len::Int64 = 6,
+    scheme::Union{Nothing, Function} = nothing,
     kwargs...
 ) where {N}
     seqlen = length(sequence)
     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
     orfs = Vector{ORF}()
+    id = 0
     for strand in ('+', '-')
         seq = strand == '-' ? reverse_complement(sequence) : sequence
 
@@ -61,7 +65,8 @@ function naivefinder(
                 frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
                 start = strand == '+' ? location.start : seqlen - location.stop + 1
                 stop = start + length(location) - 1
-                push!(orfs, ORF(start:stop, strand, frame, 0.0))
+                id += 1
+                push!(orfs, ORF("$(id)", start:stop, strand, frame, NaiveFinder(), scheme))
             end
         end
     end
@@ -91,12 +96,13 @@ function naivefinderscored(
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
     min_len::Int64 = 6,
-    scoringscheme::BioMarkovChain = ECOLICDS, # ECOLINOCDS
+    model::BioMarkovChain = ECOLICDS,
     kwargs...
 ) where {N}
     seqlen = length(sequence)
     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
     orfs = Vector{ORF}()
+    id = 0
     for strand in ('+', '-')
         seq = strand == '-' ? reverse_complement(sequence) : sequence
 
@@ -106,8 +112,9 @@ function naivefinderscored(
                 start = strand == '+' ? location.start : seqlen - location.stop + 1
                 stop = start + length(location) - 1
                 # score = -10log10(dnaseqprobability(seq[start:stop], scoringscheme))
-                score = log_odds_ratio_score(seq[start:stop], scoringscheme)
-                push!(orfs, ORF(start:stop, strand, frame, score))
+                score = log_odds_ratio_score(seq[start:stop], model)
+                id += 1
+                push!(orfs, ORF("$(id)", start:stop, strand, frame, NaiveFinderScored(), lors, score))
             end
         end
     end
@@ -154,7 +161,7 @@ sequence = dna"ATGGCATCTAG"
 iscoding(sequence)  # Returns: true or false
 ```
 """
-function log_odds_ratio_decision_rule( #log_odds_ratio_decision lordr/cudr/kfdr/aadr
+function lordr( #log_odds_ratio_decision, also lordr/cudr/kfdr/aadr
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
     codingmodel::BioMarkovChain = ECOLICDS,
     noncodingmodel::BioMarkovChain = ECOLINOCDS,
@@ -176,7 +183,7 @@ function log_odds_ratio_decision_rule( #log_odds_ratio_decision lordr/cudr/kfdr/
     end
 end
 
-const lordr = log_odds_ratio_decision_rule # criteria
+const log_odds_ratio_decision_rule = lordr # criteria
 
 ## Another alternative:
 

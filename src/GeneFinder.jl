@@ -25,6 +25,7 @@ using BioMarkovChains: BioMarkovChain, dnaseqprobability, ECOLICDS, ECOLINOCDS, 
 using FASTX: FASTAReader, sequence
 using IterTools: takewhile, iterated
 using PrecompileTools: @setup_workload, @compile_workload
+using GenomicFeatures: GenomicFeatures, AbstractGenomicInterval, GenomicInterval, Strand, summary, groupname, leftposition, rightposition, strand, metadata, STRAND_POS
 
 include("algorithms/naivefinder.jl")
 include("types.jl")
