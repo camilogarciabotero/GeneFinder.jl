@@ -66,7 +66,7 @@ function naivefinder(
                 start = strand == '+' ? location.start : seqlen - location.stop + 1
                 stop = start + length(location) - 1
                 id += 1
-                push!(orfs, ORF("$(id)", start:stop, strand, frame, NaiveFinder(), scheme))
+                push!(orfs, ORF("ORF$(id)", start:stop, strand, frame, NaiveFinder(), scheme))
             end
         end
     end
@@ -114,7 +114,7 @@ function naivefinderscored(
                 # score = -10log10(dnaseqprobability(seq[start:stop], scoringscheme))
                 score = log_odds_ratio_score(seq[start:stop], model)
                 id += 1
-                push!(orfs, ORF("$(id)", start:stop, strand, frame, NaiveFinderScored(), lors, score))
+                push!(orfs, ORF("ORF$(id)", start:stop, strand, frame, NaiveFinderScored(), lors, score))
             end
         end
     end

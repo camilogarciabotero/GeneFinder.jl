@@ -5,7 +5,7 @@
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
     orfs01 = findorfs(seq01, NaiveFinder())
 
-    @test orfs01 == [ORF(1:33, '+', 1, 0.0), ORF(4:33, '+', 1, 0.0), ORF(8:22, '+', 2, 0.0), ORF(12:29, '+', 3, 0.0), ORF(16:33, '+', 1, 0.0)]
+    @test orfs01 == [ORF{NaiveFinder}(ORF1, 1:33, +, 1, nothing), ORF{NaiveFinder}(ORF2, 4:33, +, 1, nothing), ORF{NaiveFinder}(ORF3, 8:22, +, 2, nothing), ORF{NaiveFinder}(ORF4, 12:29, +, 3, nothing), ORF{NaiveFinder}(ORF5, 16:33, +, 1, nothing)]
     @test length(orfs01) == 5
 
     # > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
@@ -13,7 +13,7 @@
     orfs02 = findorfs(seq02, NaiveFinder())
 
     @test length(orfs02) == 12
-    @test orfs02 == [ORF(29:40, '+', 2, 0.0), ORF(137:145, '+', 2, 0.0), ORF(164:184, '+', 2, 0.0), ORF(173:184, '+', 2, 0.0), ORF(236:241, '+', 2, 0.0), ORF(248:268, '+', 2, 0.0), ORF(362:373, '+', 2, 0.0), ORF(470:496, '+', 2, 0.0), ORF(551:574, '+', 2, 0.0), ORF(569:574, '+', 2, 0.0), ORF(581:601, '+', 2, 0.0), ORF(695:706, '+', 2, 0.0)]
+    @test orfs02 == [ORF{NaiveFinder}(ORF1, 29:40, +, 2, nothing), ORF{NaiveFinder}(ORF2, 137:145, +, 2, nothing), ORF{NaiveFinder}(ORF3, 164:184, +, 2, nothing), ORF{NaiveFinder}(ORF4, 173:184, +, 2, nothing), ORF{NaiveFinder}(ORF5, 236:241, +, 2, nothing), ORF{NaiveFinder}(ORF6, 248:268, +, 2, nothing), ORF{NaiveFinder}(ORF7, 362:373, +, 2, nothing), ORF{NaiveFinder}(ORF8, 470:496, +, 2, nothing), ORF{NaiveFinder}(ORF9, 551:574, +, 2, nothing), ORF{NaiveFinder}(ORF10, 569:574, +, 2, nothing), ORF{NaiveFinder}(ORF11, 581:601, +, 2, nothing), ORF{NaiveFinder}(ORF12, 695:706, +, 2, nothing)]
 
     # From pyrodigal issue #13 link: https://github.com/althonos/pyrodigal/blob/1f939b0913b48dbaa55d574b20e124f1b8323825/pyrodigal/tests/test_orf_finder.py#L271
     # Pyrodigal predicts 2 genes from this sequence:
@@ -23,7 +23,7 @@
     seq03 = dna"TTCGTCAGTCGTTCTGTTTCATTCAATACGATAGTAATGTATTTTTCGTGCATTTCCGGTGGAATCGTGCCGTCCAGCATAGCCTCCAGATATCCCCTTATAGAGGTCAGAGGGGAACGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGATCATCCTCGGAACGGGCAATTTCGCTTGCCATATAATTCAGACAGGAAGCCAGATAACCGATTTCATCCTCACTATCGACCTGAAATTCATAATGCATATTACCGGCAGCATACTGCTCTGTGGCATGAGTGATCTTCCTCAGAGGAATATATACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAGCAGGAACAGGATTGCCAGGGTGATATAGGAAATATTCAGCAGGTTGTTACAGGATTTCTGAATATCATTCATATCAGTATGGATGACTACATAGCCTTTTACCTTGTAGTTGGAGGTAATGGGAGCAAATACAGTAAGTACATCCGAATCAAAATTACCGAAGAAATCACCAACAATGTAATAGGAGCCGCTGGTTACGGTCGAATCAAAATTCTCAATGACAACCACATTCTCCACATCTAAGGGACTATTGGTATCCAGTACCAGTCGTCCGGAGGGATTGATGATGCGAATCTCGGAATTCAGGTAGACCGCCAGGGAGTCCAGCTGCATTTTAACGGTCTCCAAAGTTGTTTCACTGGTGTACAATCCGCCGGCATAGGTTCCGGCGATCAGGGTTGCTTCGGAATAGAGACTTTCTGCCTTTTCCCGGATCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAACAATGATGAAACCAAATACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAAAGTGTTTTTTTCATAACAAATCCTGCTTTTGGTATGACTTAATTACGTACTTCGAATTTATAGCCGATGCCCCAGATGGTGCTGATCTTCCAGTTGGCATGATCCTTGATCTTCTC"
     orfs03 = findorfs(seq03, NaiveFinder(), min_len=75)
     @test length(orfs03) == 9
-    @test orfs03 == [ORF(37:156, '+', 1, 0.0), ORF(194:268, '-', 2, 0.0), ORF(194:283, '-', 2, 0.0), ORF(249:347, '+', 3, 0.0), ORF(426:590, '+', 3, 0.0), ORF(565:657, '+', 1, 0.0), ORF(650:727, '-', 2, 0.0), ORF(786:872, '+', 3, 0.0), ORF(887:976, '-', 2, 0.0)]
+    @test orfs03 == [ORF{NaiveFinder}(ORF1, 37:156, +, 1, nothing), ORF{NaiveFinder}(ORF9, 194:268, -, 2, nothing), ORF{NaiveFinder}(ORF8, 194:283, -, 2, nothing), ORF{NaiveFinder}(ORF2, 249:347, +, 3, nothing), ORF{NaiveFinder}(ORF3, 426:590, +, 3, nothing), ORF{NaiveFinder}(ORF4, 565:657, +, 1, nothing), ORF{NaiveFinder}(ORF7, 650:727, -, 2, nothing), ORF{NaiveFinder}(ORF5, 786:872, +, 3, nothing), ORF{NaiveFinder}(ORF6, 887:976, -, 2, nothing)]
                                                                                                            #|->  This occured in Pyrodigal
     # Lambda phage tests
     # Compare to https://github.com/jonas-fuchs/viral_orf_finder/blob/master/orf_finder.py 

@@ -18,7 +18,7 @@ Write BED data to a file.
 - `min_len::Int64=6`: The minimum length that a CDS must have in order to be included in the output file. Default is `6`.
 """
 function write_orfs_bed(
-    input::NucleicSeqOrView{DNAAlphabet{N}},
+    input::Union{String,NucleicSeqOrView{DNAAlphabet{N}}},
     output::Union{IOStream, IOBuffer},
     method::M;
     alternative_start::Bool = false,
@@ -26,12 +26,12 @@ function write_orfs_bed(
 ) where {N , M<:GeneFinderMethod}
     orfs = findorfs(input, method; alternative_start, min_len)
     @inbounds for orf in orfs
-        println(output, orf.location.start, "\t", orf.location.stop, "\t", orf.strand, "\t", orf.frame)
+        println(output, orf.first, "\t", orf.last, "\t", orf.strand, "\t", orf.frame)
     end
 end
 
 function write_orfs_bed(
-    input::NucleicSeqOrView{DNAAlphabet{N}},
+    input::Union{String,NucleicSeqOrView{DNAAlphabet{N}}},
     output::String,
     method::M;
     alternative_start::Bool = false,
@@ -40,40 +40,40 @@ function write_orfs_bed(
     orfs = findorfs(input, method; alternative_start, min_len)
     open(output, "w") do f
         @inbounds for orf in orfs
-            write(f, "$(orf.location.start)\t$(orf.location.stop)\t$(orf.strand)\t$(orf.frame)\n")
+            write(f, "$(orf.first)\t$(orf.last)\t$(orf.strand)\t$(orf.frame)\n")
         end
     end
 end
 
-function write_orfs_bed(
-    input::String,
-    output::Union{IOStream, IOBuffer},
-    method::M;
-    alternative_start::Bool = false,
-    min_len::Int64 = 6
-) where {M<:GeneFinderMethod}
-    input = fasta_to_dna(input)[1] # rewrite input to be a DNA sequence
-    orfs = findorfs(input, method; alternative_start, min_len)
-    @inbounds for orf in orfs
-        println(output, orf.location.start, "\t", orf.location.stop, "\t", orf.strand, "\t", orf.frame)
-    end
-end
+# function write_orfs_bed(
+#     input::String,
+#     output::Union{IOStream, IOBuffer},
+#     method::M;
+#     alternative_start::Bool = false,
+#     min_len::Int64 = 6
+# ) where {M<:GeneFinderMethod}
+#     input = fasta_to_dna(input)[1] # rewrite input to be a DNA sequence
+#     orfs = findorfs(input, method; alternative_start, min_len)
+#     @inbounds for orf in orfs
+#         println(output, orf.first, "\t", orf.last, "\t", orf.strand, "\t", orf.frame)
+#     end
+# end
 
-function write_orfs_bed(
-    input::String,
-    output::String,
-    method::M;
-    alternative_start::Bool = false,
-    min_len::Int64 = 6
-) where {M<:GeneFinderMethod}
-    input = fasta_to_dna(input)[1]
-    orfs = findorfs(input, method; alternative_start, min_len)
-    open(output, "w") do f
-        @inbounds for orf in orfs
-            write(f, "$(orf.location.start)\t$(orf.location.stop)\t$(orf.strand)\t$(orf.frame)\n")
-        end
-    end
-end
+# function write_orfs_bed(
+#     input::String,
+#     output::String,
+#     method::M;
+#     alternative_start::Bool = false,
+#     min_len::Int64 = 6
+# ) where {M<:GeneFinderMethod}
+#     input = fasta_to_dna(input)[1]
+#     orfs = findorfs(input, method; alternative_start, min_len)
+#     open(output, "w") do f
+#         @inbounds for orf in orfs
+#             write(f, "$(orf.first)\t$(orf.last)\t$(orf.strand)\t$(orf.frame)\n")
+#         end
+#     end
+# end
 
 """
     write_orfs_fna(input::NucleicSeqOrView{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}, method::M; kwargs...) where {N, M<:GeneFinderMethod}
@@ -102,12 +102,12 @@ filename = "output.fna"
 seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
 
 open(filename, "w") do file
-     write_orfs_fna(seq, file)
+     write_orfs_fna(seq, file, NaiveFinder())
 end
 ```
 """
 function write_orfs_fna(
-    input::NucleicSeqOrView{DNAAlphabet{N}},
+    input::Union{String, NucleicSeqOrView{DNAAlphabet{N}}},
     output::Union{IOStream, IOBuffer},
     method::M;
     alternative_start::Bool = false, 
@@ -118,13 +118,13 @@ function write_orfs_fna(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        println(output, ">ORF", id, " id=", id, " start=", orf.location.start, " stop=", orf.location.stop, " strand=", orf.strand, " frame=", orf.frame)
+        println(output, ">", orf.groupname, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " score=", orf.score)
         println(output, input[orf])
     end
 end
 
 function write_orfs_fna(
-    input::NucleicSeqOrView{DNAAlphabet{N}}, 
+    input::Union{String,NucleicSeqOrView{DNAAlphabet{N}}}, 
     output::String,
     method::M;
     alternative_start::Bool = false,
@@ -136,47 +136,47 @@ function write_orfs_fna(
     open(output, "w") do f
         for (i, orf) in enumerate(orfs)
             id = string(lpad(string(i), padding, "0"))
-            write(f, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(input[orf])\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
+            write(f, ">$(orf.groupname) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) score=$(orf.score)\n$(input[orf])\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
         end
     end
 end
 
-function write_orfs_fna(
-    input::String,
-    output::Union{IOStream, IOBuffer},
-    method::M;
-    alternative_start::Bool = false, 
-    min_len::Int64 = 6
-) where {M<:GeneFinderMethod}
-    input = fasta_to_dna(input)[1]
-    orfs = findorfs(input, method; alternative_start, min_len)
-    norfs = length(orfs)
-    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
-    @inbounds for (i, orf) in enumerate(orfs)
-        id = string(lpad(string(i), padding, "0"))
-        println(output, ">ORF", id, " id=", id, " start=", orf.location.start, " stop=", orf.location.stop, " strand=", orf.strand, " frame=", orf.frame)
-        println(output, input[orf])
-    end
-end
+# function write_orfs_fna(
+#     input::String,
+#     output::Union{IOStream, IOBuffer},
+#     method::M;
+#     alternative_start::Bool = false, 
+#     min_len::Int64 = 6
+# ) where {M<:GeneFinderMethod}
+#     input = fasta_to_dna(input)[1]
+#     orfs = findorfs(input, method; alternative_start, min_len)
+#     norfs = length(orfs)
+#     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
+#     @inbounds for (i, orf) in enumerate(orfs)
+#         id = string(lpad(string(i), padding, "0"))
+#         println(output, ">ORF", id, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame)
+#         println(output, input[orf])
+#     end
+# end
 
-function write_orfs_fna(
-    input::String, 
-    output::String,
-    method::M;
-    alternative_start::Bool = false,
-    min_len::Int64 = 6
-) where {M<:GeneFinderMethod}
-    input = fasta_to_dna(input)[1]
-    orfs = findorfs(input, method; alternative_start, min_len)
-    norfs = length(orfs)
-    padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
-    open(output, "w") do f
-        for (i, orf) in enumerate(orfs)
-            id = string(lpad(string(i), padding, "0"))
-            write(f, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(input[orf])\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
-        end
-    end
-end
+# function write_orfs_fna(
+#     input::String, 
+#     output::String,
+#     method::M;
+#     alternative_start::Bool = false,
+#     min_len::Int64 = 6
+# ) where {M<:GeneFinderMethod}
+#     input = fasta_to_dna(input)[1]
+#     orfs = findorfs(input, method; alternative_start, min_len)
+#     norfs = length(orfs)
+#     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
+#     open(output, "w") do f
+#         for (i, orf) in enumerate(orfs)
+#             id = string(lpad(string(i), padding, "0"))
+#             write(f, ">ORF$(id) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame)\n$(input[orf])\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
+#         end
+#     end
+# end
 
 """
 	write_orfs_faa(input::NucleicSeqOrView{DNAAlphabet{4}}, output::Union{IOStream, IOBuffer}, method::M; kwargs...) where {N, M<:GeneFinderMethod}
@@ -222,7 +222,7 @@ function write_orfs_faa(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        println(output, ">ORF", id, " id=", id, " start=", orf.location.start, " stop=", orf.location.stop, " strand=", orf.strand, " frame=", orf.frame)
+        println(output, ">ORF", id, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame)
         println(output, translate(input[orf]; code))
     end
 end
@@ -241,7 +241,7 @@ function write_orfs_faa(
     open(output, "w") do f
         for (i, orf) in enumerate(orfs)
             id = string(lpad(string(i), padding, "0"))
-            write(f, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(translate(input[orf]; code))\n")
+            write(f, ">ORF$(id) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame)\n$(translate(input[orf]; code))\n")
         end
     end
 end
@@ -260,7 +260,7 @@ function write_orfs_faa(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        println(output, ">ORF", id, " id=", id, " start=", orf.location.start, " stop=", orf.location.stop, " strand=", orf.strand, " frame=", orf.frame)
+        println(output, ">ORF", id, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame)
         println(output, translate(input[orf]; code))
     end
 end
@@ -280,7 +280,7 @@ function write_orfs_faa(
     open(output, "w") do f
         for (i, orf) in enumerate(orfs)
             id = string(lpad(string(i), padding, "0"))
-            write(f, ">ORF$(id) id=$(id) start=$(orf.location.start) stop=$(orf.location.stop) strand=$(orf.strand) frame=$(orf.frame)\n$(translate(input[orf]; code))\n")
+            write(f, ">ORF$(id) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame)\n$(translate(input[orf]; code))\n")
         end
     end
 end
@@ -318,7 +318,7 @@ function write_orfs_gff(
     println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
     for (i, orf) in enumerate(orfs)
         id = string("ORF", lpad(string(i), padding, "0"))
-        println(output, "Chr\t.\tORF\t", orf.location.start, "\t", orf.location.stop, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame)
+        println(output, "Chr\t.\tORF\t", orf.first, "\t", orf.last, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame)
         end
 end
 
@@ -338,7 +338,7 @@ function write_orfs_gff(
             id = string("ORF", lpad(string(i), padding, "0"))
             write(
                 f,
-                "Chr\t.\tORF\t$(orf.location.start)\t$(orf.location.stop)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame)\n",
+                "Chr\t.\tORF\t$(orf.first)\t$(orf.last)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame)\n",
             )
         end
     end
@@ -358,7 +358,7 @@ function write_orfs_gff(
     println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
     for (i, orf) in enumerate(orfs)
         id = string("ORF", lpad(string(i), padding, "0"))
-        println(output, "Chr\t.\tORF\t", orf.location.start, "\t", orf.location.stop, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame)
+        println(output, "Chr\t.\tORF\t", orf.first, "\t", orf.last, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame)
     end
 end
 
@@ -379,7 +379,7 @@ function write_orfs_gff(
             id = string("ORF", lpad(string(i), padding, "0"))
             write(
                 f,
-                "Chr\t.\tORF\t$(orf.location.start)\t$(orf.location.stop)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame)\n",
+                "Chr\t.\tORF\t$(orf.first)\t$(orf.last)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame)\n",
             )
         end
     end

@@ -29,10 +29,10 @@ end
 
 function iscoding(
     sequence::NucleicSeqOrView{DNAAlphabet{N}},
-    orf::ORF;
+    orf::ORF{M};
     criteria::Function = lordr,
     kwargs...
-) where {N}
+) where {N,M <: GeneFinderMethod}
     return criteria(sequence[orf]; kwargs...)
 end
 

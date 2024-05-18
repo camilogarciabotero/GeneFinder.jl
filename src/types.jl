@@ -139,7 +139,8 @@ end
 
 function Base.show(io::IO, i::ORF)
     if get(io, :compact, false)
-        print(io, groupname(i), ":", leftposition(i), "-", rightposition(i))
+        # print(io, groupname(i), ":", leftposition(i), "-", rightposition(i))
+        print(io, "ORF{$(typeof(finder(i)))}($(groupname(i)), $(leftposition(i)):$(rightposition(i)), $(strand(i)), $(frame(i)), $(score(i)))")
     else
         # print(io, "ORF{$(typeof(finder(i))),$(scheme(i))}($(groupname(i)), $(leftposition(i)):$(rightposition(i)), $(strand(i)), $(frame(i)), $(round(score(i), digits=5)))")
         print(io, "ORF{$(typeof(finder(i)))}($(groupname(i)), $(leftposition(i)):$(rightposition(i)), $(strand(i)), $(frame(i)), $(score(i)))")
