@@ -1,4 +1,4 @@
-export hasprematurestop, fasta_to_dna
+export hasprematurestop, fasta_to_dna, get_variable_name
 # General purposes methods supporting main functions
 
 """
@@ -35,4 +35,13 @@ function fasta_to_dna(input::AbstractString)::Vector{LongSequence{DNAAlphabet{4}
     FASTAReader(open(input)) do reader
         return [LongSequence{DNAAlphabet{4}}(sequence(record)) for record in reader]
     end
+end
+
+function get_variable_name(var)
+    for name in names(Main)
+        if getfield(Main, name) === var
+            return string(name)
+        end
+    end
+    return nothing
 end

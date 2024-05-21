@@ -1,6 +1,7 @@
 export ORF
 export NaiveFinder, NaiveFinderScored
 export NaiveScoringScheme
+export finder, frame, scheme, score
 # Structs associated with gene models 
 abstract type AbstractGene end
 
@@ -81,7 +82,7 @@ abstract type GeneScoringScheme end
 struct NaiveScoringScheme <: GeneScoringScheme end
 
 
-export ORF
+# export ORF
 
 struct ORF{F} <: GenomicFeatures.AbstractGenomicInterval{F}
     groupname::String
@@ -106,6 +107,7 @@ function ORF(
     score::Union{Nothing, Float64}=nothing,
     rbs::Union{Nothing, Vector{UnitRange{Int64}}}=nothing
 ) where {F <: GeneFinderMethod}
+    # @assert frame in (1, 2, 3) "Invalid frame value. Frame must be 1, 2, or 3."
     return ORF{F}(groupname, first, last, strand, frame, finder, scheme, score, rbs)
 end
 
@@ -118,6 +120,7 @@ function ORF(
     score::Union{Nothing, Float64}=nothing,
     rbs::Union{Nothing, Vector{UnitRange{Int64}}}=nothing
 ) where {F <: GeneFinderMethod}
+    # @assert frame in (1, 2, 3) "Invalid frame value. Frame must be 1, 2, or 3."
     return ORF{F}(id, first(location), last(location), strand, frame, finder, scheme, score, rbs)
 end
 
@@ -140,10 +143,10 @@ end
 function Base.show(io::IO, i::ORF)
     if get(io, :compact, false)
         # print(io, groupname(i), ":", leftposition(i), "-", rightposition(i))
-        print(io, "ORF{$(typeof(finder(i)))}($(groupname(i)), $(leftposition(i)):$(rightposition(i)), $(strand(i)), $(frame(i)), $(score(i)))")
+        print(io, "ORF{$(typeof(finder(i)))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)), $(score(i)))")
     else
         # print(io, "ORF{$(typeof(finder(i))),$(scheme(i))}($(groupname(i)), $(leftposition(i)):$(rightposition(i)), $(strand(i)), $(frame(i)), $(round(score(i), digits=5)))")
-        print(io, "ORF{$(typeof(finder(i)))}($(groupname(i)), $(leftposition(i)):$(rightposition(i)), $(strand(i)), $(frame(i)), $(score(i)))")
+        print(io, "ORF{$(typeof(finder(i)))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)), $(score(i)))")
         # println(io, " ", groupname(i), " ", leftposition(i), ":", rightposition(i), ", ", strand(i), ", ", frame(i), ", score: $(round(score(i), digits=2))")
     end
 end
