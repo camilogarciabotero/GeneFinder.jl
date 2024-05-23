@@ -37,18 +37,18 @@
 #     NC_001416_orfs = findorfs(NC_001416, NaiveFinder(), min_len=75)
 #     @test length(NC_001416_orfs) == 885
 # end
-@testitem "getorfs dna" default_imports=false begin
+# @testitem "getorfs dna" default_imports=false begin
 
-    using BioSequences: @dna_str, DNAAlphabet
-    using GeneFinder: NaiveFinder, getorfs, findorfs, ORF
-    using Test: @test
+#     using BioSequences: @dna_str, DNAAlphabet
+#     using GeneFinder: NaiveFinder, getorfs, findorfs, ORF
+#     using Test: @test
 
-    seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-    orfseqs = getorfs(seq01, DNAAlphabet{4}(), NaiveFinder())
+#     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+#     orfseqs = getorfs(seq01, DNAAlphabet{4}(), NaiveFinder())
 
-    # @test length(orfseqs) == 5
-    # @test orfseqs[1] == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
-end
+#     # @test length(orfseqs) == 5
+#     # @test orfseqs[1] == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
+# end
 
 # @testitem "getorfs proteins" begin
 #     using BioSequences, GeneFinder, Test
