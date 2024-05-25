@@ -56,17 +56,15 @@ function naivefinder(
     seqlen = length(sequence)
     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
     orfs = Vector{ORF}()
-    id = 0
+    seqname = get_variable_name(sequence)
     for strand in ('+', '-')
         seq = strand == '-' ? reverse_complement(sequence) : sequence
-
         @inbounds for location in @views _locationiterator(seq; alternative_start)
             if length(location) >= min_len
                 frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
                 start = strand == '+' ? location.start : seqlen - location.stop + 1
                 stop = start + length(location) - 1
-                id += 1
-                push!(orfs, ORF(get_variable_name(sequence), start:stop, strand, frame, NaiveFinder(), scheme))
+                push!(orfs, ORF(seqname, start:stop, strand, frame, scheme)) #NaiveFinder()
             end
         end
     end
@@ -102,7 +100,7 @@ function naivefinderscored(
     seqlen = length(sequence)
     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
     orfs = Vector{ORF}()
-    id = 0
+    seqname = get_variable_name(sequence)
     for strand in ('+', '-')
         seq = strand == '-' ? reverse_complement(sequence) : sequence
 
@@ -113,8 +111,7 @@ function naivefinderscored(
                 stop = start + length(location) - 1
                 # score = -10log10(dnaseqprobability(seq[start:stop], scoringscheme))
                 score = log_odds_ratio_score(seq[start:stop], model)
-                id += 1
-                push!(orfs, ORF(get_variable_name(sequence), start:stop, strand, frame, NaiveFinderScored(), lors, score))
+                push!(orfs, ORF(seqname, start:stop, strand, frame, NaiveFinderScored(), lors, score))
             end
         end
     end
