@@ -1,4 +1,4 @@
-export hasprematurestop, fasta_to_dna, get_variable_name
+export hasprematurestop, fasta2bioseq, get_var_name
 # General purposes methods supporting main functions
 
 """
@@ -27,17 +27,17 @@ function hasprematurestop(sequence::NucleicSeqOrView{DNAAlphabet{N}})::Bool wher
 end
 
 """
-    fasta_to_dna(input::String)
+    fasta2bioseq(input::String)
 
 Converts a FASTA formatted file (even if it is a multi-fasta) to an array of `LongSequence{DNAAlphabet{4}}` objects.
 """
-function fasta_to_dna(input::AbstractString)::Vector{LongSequence{DNAAlphabet{4}}}
+function fasta2bioseq(input::AbstractString)::Vector{LongSequence{DNAAlphabet{4}}}
     FASTAReader(open(input)) do reader
         return [LongSequence{DNAAlphabet{4}}(sequence(record)) for record in reader]
     end
 end
 
-function get_variable_name(var)
+function get_var_name(var::NucleicSeqOrView{DNAAlphabet{N}}) where {N}
     for name in names(Main)
         if getfield(Main, name) === var
             return string(name)

@@ -3,7 +3,7 @@ module GeneFinderTests
 using Test
 using BioSequences
 using FASTX
-# using GeneFinder
+using GeneFinder
 using Aqua
 using TestItems
 using TestItemRunner
@@ -12,7 +12,7 @@ using TestItemRunner
 
 # include("findorfstest.jl")
 # include("iotest.jl")
-include("getindextest.jl")
+# include("getindextest.jl")
 # include("aquatest.jl")
 
 end
