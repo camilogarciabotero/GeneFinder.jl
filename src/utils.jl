@@ -1,4 +1,5 @@
 export hasprematurestop, fasta2bioseq, get_var_name
+
 # General purposes methods supporting main functions
 
 """

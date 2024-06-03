@@ -62,82 +62,95 @@ The `naivefinder` function takes a LongSequence{DNAAlphabet{4}} sequence and ret
     If the log-odds ratio exceeds a given threshold (`η`), the sequence is considered likely to be coding. See [`lordr`](@ref) for more information about coding creteria.
 
 """
-# function NaiveFinder(
-#     sequence::NucleicSeqOrView{DNAAlphabet{N}};
-#     alternative_start::Bool = false,
-#     minlen::Int64 = 6,
-#     scheme::Union{Nothing, Function} = nothing,
-#     kwargs...
-# ) where {N}
-#     seqlen = length(sequence)
-#     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
-#     orfs = Vector{ORF{N,NaiveFinder}}()
-#     seqname = get_var_name(sequence)
-#     for strand in ('+', '-')
-#         s = strand == '-' ? reverse_complement(sequence) : sequence
-#         @inbounds for location in @views _locationiterator(s; alternative_start)
-#             if length(location) >= minlen
-#                 start = strand == '+' ? location.start : seqlen - location.stop + 1
-#                 stop = start + length(location) - 1
-#                 frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
-#                 seq = @view(sequence[start:stop])
-#                 score = scheme === nothing ? 0 : scheme(@view(s[start:stop]), ECOLICDS)
-#                 gc = gc_content(seq)
-#                 len = length(seq)
-#                 fts = Dict(:gc => gc, :length => len, :score => score)
-#                 push!(orfs, ORF{N,NaiveFinder}(seqname, start, stop, strand, frame, NaiveFinder, seq, fts, scheme))
-#             end
-#         end
-#     end
-#     return sort!(orfs; kwargs...)
-# end
-
 function NaiveFinder(
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
     minlen::Int64 = 6,
-    scheme::Union{Nothing, Function} = nothing,
+    scheme::Union{Nothing,Function} = nothing,
     kwargs...
 ) where {N}
-    
     seqlen = length(sequence)
     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
     orfs = Vector{ORF{N,NaiveFinder}}()
     seqname = get_var_name(sequence)
-
-    function createorf(location, strand, s, seqlen)
-        if length(location) < minlen
-            return nothing
-        end
-        
-        if strand == '+'
-            start = location.start
-            stop = start + length(location) - 1
-            frame = framedict[location.start % 3]
-        else
-            start = seqlen - location.stop + 1
-            stop = start + length(location) - 1
-            frame = framedict[(seqlen - location.stop + 1) % 3]
-        end
-
-        seq = @view(sequence[start:stop])
-        score = scheme === nothing ? 0 : scheme(@view(s[start:stop]), ECOLICDS)
-        gc = gc_content(seq)
-        len = length(seq)
-        fts = Dict(:gc => gc, :length => len, :score => score)
-
-        return ORF{N, NaiveFinder}(seqname, start, stop, strand, frame, seq, fts, scheme)
-    end
-
-    @inbounds for strand in ('+', '-')
+    for strand in ('+', '-')
         s = strand == '-' ? reverse_complement(sequence) : sequence
         @inbounds for location in @views _locationiterator(s; alternative_start)
-            orf = createorf(location, strand, s, seqlen)
-            if orf !== nothing
-                push!(orfs, orf)
+            if length(location) >= minlen
+                #main fields
+                start = strand == '+' ? location.start : seqlen - location.stop + 1
+                stop = start + length(location) - 1
+                frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
+                seq = strand == '+' ? @view(sequence[start:stop]) : reverse_complement(@view(sequence[start:stop])) #@view(sequence[start:stop])
+                #features
+                score = scheme === nothing ? 0.0 : scheme(@view(seq[start:stop]), ECOLICDS)
+
+                #populate the feature dict
+                fts = Dict(:score => score) #:gc => gc, :length => len,
+
+                push!(orfs, ORF{N,NaiveFinder}(seqname, start, stop, strand, frame, seq, fts, scheme))
             end
         end
     end
-
     return sort!(orfs; kwargs...)
 end
+
+# export createorf
+
+# function createorf(
+#     sequence::NucleicSeqOrView{DNAAlphabet{N}},
+#     seqname::String,
+#     location::UnitRange{Int64},
+#     strand::Char,
+#     seqlen::Int64,
+#     minlen::Int64,
+#     scheme::Union{Nothing,Function}
+# ) where {N}
+#     if length(location) < minlen
+#         return nothing
+#     end
+
+#     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
+
+#     if strand == '+'
+#         start = location.start
+#         stop = start + length(location) - 1
+#         frame = framedict[location.start % 3]
+#     else
+#         start = seqlen - location.stop + 1
+#         stop = start + length(location) - 1
+#         frame = framedict[(seqlen - location.stop + 1) % 3]
+#     end
+
+#     seq = strand == '+' ? @view(sequence[start:stop]) : reverse_complement(@view(sequence[start:stop]))
+#     score = scheme === nothing ? 0 : scheme(@view(seq[start:stop]), ECOLICDS)
+#     gc = gc_content(seq)
+#     len = length(seq)
+#     fts = Dict(:gc => gc, :length => len, :score => score)
+
+#     return ORF{N, NaiveFinder}(seqname, start, stop, strand, frame, seq, fts, scheme)
+# end
+
+# function NaiveFinder(
+#     sequence::NucleicSeqOrView{DNAAlphabet{N}};
+#     alternative_start::Bool = false,
+#     minlen::Int64 = 6,
+#     scheme::Union{Nothing,Function} = nothing,
+#     kwargs...
+# ) where {N}
+#     seqlen = length(sequence)
+#     orfs = Vector{ORF{N,NaiveFinder}}()
+#     seqname = get_var_name(sequence)
+
+#     @inbounds for strand in ('+', '-')
+#         seq = strand == '-' ? reverse_complement(sequence) : sequence
+#         @inbounds for location in @views _locationiterator(s; alternative_start)
+#             orf = createorf(seq, seqname, location, strand, seqlen, minlen, scheme)
+#             if orf !== nothing
+#                 push!(orfs, orf)
+#             end
+#         end
+#     end
+
+#     return sort!(orfs; kwargs...)
+# end

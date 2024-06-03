@@ -27,7 +27,7 @@ using BioMarkovChains: BioMarkovChain, dnaseqprobability, ECOLICDS, ECOLINOCDS, 
 using FASTX: FASTAReader, sequence
 using IterTools: takewhile, iterated
 using PrecompileTools: @setup_workload, @compile_workload
-using GenomicFeatures: GenomicFeatures, AbstractGenomicInterval, GenomicInterval, Strand, summary, groupname, strand, metadata, STRAND_POS, STRAND_NEG, STRAND_BOTH, STRAND_NA
+using GenomicFeatures: GenomicFeatures, AbstractGenomicInterval, GenomicInterval, Strand, summary, groupname, strand, metadata, STRAND_POS, STRAND_NEG, STRAND_BOTH, STRAND_NA, leftposition, rightposition, length
 
 # Finder Algorithms
 include("algorithms/naivefinder.jl")

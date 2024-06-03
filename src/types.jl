@@ -73,19 +73,15 @@ function scheme(i::ORF{N,F}) where {N,F}
 end
 
 function sequence(i::ORF{N,F}) where {N,F}
-    return i.strand == STRAND_POS ? i.seq : reverse_complement(i.seq)
+    return i.seq #i.strand == STRAND_POS ? i.seq : reverse_complement(i.seq)
 end
 
 function score(i::ORF{N,F}) where {N,F}
     return i.features[:score]
 end
 
-function gc(i::ORF{N,F}) where {N,F}
-    return i.features[:gc]
-end
-
 function length(i::ORF{N,F}) where {N,F}
-    return i.features[:length]
+    return length(i.seq)
 end
 
 function features(i::ORF{N,F}) where {N,F}

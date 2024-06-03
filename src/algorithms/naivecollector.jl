@@ -18,7 +18,7 @@ function NaiveCollector(
     seqlen = length(sequence)
     seqname = get_var_name(sequence)
 
-    function createorfs(x, strand, s)
+    function createorfs(x, strand)
         if length(x.captured[1]:x.captured[3]) < minlen
             return nothing
         end
@@ -31,17 +31,17 @@ function NaiveCollector(
             stop = seqlen - x.captured[1] + 1
             frame = framedict[(seqlen - x.captured[3]) % 3]
         end
-        seq = @view(sequence[start:stop])
-        score = scheme === nothing ? 0 : scheme(@view(s[start:stop]), ECOLICDS)
-        fts = Dict(:gc => gc_content(seq), :length => length(seq), :score => score)
+        seq = strand == '+' ? @view(sequence[start:stop]) : reverse_complement(@view(sequence[start:stop])) #@view(sequence[start:stop])
+        score = scheme === nothing ? 0.0 : scheme(@view(seq[start:stop]), ECOLICDS)
+        fts = Dict(:score => score)
         return ORF{N,NaiveCollector}(seqname, start, stop, strand, frame, seq, fts, scheme)
     end
 
     orfs = Vector{ORF{N,NaiveCollector}}()
     for strand in ('+', '-')
-        s = strand == '-' ? revseq : sequence
-        matches = eachmatch(regorf, s, overlap)
-        strandedorfs = filter(!isnothing, [createorfs(x, strand, s) for x in matches])
+        seq = strand == '-' ? revseq : sequence
+        matches = eachmatch(regorf, seq, overlap)
+        strandedorfs = filter(!isnothing, [createorfs(x, strand) for x in matches])
         append!(orfs, strandedorfs)
     end
 
