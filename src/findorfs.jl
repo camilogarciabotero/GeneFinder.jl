@@ -33,8 +33,6 @@ findorfs(sequence, NaiveFinder())
 ```
 
 """
-function findorfs end
-
 function findorfs(
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
     finder::Type{F}=NaiveFinder,
