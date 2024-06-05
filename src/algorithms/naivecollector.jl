@@ -32,7 +32,7 @@ function NaiveCollector(
             frame = framedict[(seqlen - x.captured[3]) % 3]
         end
         seq = strand == '+' ? @view(sequence[start:stop]) : reverse_complement(@view(sequence[start:stop])) #@view(sequence[start:stop])
-        score = scheme === nothing ? 0.0 : scheme(@view(seq[start:stop]), ECOLICDS)
+        score = scheme === nothing ? 0.0 : scheme(seq, ECOLICDS)
         fts = Dict(:score => score)
         return ORF{N,NaiveCollector}(seqname, start, stop, strand, frame, seq, fts, scheme)
     end

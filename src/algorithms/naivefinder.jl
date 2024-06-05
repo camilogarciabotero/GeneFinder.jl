@@ -83,7 +83,7 @@ function NaiveFinder(
                 frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
                 seq = strand == '+' ? @view(sequence[start:stop]) : reverse_complement(@view(sequence[start:stop])) #@view(sequence[start:stop])
                 #features
-                score = scheme === nothing ? 0.0 : scheme(@view(seq[start:stop]), ECOLICDS)
+                score = scheme === nothing ? 0.0 : scheme(seq, ECOLICDS) # @view(sequence[start:stop]
 
                 #populate the feature dict
                 fts = Dict(:score => score) #:gc => gc, :length => len,
