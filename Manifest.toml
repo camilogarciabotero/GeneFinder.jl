@@ -2,7 +2,7 @@
 
 julia_version = "1.10.4"
 manifest_format = "2.0"
-project_hash = "514456eec9673906fe896a3ae36685951a71c19f"
+project_hash = "e13b3d62f031e8e91ec33e86f0dbf42fa3097ba0"
 
 [[deps.Automa]]
 deps = ["PrecompileTools", "TranscodingStreams"]
@@ -21,9 +21,9 @@ version = "0.1.4"
 
 [[deps.BioMarkovChains]]
 deps = ["BioSequences", "PrecompileTools", "VectorizedKmers"]
-git-tree-sha1 = "c48cc4efe18355a1a19ae627d05bf19df0a57253"
+git-tree-sha1 = "72c9d5027120756a71fb7b1036a052b6f9353ed6"
 uuid = "f861b655-cb5f-42ce-b66a-341b542d4f2c"
-version = "0.9.3"
+version = "0.10.0"
 
     [deps.BioMarkovChains.extensions]
     DiscreteMarkovChainsExt = "DiscreteMarkovChains"

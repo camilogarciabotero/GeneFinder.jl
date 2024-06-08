@@ -10,9 +10,9 @@ using TestItemRunner
 
 @run_package_tests
 
-# include("findorfstest.jl")
+include("findorfstest.jl")
+include("aquatest.jl")
 # include("iotest.jl")
 # include("getindextest.jl")
-# include("aquatest.jl")
 
 end
