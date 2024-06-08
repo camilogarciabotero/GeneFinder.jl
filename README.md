@@ -50,27 +50,27 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
 Now lest us find the ORFs
 
 ```julia
-findorfs(seq, NaiveFinder())
+orfs = findorfs(seq, finder=NaiveFinder) # use finder=NaiveCollector as an alternative
 
-12-element Vector{ORF}:
- ORF(29:40, '+', 2, 0.0)
- ORF(137:145, '+', 2, 0.0)
- ORF(164:184, '+', 2, 0.0)
- ORF(173:184, '+', 2, 0.0)
- ORF(236:241, '+', 2, 0.0)
- ORF(248:268, '+', 2, 0.0)
- ORF(362:373, '+', 2, 0.0)
- ORF(470:496, '+', 2, 0.0)
- ORF(551:574, '+', 2, 0.0)
- ORF(569:574, '+', 2, 0.0)
- ORF(581:601, '+', 2, 0.0)
- ORF(695:706, '+', 2, 0.0)
+12-element Vector{ORF{4, NaiveFinder}}:
+ ORF{NaiveFinder}(29:40, '+', 2)
+ ORF{NaiveFinder}(137:145, '+', 2)
+ ORF{NaiveFinder}(164:184, '+', 2)
+ ORF{NaiveFinder}(173:184, '+', 2)
+ ORF{NaiveFinder}(236:241, '+', 2)
+ ORF{NaiveFinder}(248:268, '+', 2)
+ ORF{NaiveFinder}(362:373, '+', 2)
+ ORF{NaiveFinder}(470:496, '+', 2)
+ ORF{NaiveFinder}(551:574, '+', 2)
+ ORF{NaiveFinder}(569:574, '+', 2)
+ ORF{NaiveFinder}(581:601, '+', 2)
+ ORF{NaiveFinder}(695:706, '+', 2)
 ```
 
-Two other methods where implemented into `getorfs` to get the ORFs in DNA or aminoacid sequences, respectively. They use the `findorfs` function to first get the ORFs and then get the correspondance array of `BioSequence` objects.
+The `ORF` structure contains also the sequence of the ORF, the frame, and several features. If you want to get the sequence of the ORFs you can broadcast the `sequence` function to safely extract the sequences of all ORFs.
 
 ```julia
-getorfs(seq, DNAAlphabet{4}(), NaiveFinder())
+sequence.(orfs)
 
 12-element Vector{LongSubSeq{DNAAlphabet{4}}}:
  ATGCAACCCTGA
@@ -85,6 +85,26 @@ getorfs(seq, DNAAlphabet{4}(), NaiveFinder())
  ATGTGA
  ATGTGTCCAACGGCAGCCTGA
  ATGCAACCCTGA
+```
+
+Similarly, you can extract the amino acid sequences of the ORFs using the `translate` function.
+
+```julia
+translate.(orfs)
+
+12-element Vector{LongAA}:
+ MQP*
+ MR*
+ MRRMAR*
+ MAR*
+ M*
+ MCPTAV*
+ MQP*
+ MHWLVLSI*
+ MSPHKAM*
+ M*
+ MCPTAA*
+ MQP*
 ```
 
 ## Writting ORF information into bioinformatic formats
@@ -118,7 +138,7 @@ Once a `BioSequence` object has been instantiated, the `write_orfs_fna` function
 outfile = "LFLS01000089.fna"
 
 open(outfile, "w") do io
-    write_orfs_fna(seq, io, NaiveFinder())
+    write_orfs_fna(seq, io, finder=NaiveFinder) # use finder=NaiveCollector as an alternative
 end
 ```
 
