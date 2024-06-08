@@ -26,7 +26,6 @@ using BioSequences:
 using BioMarkovChains: BioMarkovChain, dnaseqprobability, ECOLICDS, ECOLINOCDS, log_odds_ratio_score
 using FASTX: FASTAReader, sequence
 using IterTools: takewhile, iterated
-using PrecompileTools: @setup_workload, @compile_workload
 using GenomicFeatures: GenomicFeatures, AbstractGenomicInterval, GenomicInterval, Strand, summary, groupname, strand, metadata, STRAND_POS, STRAND_NEG, STRAND_BOTH, STRAND_NA, leftposition, rightposition, length
 
 # Finder Algorithms
@@ -46,16 +45,6 @@ include("io.jl")
 include("utils.jl")
 include("extended.jl")
 
-@setup_workload begin
-    # Putting some things in `@setup_workload` instead of `@compile_workload` can reduce the size of the
-    # precompile file and potentially make loading faster.
-    # using BioSequences, GeneFinder
-    seq = randdnaseq(99)
-    @compile_workload begin
-        # all calls in this block will be precompiled, regardless of whether
-        # they belong to your package or not (on Julia 1.8 and higher)
-        # findorfs(seq)
-    end
-end
+include("workload.jl")
 
 end
