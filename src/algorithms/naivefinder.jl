@@ -83,10 +83,11 @@ function NaiveFinder(
                 frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
                 seq = strand == '+' ? @view(sequence[start:stop]) : reverse_complement(@view(sequence[start:stop])) #@view(sequence[start:stop])
                 #features
-                score = scheme === nothing ? 0.0 : scheme(seq, ECOLICDS) # @view(sequence[start:stop]
+                scr = scheme === nothing ? 0.0 : scheme(seq, ECOLICDS) # @view(sequence[start:stop]
 
                 #populate the feature dict
-                fts = Dict(:score => score) #:gc => gc, :length => len,
+                #fts = Dict(:score => score) #:gc => gc, :length => len,
+                fts = Features((score = scr,)) # rbs = RBS(biore"RRR"dna, 3:4, 1.0)
 
                 push!(orfs, ORF{N,NaiveFinder}(seqname, start, stop, strand, frame, seq, fts, scheme))
             end

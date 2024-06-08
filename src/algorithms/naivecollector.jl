@@ -32,8 +32,9 @@ function NaiveCollector(
             frame = framedict[(seqlen - x.captured[3]) % 3]
         end
         seq = strand == '+' ? @view(sequence[start:stop]) : reverse_complement(@view(sequence[start:stop])) #@view(sequence[start:stop])
-        score = scheme === nothing ? 0.0 : scheme(seq, ECOLICDS)
-        fts = Dict(:score => score)
+        scr = scheme === nothing ? 0.0 : scheme(seq, ECOLICDS)
+        # fts = Dict(:score => score)
+        fts = Features((score = scr,)) # rbs = RBS(biore"RRR"dna, 3:4, 1.0)
         return ORF{N,NaiveCollector}(seqname, start, stop, strand, frame, seq, fts, scheme)
     end
 
