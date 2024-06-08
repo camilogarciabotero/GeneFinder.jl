@@ -1,8 +1,8 @@
-import GenomicFeatures: first, last, length, strand, groupname
+import GenomicFeatures: first, last, length, strand, groupname, metadata
 import FASTX: sequence
 
-export RBS, ORF
-export gc, features, sequence
+export Features, RBS, ORF
+export features, sequence
 export groupname, finder, frame, scheme, score
 
 #### Ribosome Binding Site (RBS) struct ####
@@ -10,6 +10,12 @@ export groupname, finder, frame, scheme, score
 # seq[orf.first-bin01.offset.start:orf.first-1]
 
 # motifs = [dna"GGA", dna"GAG", dna"AGG"]
+
+struct Features{K}
+    fts::K
+end
+
+Features(fts::NamedTuple) = Features{typeof(fts)}(fts)
 struct RBS
     motif::BioRegex{DNA}
     offset::UnitRange{Int64} # offset
@@ -20,8 +26,8 @@ struct RBS
     end
 end
 
-# Structs associated with gene models
 
+# Structs associated with gene models
 # const FEATUREDICT = Dict{Symbol,Any}(:gc => 0.0, :length => 0, :score => 0.0)
 # const Feature = Union{Real, Vector{RBS}}
 struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
@@ -31,7 +37,7 @@ struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
     strand::Strand
     frame::Int
     seq::LongSubSeq{DNAAlphabet{N}}
-    features::Dict{Symbol,Any}
+    features::Features  # features::Dict{Symbol,Any} or # features::@NamedTuple{score::Float64, rbs::Any}
     scheme::Union{Nothing,Function}
 end
 
@@ -43,10 +49,11 @@ function ORF{N,F}(
     strand::Union{Strand,Char},
     frame::Int,
     seq::LongSubSeq{DNAAlphabet{N}},
-    features::Dict{Symbol,Any},
+    features::Features, # ::Dict{Symbol,Any} or # ::@NamedTuple{score::Float64, rbs::Any} or @NamedTuple{Vararg{typeof(...)}}
     scheme::Union{Nothing,Function}=nothing
 ) where {N,F<:GeneFinderMethod}
     # @assert frame in (1, 2, 3) && location[1] < location[end] && score isa Union{Nothing, Float64} && length(seq) == last(location) - first(location) + 1 && length(seq) % 3 == 0 "Invalid input. Please check the frame, location, score, and sequence length."
+    # groupname == "" && error("Please provide a groupname for the ORF.")
     return ORF{N,F}(groupname, first, last, strand, frame, seq, features, scheme) #finder
 end
 
@@ -85,7 +92,7 @@ function length(i::ORF{N,F}) where {N,F}
 end
 
 function features(i::ORF{N,F}) where {N,F}
-    return i.features
+    return i.features.fts
 end
 
 function Base.show(io::IO, i::ORF{N,F}) where {N,F}
@@ -94,6 +101,10 @@ function Base.show(io::IO, i::ORF{N,F}) where {N,F}
     else
         print(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") # , $(score(i))
     end
+end
+
+function metadata(i::ORF{N,F}) where {N,F}
+    return features(i)
 end
 
 ## Ideas for Gene struct
