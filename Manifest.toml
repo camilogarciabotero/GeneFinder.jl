@@ -21,9 +21,9 @@ version = "0.1.4"
 
 [[deps.BioMarkovChains]]
 deps = ["BioSequences", "PrecompileTools", "VectorizedKmers"]
-git-tree-sha1 = "72c9d5027120756a71fb7b1036a052b6f9353ed6"
+git-tree-sha1 = "ff9f9e36892cf21222f2f2a0fe709a61b5d8dbfe"
 uuid = "f861b655-cb5f-42ce-b66a-341b542d4f2c"
-version = "0.10.0"
+version = "0.10.1"
 
     [deps.BioMarkovChains.extensions]
     DiscreteMarkovChainsExt = "DiscreteMarkovChains"

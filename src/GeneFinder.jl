@@ -23,7 +23,7 @@ using BioSequences:
     translate,
     gc_content
 
-using BioMarkovChains: BioMarkovChain, dnaseqprobability, ECOLICDS, ECOLINOCDS, log_odds_ratio_score
+using BioMarkovChains: BioMarkovChain, ECOLICDS, ECOLINOCDS, log_odds_ratio_score
 using FASTX: FASTAReader, sequence
 using IterTools: takewhile, iterated
 using GenomicFeatures: GenomicFeatures, AbstractGenomicInterval, GenomicInterval, Strand, summary, groupname, strand, metadata, STRAND_POS, STRAND_NEG, STRAND_BOTH, STRAND_NA, leftposition, rightposition, length
