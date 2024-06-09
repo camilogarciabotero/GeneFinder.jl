@@ -3,8 +3,8 @@ export log_odds_ratio_decision_rule, lordr, lors
 @doc raw"""
     log_odds_ratio_decision_rule(
         sequence::LongSequence{DNAAlphabet{4}};
-        codingmodel::BioMarkovChain,
-        noncodingmodel::BioMarkovChain,
+        modela::BioMarkovChain,
+        modelb::BioMarkovChain,
         η::Float64 = 1e-5
         )
 
@@ -22,6 +22,7 @@ S(X) = \log \left( \frac{{P_C(X_1=i_1, \ldots, X_T=i_T)}}{{P_N(X_1=i_1, \ldots, 
 ## Keyword Arguments
 - `codingmodel::BioMarkovChain`: The transition model for coding regions, (default: `ECOLICDS`).
 - `noncodingmodel::BioMarkovChain`: The transition model for non-coding regions, (default: `ECOLINOCDS`)
+- `b::Number = 2`: The base of the logarithm used to calculate the log-odds ratio (default: 2).
 - `η::Float64 = 1e-5`: The threshold value (eta) for the log-odds ratio (default: 1e-5).
 
 # Returns
