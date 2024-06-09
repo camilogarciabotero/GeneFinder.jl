@@ -84,7 +84,7 @@ function sequence(i::ORF{N,F}) where {N,F}
 end
 
 function score(i::ORF{N,F}) where {N,F}
-    return i.features[:score]
+    return i.features.fts[:score]
 end
 
 function length(i::ORF{N,F}) where {N,F}
