@@ -46,5 +46,5 @@ function NaiveCollector(
         append!(orfs, strandedorfs)
     end
 
-    return sort!(orfs; kwargs...)
+    return sort!(orfs)
 end

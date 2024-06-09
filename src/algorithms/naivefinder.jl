@@ -93,7 +93,7 @@ function NaiveFinder(
             end
         end
     end
-    return sort!(orfs; kwargs...)
+    return sort!(orfs)
 end
 
 # export createorf
