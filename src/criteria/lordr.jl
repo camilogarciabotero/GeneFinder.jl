@@ -41,19 +41,13 @@ iscoding(sequence)  # Returns: true or false
 """
 function lordr( #log_odds_ratio_decision, also lordr/cudr/kfdr/aadr
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
-    codingmodel::BioMarkovChain = ECOLICDS,
-    noncodingmodel::BioMarkovChain = ECOLINOCDS,
-    η::Float64 = 1e-5
+    modela::BioMarkovChain = ECOLICDS,
+    modelb::BioMarkovChain = ECOLINOCDS,
+    b::Number = 2,
+    η::Float64 = 5e-3
 ) where {N}
-    pcoding = dnaseqprobability(sequence, codingmodel)
-    pnoncoding = dnaseqprobability(sequence, noncodingmodel)
 
-    logodds = log(pcoding / pnoncoding)
-
-    length(sequence) % 3 == 0 || error("The sequence is not divisible by 3")
-
-    !hasprematurestop(sequence) || error("There is a premature stop codon in the sequence")
-
+    logodds = log_odds_ratio_score(sequence; modela=modela, modelb=modelb, b=b)
     if logodds > η
         return true
     else
