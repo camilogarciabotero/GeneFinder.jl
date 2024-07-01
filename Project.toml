@@ -18,11 +18,13 @@ FASTX = "2"
 GenomicFeatures = "3"
 IterTools = "1.4"
 PrecompileTools = "1"
-julia = "1"
+julia = "1.6"
 
 [extras]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+StyledStrings = "f489334b-da3d-4c2e-b8f0-e476e12c162b"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [targets]
 test = ["Test", "Aqua"]
