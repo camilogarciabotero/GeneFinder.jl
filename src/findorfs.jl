@@ -5,17 +5,15 @@ export findorfs
 
 This is the main interface method for finding open reading frames (ORFs) in a DNA sequence.
 
-It takes the following arguments:
+It takes the following required arguments:
 
 - `sequence`: The nucleic acid sequence to search for ORFs.
 - `method`: The algorithm used to find ORFs. It can be either `NaiveFinder()`, `NaiveFinderScored()` or yet other implementations.
 
 ## Keyword Arguments regardless of the finder method:
-- `alternative_start`: A boolean indicating whether to consider alternative start codons. Default is `false`.
-- `min_len`: The minimum length of an ORF. Default is `6`.
-
-## Keyword Arguments for `NaiveFinderScored()`:
-- `scoringscheme::BioMarkovChain`: The scoring scheme to use for the scoring algorithm. Default is `ECOLICDS`.
+- `alternative_start::Bool`: A boolean indicating whether to consider alternative start codons. Default is `false`.
+- `minlen::Int`: The minimum length of an ORF. Default is `6`.
+- `scheme::Function`: The scoring scheme to use for scoring the sequence from the ORF. Default is `nothing`.
 
 ## Returns
 A vector of `ORF` objects representing the found ORFs.
@@ -31,26 +29,16 @@ sequence = randdnaseq(120)
 findorfs(sequence, NaiveFinder())
 
 1-element Vector{ORF}:
- ORF(77:118, '-', 2, 0.0)
+ ORF{NaiveFinder}(77:118, '-', 2, 0.0)
 ```
 
 """
-function findorfs end
-
 function findorfs(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}},
-    ::NaiveFinder;
+    sequence::NucleicSeqOrView{DNAAlphabet{N}};
+    finder::Type{F}=NaiveFinder,
     kwargs...
-) where {N}
-    return naivefinder(sequence; kwargs...)::Vector{ORF}
-end
-
-function findorfs(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}},
-    ::NaiveFinderScored; # Should we decoupled the FinderMethod from the ScoringMethod? if so, what strategy to use for add the parameter (as a kwargs, as a ::SpecificScoringMethod or as a ::Type{M} where M<:ScoringMethod)?
-    kwargs...
-) where {N}
-    return naivefinderscored(sequence; kwargs...)::Vector{ORF} #alternative_start, min_len, scoringscheme
+) where {N, F<:GeneFinderMethod}
+    return finder(sequence; kwargs...)::Vector{ORF{N,F}}
 end
 
 
@@ -61,7 +49,7 @@ end
 #     method::Type{M};
 #     kwargs...
 # ) where {N, M<:GeneFinderMethod}
-#     return method(sequence; kwargs...)::Vector{ORF} #alternative_start, min_len, scoringscheme
+#     return method(sequence; kwargs...)::Vector{ORF} #alternative_start, minlen, scoringscheme
 # end
 
 # This general implementation would allow for the addition of new finder methods without changing the findorfs method.
@@ -81,7 +69,7 @@ end
 #     function NaiveFinderScored(
 #         sequence::NucleicSeqOrView{DNAAlphabet{N}};
 #         alternative_start::Bool = false,
-#         min_len::Int64 = 6,
+#         minlen::Int64 = 6,
 #         scoringscheme::BioMarkovChain = ECOLICDS,
 #         byf::Symbol = :location,
 #         kwargs...
@@ -93,7 +81,7 @@ end
 #             seq = strand == '-' ? reverse_complement(sequence) : sequence
 
 #             @inbounds for location in @views _locationiterator(seq; alternative_start)
-#                 if length(location) >= min_len
+#                 if length(location) >= minlen
 #                     frame = strand == '+' ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
 #                     start = strand == '+' ? location.start : seqlen - location.stop + 1
 #                     stop = start + length(location) - 1

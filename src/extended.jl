@@ -1,25 +1,25 @@
 # Methods from main packages that expand their fuctions to this package structs
-import Base: isless, iterate, sort, getindex
+import Base: isless, iterate, sort, getindex, length
+import BioSequences: translate
 
+Base.isless(a::ORF{N,F}, b::ORF{N,F}) where {N,F} = isless(a.first:a.last, b.first:b.last)
 
-Base.isless(a::ORF, b::ORF) = isless(a.location, b.location)
-# Base.isless(a::ORF, b::ORF) = isless(a.score, b.score)
+function getindex(seq::NucleicSeqOrView{A}, orf::ORF{N,F}) where {A,N,F}
+    @assert @view(seq[begin:end]) == source(orf) "The source sequence of the ORF and the given sequence are different"
 
-# Base.sort(v::Vector{<:ORF}; kwargs...) = sort(v, by = _orf_sort_key)
-# Base.sort!(v::Vector{<:ORF}; kwargs...) = sort!(v, by = _orf_sort_key)
-
-
-#TODOs: how to make more robust the getindex method? confroning the frames?
-# Base.getindex(sequence::NucleicSeqOrView{A}, orf::ORF) where {A} = orf.strand == '+' ? (@view sequence[orf.location]) : reverse_complement(@view sequence[orf.location])
-
-function getindex(sequence::NucleicSeqOrView{A}, orf::ORF) where {A}
-    if orf.strand == '+'
-        return @view sequence[orf.location]
+    if orf.strand == STRAND_POS
+        s = @view seq[orf.first:orf.last]
     else
-        return reverse_complement(@view sequence[orf.location])
+        s = reverse_complement(@view seq[orf.first:orf.last])
     end
+
+    if !occursin(biore"T(AG|AA|GA)"dna, s)
+        error("There is no stop codon at the end of the sequence/orf")
+    end
+
+    return s
 end
 
-# function _orf_sort_key(orf::ORF)
-#     return (orf.location, orf.strand, orf.score)
-# end
+function translate(orf::ORF{N,F}; kwargs...) where {N,F}
+    return translate(sequence(orf); kwargs...)
+end

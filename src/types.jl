@@ -1,82 +1,161 @@
-export ORF
-export NaiveFinder, NaiveFinderScored
-export NaiveScoringScheme
-# Structs associated with gene models 
-abstract type AbstractGene end
+import GenomicFeatures: first, last, length, strand, groupname, metadata
+import FASTX: sequence
 
-"""
-    struct GeneFeatures
-        seqname::String
-        start::Int64
-        stop::Int64
-        strand::Char
-        frame::Int8
-        score::Union{Nothing, Float64} # Add score field
-        attribute::Dict
-    end
+export Features, RBS, ORF
+export features, sequence, source
+export groupname, finder, frame, scheme, score, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
 
-This is the main Gene struct, based on the fields that could be found in a GFF3, still needs to be defined correctly,
-    The idea is correct the frame and attributes that will have something like a possible list (id=Char;name=;locus_tag).
-    The `write` and `get` functions should have a dedicated method for this struct.
-"""
-# struct GeneFeatures <: AbstractGene
-#     seqname::String
-#     start::Int64
-#     stop::Int64
-#     strand::Char
-#     frame::Int8 # But maybe a Union to allow empty when reading a GFF? 
-#     score::Union{Float64, Nothing} # Add score field
-#     attribute::Dict # Should be a Dict perhaps or a NamedTuple
-# end
+#### Ribosome Binding Site (RBS) struct ####
 
-# struct GeneFeatures <: AbstractGene
-#     seqname::String could be a Union{String, Nothing} and named id.
-#     orf::ORF
-#     attribute::Dict
-# end
+# seq[orf.first-bin01.offset.start:orf.first-1]
 
-"""
-    struct ORF
-        location::UnitRange{Int64}
-        strand::Char
-        frame::Int
-        score::Union{Nothing, Float64}
-    end
+# motifs = [dna"GGA", dna"GAG", dna"AGG"]
 
-The ORF struct represents an open reading frame in a DNA sequence. It has two fields: 
+struct Features{K}
+    fts::K
+end
 
-- `location`: which is a UnitRange{Int64} indicating the start and end locations of the ORF in the sequence
-- `strand`:  is a Char type indicating whether the ORF is on the forward ('+') or reverse ('-') strand of the sequence.
-- `frame`: is an Int type indicating the reading frame of the ORF. The frame is the position of the first nucleotide of the codon that starts the ORF, relative to the start of the sequence. It can be 1, 2, or 3.
-- `score`: is a Union{Nothing, Float64} type indicating the score of the ORF. It can be a Float64 or nothing.
-"""
-struct ORF <: AbstractGene # could also be mutable so that scores can be updated later, but tests fails
-    #TODOs:  location might be a complex Union allowing UnitRange or a Join of ranges (e.g. 1..100, 200..300)?
-    location::UnitRange{Int64}  # Note that it is also called position for gene struct in GenomicAnotations
-    strand::Char
-    frame::Int # Use Int64 instead of Int
-    score::Union{Nothing, Float64} # Add score field shold be a namedtuple with the score and the method used to score
-    # rbs::Union{Nothing, Vector{UnitRange{Int64}}} # Add RBS field  see https://github.com/deprekate/PHANOTATE/blob/c77e80caef8dc3264f7dc698b087bcd486216bcb/phanotate_modules/functions.py#L48
+Features(fts::NamedTuple) = Features{typeof(fts)}(fts)
+struct RBS
+    motif::BioRegex{DNA}
+    offset::UnitRange{Int64} # offset
+    score::Float64
 
-    function ORF(location::UnitRange{Int64}, strand::Char, frame::Int, score::Union{Nothing, Float64} = nothing)
-        @assert frame in (1, 2, 3) "Invalid frame value. Frame must be 1, 2, or 3."
-        @assert strand in ('+', '-') "Invalid strand value. Strand must be '+' or '-'."
-        @assert location[1] < location[end] "Invalid location. Start must be less than stop."
-        @assert score isa Union{Nothing, Float64} "Invalid score value. Score must be a Float64 or nothing."
-    
-        return new(location, strand, frame, score)
+    function RBS(motif::BioRegex{DNA}, offset::UnitRange{Int64}, score::Float64)
+        return new(motif, offset, score)
     end
 end
 
-## Interfaces for gene finders
+# Structs associated with gene models
+# const FEATUREDICT = Dict{Symbol,Any}(:gc => 0.0, :length => 0, :score => 0.0)
+# const Feature = Union{Real, Vector{RBS}}
+# features::Dict{Symbol,Any} or # features::@NamedTuple{score::Float64, rbs::Any}
+# seq::LongSubSeq{DNAAlphabet{N}}
+struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
+    groupname::String
+    first::Int64
+    last::Int64
+    strand::Strand
+    frame::Int
+    features::Features
+    scheme::Union{Nothing,Function}
 
-abstract type GeneFinderMethod end
-struct NaiveFinder <: GeneFinderMethod end
-struct NaiveFinderScored <: GeneFinderMethod end
+    function ORF{N,F}(
+        groupname::String,
+        first::Int64,
+        last::Int64,
+        strand::Strand,
+        frame::Int,
+        features::Features,
+        scheme::Union{Nothing,Function}
+    ) where {N,F}
+        @assert frame in (1, 2, 3) "Invalid frame. Please provide a frame between 1 and 3."
+
+        return new{N,F}(groupname, first, last, strand, frame, features, scheme)
+    end
+end
+
+function ORF{N,F}(
+    ::Type{F}, #finder
+    groupname::String,
+    first::Int64,
+    last::Int64,
+    strand::Strand,
+    frame::Int,
+    features::Features, # ::Dict{Symbol,Any} or # ::@NamedTuple{score::Float64, rbs::Any} or @NamedTuple{Vararg{typeof(...)}}
+    scheme::Union{Nothing,Function}=nothing
+) where {N,F<:GeneFinderMethod}
+    return ORF{N,F}(groupname, first, last, strand, frame, features, scheme) #finder seq
+end
 
 
-## Interfaces for gene scoring schemes
+# function ORF{N,F}(
+#     ::Type{F}, #finder
+#     groupname::Union{Nothing,String},
+#     first::Int64,
+#     last::Int64,
+#     strand::Strand,
+#     frame::Int,
+#     features::Features, # ::Dict{Symbol,Any} or # ::@NamedTuple{score::Float64, rbs::Any} or @NamedTuple{Vararg{typeof(...)}}
+#     scheme::Union{Nothing,Function}=nothing
+# ) where {N,F<:GeneFinderMethod}
+#     groupname = groupname === nothing ? "seq" : groupname
+#     return ORF{N,F}(groupname, first, last, strand, frame, features, scheme) #finder seq
+# end
 
-abstract type GeneScoringScheme end
-struct NaiveScoringScheme <: GeneScoringScheme end
+function groupname(i::ORF{N,F}) where {N,F}
+    return i.groupname
+end
 
+function first(i::ORF{N,F}) where {N,F}
+    return i.first
+end
+
+function last(i::ORF{N,F}) where {N,F}
+    return i.last
+end
+
+function frame(i::ORF{N,F}) where {N,F}
+    return i.frame
+end
+
+finder(i::ORF{N,F}) where {N,F} = F
+
+function scheme(i::ORF{N,F}) where {N,F}
+    return i.scheme
+end
+
+function sequence(i::ORF{N,F}) where {N,F}
+    seqsymb = Symbol(i.groupname)
+    seq = getfield(Main, seqsymb)
+    return i.strand == STRAND_POS ? @view(seq[i.first:i.last]) : reverse_complement(@view(seq[i.first:i.last])) #seq[i.first:i.last]
+end
+
+function source(i::ORF{N,F}) where {N,F}
+    seqsymb = Symbol(i.groupname)
+    return getfield(Main, seqsymb)
+end
+
+function score(i::ORF{N,F}) where {N,F}
+    return i.features.fts[:score]
+end
+
+function length(i::ORF{N,F}) where {N,F}
+    return length(sequence(i))
+end
+
+function features(i::ORF{N,F}) where {N,F}
+    return i.features.fts
+end
+
+function strand(i::ORF{N,F}) where {N,F}
+    return i.strand
+end
+
+function Base.show(io::IO, i::ORF{N,F}) where {N,F}
+    if get(io, :compact, false)
+        print(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") #{$(typeof(finder(i)))} $(score(i))
+    else
+        print(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") # , $(score(i))
+    end
+end
+
+function metadata(i::ORF{N,F}) where {N,F}
+    return features(i)
+end
+
+## Ideas for Gene struct
+
+# struct CDS <: AbstractGene
+#     orf::ORF
+#     coding::Bool
+# end
+
+
+# frm = 1
+# frst = 1
+# lst = 99
+# str = '+'
+# seq = randdnaseq(99)
+
+# orf = ORF{4,NaiveFinder}("seq1", frst, lst, str, frm, seq, nothing, nothing, nothing)
