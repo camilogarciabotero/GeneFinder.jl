@@ -19,10 +19,12 @@ function NaiveCollector(
     seqname = _varname(sequence)
 
     function createorfs(x, strand)
+        
         if length(x.captured[1]:x.captured[3]) < minlen
             return nothing
         end
-        if strand == '+'
+
+        if strand == STRAND_POS
             start = x.captured[1]
             stop = x.captured[3] + 1
             frame = framedict[x.captured[1] % 3]
@@ -31,16 +33,25 @@ function NaiveCollector(
             stop = seqlen - x.captured[1] + 1
             frame = framedict[(seqlen - x.captured[3]) % 3]
         end
-        seq = strand == '+' ? @view(sequence[start:stop]) : reverse_complement(@view(sequence[start:stop])) #@view(sequence[start:stop])
-        scr = scheme === nothing ? 0.0 : scheme(seq; kwargs...)
+
+        if scheme === nothing
+            scr = 0.0
+        else
+            seq = strand == STRAND_POS ? @view(sequence[start:stop]) : reverse_complement(@view(sequence[start:stop]))
+            scr = scheme(seq; kwargs...)
+        end
+
+        # seq = strand == STRAND_POS ? @view(sequence[start:stop]) : reverse_complement(@view(sequence[start:stop])) #@view(sequence[start:stop])
+        # scr = scheme === nothing ? 0.0 : scheme(seq; kwargs...)
         # fts = Dict(:score => score)
         fts = Features((score = scr,)) # rbs = RBS(biore"RRR"dna, 3:4, 1.0)
+
         return ORF{N,NaiveCollector}(seqname, start, stop, strand, frame, fts, scheme) # seq
     end
 
     orfs = Vector{ORF{N,NaiveCollector}}()
-    for strand in ('+', '-')
-        seq = strand == '-' ? revseq : sequence
+    for strand in (STRAND_POS, STRAND_NEG)
+        seq = strand == STRAND_NEG ? revseq : sequence
         matches = eachmatch(regorf, seq, overlap)
         strandedorfs = filter(!isnothing, [createorfs(x, strand) for x in matches])
         append!(orfs, strandedorfs)
