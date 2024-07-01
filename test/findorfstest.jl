@@ -3,13 +3,23 @@
     # cd(@__DIR__)
     # using GeneFinder: findorfs, NaiveFinder, ORF
     # A random seq to start
-    using BioSequences: @dna_str
 
+    using BioSequences: @dna_str
+    using GeneFinder: findorfs, NaiveFinder, ORF, source
+    # using GeneFinder: findorfs, NaiveFinder, ORF, Features, STRAND_POS, STRAND_NEG, source, sequence, groupname
+    
     seq01 = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-    # orfs01 = findorfs(seq01, finder=NaiveFinder)
-    orf01 = ORF{4,NaiveFinder}("seq01", 1, 33, '+', 1, seq01[1:33], Dict(:score => 0.0), nothing)
-    sequence(orf01) == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
-    groupname(orf01) == "seq01"
+
+    orf01 = ORF{4,NaiveFinder}("seq01", 1, 33, STRAND_POS, 1, Features((score = 0.0,)), nothing) # ORF{4,NaiveFinder}("phi", 7, 15, '+', 1, Features((score = 0,)), nothing)
+    # source(orf01)
+    # GeneFinder.source(orf01)
+    orfs = findorfs(seq01)
+    @view(seq01[begin:end])
+    seq01
+    # seq01[orf01]
+    # sequence(orf01) == dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"
+
+    # groupname(orf01) == "seq01"
 
     # @test orfs01 == [
     #     ORF{4,NaiveFinder}("seq01", 1, 33, '+', 1, seq01[1:33], Dict(:score => 0.0), nothing),

@@ -16,7 +16,7 @@ function NaiveCollector(
     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
     revseq = reverse_complement(sequence)
     seqlen = length(sequence)
-    seqname = get_var_name(sequence)
+    seqname = _varname(sequence)
 
     function createorfs(x, strand)
         if length(x.captured[1]:x.captured[3]) < minlen
@@ -35,7 +35,7 @@ function NaiveCollector(
         scr = scheme === nothing ? 0.0 : scheme(seq; kwargs...)
         # fts = Dict(:score => score)
         fts = Features((score = scr,)) # rbs = RBS(biore"RRR"dna, 3:4, 1.0)
-        return ORF{N,NaiveCollector}(seqname, start, stop, strand, frame, seq, fts, scheme)
+        return ORF{N,NaiveCollector}(seqname, start, stop, strand, frame, fts, scheme) # seq
     end
 
     orfs = Vector{ORF{N,NaiveCollector}}()
