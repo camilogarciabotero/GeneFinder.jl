@@ -70,9 +70,9 @@ uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
 [[deps.FASTX]]
 deps = ["Automa", "BioGenerics", "PrecompileTools", "StringViews", "TranscodingStreams"]
-git-tree-sha1 = "24ce37a228990be0cb69b3a2dbcfb656f32fc679"
+git-tree-sha1 = "b998f092c8fe26f0ca417a12df18da5340153f34"
 uuid = "c2308a5c-f048-11e8-3e8a-31650f418d12"
-version = "2.1.5"
+version = "2.1.6"
 weakdeps = ["BioSequences"]
 
     [deps.FASTX.extensions]
@@ -147,9 +147,9 @@ uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 version = "1.0.3"
 
 [[deps.TranscodingStreams]]
-git-tree-sha1 = "a947ea21087caba0a798c5e494d0bb78e3a1a3a0"
+git-tree-sha1 = "d73336d81cafdc277ff45558bb7eaa2b04a8e472"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.10.9"
+version = "0.10.10"
 
     [deps.TranscodingStreams.extensions]
     TestExt = ["Test", "Random"]
