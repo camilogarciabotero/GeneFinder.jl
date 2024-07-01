@@ -2,8 +2,8 @@ import GenomicFeatures: first, last, length, strand, groupname, metadata
 import FASTX: sequence
 
 export Features, RBS, ORF
-export features, sequence
-export groupname, finder, frame, scheme, score
+export features, sequence, source
+export groupname, finder, frame, scheme, score, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
 
 #### Ribosome Binding Site (RBS) struct ####
 
@@ -26,19 +26,33 @@ struct RBS
     end
 end
 
-
 # Structs associated with gene models
 # const FEATUREDICT = Dict{Symbol,Any}(:gc => 0.0, :length => 0, :score => 0.0)
 # const Feature = Union{Real, Vector{RBS}}
+# features::Dict{Symbol,Any} or # features::@NamedTuple{score::Float64, rbs::Any}
+# seq::LongSubSeq{DNAAlphabet{N}}
 struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
     groupname::String
     first::Int64
     last::Int64
     strand::Strand
     frame::Int
-    seq::LongSubSeq{DNAAlphabet{N}}
-    features::Features  # features::Dict{Symbol,Any} or # features::@NamedTuple{score::Float64, rbs::Any}
+    features::Features
     scheme::Union{Nothing,Function}
+
+    function ORF{N,F}(
+        groupname::String,
+        first::Int64,
+        last::Int64,
+        strand::Strand,
+        frame::Int,
+        features::Features,
+        scheme::Union{Nothing,Function}
+    ) where {N,F}
+        @assert frame in (1, 2, 3) "Invalid frame. Please provide a frame between 1 and 3."
+
+        return new{N,F}(groupname, first, last, strand, frame, features, scheme)
+    end
 end
 
 function ORF{N,F}(
@@ -46,16 +60,28 @@ function ORF{N,F}(
     groupname::String,
     first::Int64,
     last::Int64,
-    strand::Union{Strand,Char},
+    strand::Strand,
     frame::Int,
-    seq::LongSubSeq{DNAAlphabet{N}},
     features::Features, # ::Dict{Symbol,Any} or # ::@NamedTuple{score::Float64, rbs::Any} or @NamedTuple{Vararg{typeof(...)}}
     scheme::Union{Nothing,Function}=nothing
 ) where {N,F<:GeneFinderMethod}
-    # @assert frame in (1, 2, 3) && location[1] < location[end] && score isa Union{Nothing, Float64} && length(seq) == last(location) - first(location) + 1 && length(seq) % 3 == 0 "Invalid input. Please check the frame, location, score, and sequence length."
-    # groupname == "" && error("Please provide a groupname for the ORF.")
-    return ORF{N,F}(groupname, first, last, strand, frame, seq, features, scheme) #finder
+    return ORF{N,F}(groupname, first, last, strand, frame, features, scheme) #finder seq
 end
+
+
+# function ORF{N,F}(
+#     ::Type{F}, #finder
+#     groupname::Union{Nothing,String},
+#     first::Int64,
+#     last::Int64,
+#     strand::Strand,
+#     frame::Int,
+#     features::Features, # ::Dict{Symbol,Any} or # ::@NamedTuple{score::Float64, rbs::Any} or @NamedTuple{Vararg{typeof(...)}}
+#     scheme::Union{Nothing,Function}=nothing
+# ) where {N,F<:GeneFinderMethod}
+#     groupname = groupname === nothing ? "seq" : groupname
+#     return ORF{N,F}(groupname, first, last, strand, frame, features, scheme) #finder seq
+# end
 
 function groupname(i::ORF{N,F}) where {N,F}
     return i.groupname
@@ -80,7 +106,14 @@ function scheme(i::ORF{N,F}) where {N,F}
 end
 
 function sequence(i::ORF{N,F}) where {N,F}
-    return i.seq #i.strand == STRAND_POS ? i.seq : reverse_complement(i.seq)
+    seqsymb = Symbol(i.groupname)
+    seq = getfield(Main, seqsymb)
+    return i.strand == STRAND_POS ? @view(seq[i.first:i.last]) : reverse_complement(@view(seq[i.first:i.last])) #seq[i.first:i.last]
+end
+
+function source(i::ORF{N,F}) where {N,F}
+    seqsymb = Symbol(i.groupname)
+    return getfield(Main, seqsymb)
 end
 
 function score(i::ORF{N,F}) where {N,F}
@@ -88,11 +121,15 @@ function score(i::ORF{N,F}) where {N,F}
 end
 
 function length(i::ORF{N,F}) where {N,F}
-    return length(i.seq)
+    return length(sequence(i))
 end
 
 function features(i::ORF{N,F}) where {N,F}
     return i.features.fts
+end
+
+function strand(i::ORF{N,F}) where {N,F}
+    return i.strand
 end
 
 function Base.show(io::IO, i::ORF{N,F}) where {N,F}
