@@ -4,20 +4,22 @@
 For convenience, the `ORF` type is more stringent in preventing the creation of incompatible instances. As a result, attempting to create an instance with incompatible parameters will result in an error. For instance, the following code snippet will trigger an error:
 
 ```julia
-ORF(1:10, '+', 4)
+ORF{4,NaiveFinder}(1:10, '+', 4) # Or any F <: GeneFinderMethod
 
 ERROR: AssertionError: Invalid frame value. Frame must be 1, 2, or 3.
 Stacktrace:
- [1] ORF(location::UnitRange{Int64}, strand::Char, frame::Int64)
-   @ GeneFinder ~/.julia/dev/GeneFinder/src/types.jl:47
- [2] top-level scope
-   @ REPL[25]:1
+ [1] ORF
+   @ ~/.julia/dev/GeneFinder/src/types.jl:52 [inlined]
+ [2] ORF{4, NaiveCollector}(range::UnitRange{Int64}, strand::Char, frame::Int64)
+   @ GeneFinder ~/.julia/dev/GeneFinder/src/types.jl:79
+ [3] top-level scope
+   @ REPL[20]:1
 ```
  
 Similar behavior will be encountered when the strand is neither `+` nor `-`. This precautionary measure helps prevent the creation of invalid ORFs, ensuring greater stability and enabling the extension of its interface. For example, after creating a specific `ORF`, users can seamlessly iterate over a sequence of interest and verify whether the ORF is contained within the sequence.
 
 ```julia
-orf = ORF(137:145, '+', 2)
+orf = ORF{4,NaiveFinder}(137:145, '+', 2)
 seq[orf]
 
 9nt DNA Sequence:
