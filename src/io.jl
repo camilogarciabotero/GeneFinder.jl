@@ -91,7 +91,7 @@ function write_orfs_fna(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        println(output, ">", orf.groupname, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " score=", orf.score)
+        println(output, ">", orf.groupname, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " score=", orf.features.fts.score)
         println(output, sequence(orf))
     end
 end
@@ -110,7 +110,7 @@ function write_orfs_fna(
     open(output, "w") do f
         for (i, orf) in enumerate(orfs)
             id = string(lpad(string(i), padding, "0"))
-            write(f, ">$(orf.groupname) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) score=$(orf.score)\n$(sequence(orf))\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
+            write(f, ">$(orf.groupname) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) score=$(orf.features.fts.score)\n$(sequence(orf))\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
         end
     end
 end
@@ -160,7 +160,7 @@ function write_orfs_faa(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        println(output, ">ORF", id, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame)
+        println(output, ">ORF", id, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " score=", orf.features.fts.score)
         println(output, translate(orf; code))
     end
 end
@@ -180,7 +180,7 @@ function write_orfs_faa(
     open(output, "w") do f
         for (i, orf) in enumerate(orfs)
             id = string(lpad(string(i), padding, "0"))
-            write(f, ">ORF$(id) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame)\n$(translate(orf; code))\n")
+            write(f, ">ORF$(id) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) score=$(orf.features.fts.score)\n$(translate(orf; code))\n")
         end
     end
 end
@@ -219,7 +219,7 @@ function write_orfs_gff(
     println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
     for (i, orf) in enumerate(orfs)
         id = string("ORF", lpad(string(i), padding, "0"))
-        println(output, "Chr\t.\tORF\t", orf.first, "\t", orf.last, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame)
+        println(output, "Chr\t.\tORF\t", orf.first, "\t", orf.last, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame, ";Score=", orf.features.fts.score)
     end
 end
 
@@ -240,7 +240,7 @@ function write_orfs_gff(
             id = string("ORF", lpad(string(i), padding, "0"))
             write(
                 f,
-                "Chr\t.\tORF\t$(orf.first)\t$(orf.last)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame)\n",
+                "Chr\t.\tORF\t$(orf.first)\t$(orf.last)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame);Score=$(orf.features.fts.score)\n"
             )
         end
     end
