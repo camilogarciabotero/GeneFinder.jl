@@ -49,10 +49,11 @@ struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
         features::Features,
         scheme::Union{Nothing,Function}
     ) where {N,F}
-        @assert frame in (1, 2, 3) "Invalid frame. Please provide a frame between 1 and 3."
+        @assert frame in (1, 2, 3) "Invalid frame value. Frame must be 1, 2, or 3."
 
         return new{N,F}(groupname, first, last, strand, frame, features, scheme)
     end
+    
 end
 
 function ORF{N,F}(
@@ -68,6 +69,19 @@ function ORF{N,F}(
     return ORF{N,F}(groupname, first, last, strand, frame, features, scheme) #finder seq
 end
 
+function ORF{N,F}(
+    range::UnitRange{Int64},
+     strand::Char,
+     frame::Int
+) where {N,F<:GeneFinderMethod}
+    groupname = "unamedseq"
+    first = range.start
+    last = range.stop
+    features = Features(NamedTuple())
+    scheme = nothing
+    strand = strand == '+' ? STRAND_POS : STRAND_NEG
+    return ORF{N,F}(groupname, first, last, strand, frame, features, scheme)
+end
 
 # function ORF{N,F}(
 #     ::Type{F}, #finder
