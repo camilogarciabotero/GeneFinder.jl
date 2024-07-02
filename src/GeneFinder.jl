@@ -20,8 +20,7 @@ using BioSequences:
     reverse_complement,
     randdnaseq,
     ncbi_trans_table,
-    translate,
-    gc_content
+    translate
 
 using BioMarkovChains: BioMarkovChain, ECOLICDS, ECOLINOCDS, log_odds_ratio_score
 using FASTX: FASTAReader, sequence
