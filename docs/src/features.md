@@ -82,7 +82,7 @@ features.(phiorfs)
  (score = -4.459423419810693,)
 ```
 
-## Analysing Lamda ORFs
+## Analysing Lambda ORFs
 
 In this case the `lors` calculates the log odds ratio of the ORF sequence given two Markov models (by default: [ECOLICDS](https://github.com/camilogarciabotero/BioMarkovChains.jl/blob/533e53d97cf5951f1ca050454bce1423ec8d7c36/src/models.jl#L3) and [ECOLINOCDS](https://github.com/camilogarciabotero/BioMarkovChains.jl/blob/533e53d97cf5951f1ca050454bce1423ec8d7c36/src/models.jl#L16)), one for the coding region and one for the non-coding region. The score is stored in the `score` field of the `NamedTuple` returned by the `features` function. By default the `lors` function return the base 2 logarithm of the odds ratio, so it is analogous to the bits of information that the ORF sequence is coding.
 
