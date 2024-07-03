@@ -125,5 +125,12 @@ features.(invphiorfs)
  (score = 4.459423419810688,)
 ```
 
-This is the same as the previous example but with the inverse of the odds ratio, meaning that the score is the the chance of the ORF sequence being non-coding given the two models.
+This is the same as the previous example but with the inverse of the odds ratio, meaning that the score is the the chance of the ORF sequence being non-coding given the same two models used before (i.e. ECOLICDS and ECOLINOCDS). Now we can even analyse how is the distribution of the scores in the ORFs.
+
+```julia
+using UnicodePlots
+```
+
+
+
 
