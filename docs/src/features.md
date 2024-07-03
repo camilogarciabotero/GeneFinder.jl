@@ -136,4 +136,6 @@ f
 
 ![](assets/lors-lambda.png)
 
-What this plot shows is that the ORFs in the lambda genome have a higher score than random sequences of the same length. This is expected since the lambda genome is a coding region and the ORFs are more likely to be coding regions than random sequences. The `lors` function is a simple example of how to calculate a score for an ORF, but it can be replaced by any other scoring function that you may want to use.
+What this plot shows is that the ORFs in the lambda genome have a higher scores than random sequences of the same length. The score is a measure of how likely a sequence given the coding model is compared to the non-coding model. In other words, the higher the score the more likely the sequence is coding. So, the plot shows that the ORFs in the lambda genome are more likely to be coding regions than random sequences. It also shows that the longer the ORF the higher the score, which is expected since longer ORFs are more likely to be coding regions than shorter ones.
+
+
