@@ -26,11 +26,23 @@ struct RBS
     end
 end
 
-# Structs associated with gene models
-# const FEATUREDICT = Dict{Symbol,Any}(:gc => 0.0, :length => 0, :score => 0.0)
-# const Feature = Union{Real, Vector{RBS}}
-# features::Dict{Symbol,Any} or # features::@NamedTuple{score::Float64, rbs::Any}
-# seq::LongSubSeq{DNAAlphabet{N}}
+
+"""
+    struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
+
+The `ORF` struct represents an Open Reading Frame (ORF) in genomics.
+
+# Fields
+- `groupname::String`: The name of the group to which the ORF belongs.
+- `first::Int64`: The starting position of the ORF.
+- `last::Int64`: The ending position of the ORF.
+- `strand::Strand`: The strand on which the ORF is located.
+- `frame::Int`: The reading frame of the ORF.
+- `features::Features`: The features associated with the ORF.
+- `scheme::Union{Nothing,Function}`: The scheme used for the ORF.
+
+# Constructor
+"""
 struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
     groupname::String
     first::Int64
@@ -69,33 +81,19 @@ function ORF{N,F}(
     return ORF{N,F}(groupname, first, last, strand, frame, features, scheme) #finder seq
 end
 
-function ORF{N,F}(
+function ORF{F}(
     range::UnitRange{Int64},
      strand::Char,
      frame::Int
-) where {N,F<:GeneFinderMethod}
+) where {F<:GeneFinderMethod}
     groupname = "unamedseq"
     first = range.start
     last = range.stop
     features = Features(NamedTuple())
     scheme = nothing
     strand = strand == '+' ? STRAND_POS : STRAND_NEG
-    return ORF{N,F}(groupname, first, last, strand, frame, features, scheme)
+    return ORF{4,F}(groupname, first, last, strand, frame, features, scheme)
 end
-
-# function ORF{N,F}(
-#     ::Type{F}, #finder
-#     groupname::Union{Nothing,String},
-#     first::Int64,
-#     last::Int64,
-#     strand::Strand,
-#     frame::Int,
-#     features::Features, # ::Dict{Symbol,Any} or # ::@NamedTuple{score::Float64, rbs::Any} or @NamedTuple{Vararg{typeof(...)}}
-#     scheme::Union{Nothing,Function}=nothing
-# ) where {N,F<:GeneFinderMethod}
-#     groupname = groupname === nothing ? "seq" : groupname
-#     return ORF{N,F}(groupname, first, last, strand, frame, features, scheme) #finder seq
-# end
 
 function groupname(i::ORF{N,F}) where {N,F}
     return i.groupname
@@ -119,6 +117,19 @@ function scheme(i::ORF{N,F}) where {N,F}
     return i.scheme
 end
 
+
+"""
+    sequence(i::ORF{N,F})
+
+Extracts the DNA sequence corresponding to the given open reading frame (ORF).
+
+# Arguments
+- `i::ORF{N,F}`: The open reading frame (ORF) for which the DNA sequence needs to be extracted.
+
+# Returns
+- The DNA sequence corresponding to the given open reading frame (ORF).
+
+"""
 function sequence(i::ORF{N,F}) where {N,F}
     seqsymb = Symbol(i.groupname)
     seq = getfield(Main, seqsymb)
@@ -164,12 +175,3 @@ end
 #     orf::ORF
 #     coding::Bool
 # end
-
-
-# frm = 1
-# frst = 1
-# lst = 99
-# str = '+'
-# seq = randdnaseq(99)
-
-# orf = ORF{4,NaiveFinder}("seq1", frst, lst, str, frm, seq, nothing, nothing, nothing)
