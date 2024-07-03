@@ -1,45 +1,43 @@
 export write_orfs_fna, write_orfs_faa, write_orfs_bed, write_orfs_gff
 
 """
-    write_orfs_bed(input::NucleicSeqOrView{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}, method::M; kwargs...) where {N, M<:GeneFinderMethod}
-    write_orfs_bed(input::NucleicSeqOrView{DNAAlphabet{N}}, output::String, ::M; kwargs...) where {N, M<:GeneFinderMethod}
-    write_orfs_bed(input::String, output::Union{IOStream, IOBuffer}, method::M; kwargs...) where {M<:GeneFinderMethod}
-    write_orfs_bed(input::String, output::String, method::M; kwargs...) where {M<:GeneFinderMethod}
+    write_orfs_bed(input::NucleicSeqOrView{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}, finder::F; kwargs...)
+    write_orfs_bed(input::NucleicSeqOrView{DNAAlphabet{N}}, output::String, finder::F; kwargs...)
 
 Write BED data to a file.
 
 # Arguments
-- `input::NucleicAcidAlphabet{DNAAlphabet{N}}`: The input DNA sequence.
-- `output::IO`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
-- `method::M`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
+- `input`: The input DNA sequence NucSeq or a view.
+- `output`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
+- `finder`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
 
 # Keywords
 - `alternative_start::Bool=false`: If true, alternative start codons will be used when identifying CDSs. Default is `false`.
 - `minlen::Int64=6`: The minimum length that a CDS must have in order to be included in the output file. Default is `6`.
 """
 function write_orfs_bed(
-    input::Union{String,NucleicSeqOrView{DNAAlphabet{N}}},
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::Union{IOStream, IOBuffer};
     finder::Type{F} = NaiveFinder,
     alternative_start::Bool = false,
-    minlen::Int64 = 6,
+    minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    sequence = typeof(input) === String ? fasta2bioseq(input)[1] : input
-    orfs = findorfs(sequence; finder, alternative_start, minlen)
+    seq = fasta2bioseq(input)[1]
+    orfs = findorfs(seq; finder, alternative_start, minlen)
     @inbounds for orf in orfs
         println(output, orf.first, "\t", orf.last, "\t", orf.strand, "\t", orf.frame)
     end
 end
 
 function write_orfs_bed(
-    input::Union{String,NucleicSeqOrView{DNAAlphabet{N}}},
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::String;
     finder::Type{F} = NaiveFinder,
     alternative_start::Bool = false,
-    minlen::Int64 = 6,
+    minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    sequence = typeof(input) === String ? fasta2bioseq(input)[1] : input
-    orfs = findorfs(sequence; finder, alternative_start, minlen)
+    seq = fasta2bioseq(input)[1]
+    orfs = findorfs(seq; finder, alternative_start, minlen)
     open(output, "w") do f
         @inbounds for orf in orfs
             write(f, "$(orf.first)\t$(orf.last)\t$(orf.strand)\t$(orf.frame)\n")
@@ -48,10 +46,8 @@ function write_orfs_bed(
 end
 
 """
-    write_orfs_fna(input::NucleicSeqOrView{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}, method::M; kwargs...) where {N, M<:GeneFinderMethod}
-    write_orfs_fna(input::NucleicSeqOrView{DNAAlphabet{N}}, output::String, method::M; kwargs...) where {N, M<:GeneFinderMethod}
-    write_orfs_fna(input::String, output::Union{IOStream, IOBuffer}; kwargs...) where {M<:GeneFinderMethod}
-    write_orfs_fna(input::String, output::String, method::M; kwargs...) where {M<:GeneFinderMethod}
+    write_orfs_fna(input::NucleicSeqOrView{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}, finder::F; kwargs...)
+    write_orfs_fna(input::NucleicSeqOrView{DNAAlphabet{N}}, output::String, finder::F; kwargs...)
 
 Write a file containing the coding sequences (CDSs) of a given DNA sequence to the specified file.
 
@@ -59,7 +55,7 @@ Write a file containing the coding sequences (CDSs) of a given DNA sequence to t
 # Arguments
 - `input::NucleicAcidAlphabet{DNAAlphabet{N}}`: The input DNA sequence.
 - `output::IO`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
-- `method::M`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
+- `finder::F`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
 
 # Keywords
 
@@ -79,13 +75,13 @@ end
 ```
 """
 function write_orfs_fna(
-    input::Union{String, NucleicSeqOrView{DNAAlphabet{N}}},
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::Union{IOStream, IOBuffer};
     finder::Type{F} = NaiveFinder,
     alternative_start::Bool = false, 
-    minlen::Int64 = 6,
+    minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    seq = typeof(input) === String ? fasta2bioseq(input)[1] : input
+    seq = fasta2bioseq(input)[1]
     orfs = findorfs(seq; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
@@ -97,13 +93,13 @@ function write_orfs_fna(
 end
 
 function write_orfs_fna(
-    input::Union{String,NucleicSeqOrView{DNAAlphabet{N}}}, 
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::String;
     finder::Type{F} = NaiveFinder,
     alternative_start::Bool = false,
-    minlen::Int64 = 6,
+    minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    seq = typeof(input) === String ? fasta2bioseq(input)[1] : input
+    seq = fasta2bioseq(input)[1]
     orfs = findorfs(seq; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
@@ -116,17 +112,15 @@ function write_orfs_fna(
 end
 
 """
-	write_orfs_faa(input::NucleicSeqOrView{DNAAlphabet{4}}, output::Union{IOStream, IOBuffer}, method::M; kwargs...) where {N, M<:GeneFinderMethod}
-	write_orfs_faa(input::NucleicSeqOrView{DNAAlphabet{4}}, output::String, method::M; kwargs...) where {N, M<:GeneFinderMethod}
-    write_orfs_faa(input::String, output::Union{IOStream, IOBuffer}, method::M; kwargs...) where {M<:GeneFinderMethod}
-    write_orfs_faa(input::String, output::String, method::M; kwargs...) where {M<:GeneFinderMethod}
+	write_orfs_faa(input::NucleicSeqOrView{DNAAlphabet{4}}, output::Union{IOStream, IOBuffer}, finder::F; kwargs...)
+	write_orfs_faa(input::NucleicSeqOrView{DNAAlphabet{4}}, output::String, finder::F; kwargs...)
 
 Write the protein sequences encoded by the coding sequences (CDSs) of a given DNA sequence to the specified file.
 
 # Arguments
-- `input::NucleicAcidAlphabet{DNAAlphabet{N}}`: The input DNA sequence.
-- `output::IO`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
-- `method::M`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
+- `input`: The input DNA sequence NucSeq or a view.
+- `output`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
+- `finder`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
 
 # Keywords
 
@@ -147,14 +141,14 @@ end
 ```
 """
 function write_orfs_faa(
-    input::Union{String, NucleicSeqOrView{DNAAlphabet{N}}},
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::Union{IOStream, IOBuffer};
     finder::Type{F} = NaiveFinder,
     alternative_start::Bool = false,
     minlen::Int64 = 6,
-    code::GeneticCode = ncbi_trans_table[1],
+    code::GeneticCode = ncbi_trans_table[1]
 ) where {N,F<:GeneFinderMethod}
-    seq = typeof(input) === String ? fasta2bioseq(input)[1] : input
+    seq = fasta2bioseq(input)[1]
     orfs = findorfs(seq; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
@@ -166,14 +160,14 @@ function write_orfs_faa(
 end
 
 function write_orfs_faa(
-    input::Union{String, NucleicSeqOrView{DNAAlphabet{N}}},
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::String;
     finder::Type{F}=NaiveFinder,
     alternative_start::Bool = false,
     minlen::Int64 = 6,
-    code::GeneticCode = ncbi_trans_table[1],
+    code::GeneticCode = ncbi_trans_table[1]
 ) where {N,F<:GeneFinderMethod}
-    seq = typeof(input) === String ? fasta2bioseq(input)[1] : input
+    seq = fasta2bioseq(input)[1]
     orfs = findorfs(seq; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
@@ -186,17 +180,15 @@ function write_orfs_faa(
 end
 
 """
-    write_orfs_gff(input::NucleicSeqOrView{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}, method::M; kwargs...) where {N, M<:GeneFinderMethod}
-    write_orfs_gff(input::NucleicSeqOrView{DNAAlphabet{N}}, output::String, method::M; kwargs...) where {N, M<:GeneFinderMethod}
-    write_orfs_gff(input::String, output::Union{IOStream, IOBuffer}, method::M; kwargs...)  where {M<:GeneFinderMethod}
-    write_orfs_gff(input::String, output::String, method::M; kwargs...) where {M<:GeneFinderMethod}
+    write_orfs_gff(input::NucleicSeqOrView{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}, finder::F; kwargs...)
+    write_orfs_gff(input::NucleicSeqOrView{DNAAlphabet{N}}, output::String, finder::F; kwargs...)
 
 Write GFF data to a file.
 
 # Arguments
-- `input::NucleicAcidAlphabet{DNAAlphabet{N}}`: The input DNA sequence.
-- `output::IO`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
-- `method::M`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
+- `input`: The input DNA sequence NucSeq or a view.
+- `output`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
+- `finder`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
 
 # Keywords
 
@@ -206,13 +198,13 @@ Write GFF data to a file.
 
 """
 function write_orfs_gff(
-    input::Union{String, NucleicSeqOrView{DNAAlphabet{N}}},
-    output::Union{IOStream, IOBuffer};
+    input::NucleicSeqOrView{DNAAlphabet{N}},
+    output::Union{IOStream,IOBuffer};
     finder::Type{F} = NaiveFinder,
     alternative_start::Bool = false,
-    minlen::Int64 = 6,
+    minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    seq = typeof(input) === String ? fasta2bioseq(input)[1] : input
+    seq = fasta2bioseq(input)[1]
     orfs = findorfs(seq; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
@@ -224,13 +216,13 @@ function write_orfs_gff(
 end
 
 function write_orfs_gff(
-    input::Union{String, NucleicSeqOrView{DNAAlphabet{N}}},
+    input::NucleicSeqOrView{DNAAlphabet{N}},
     output::String;
     finder::Type{F} = NaiveFinder,
     alternative_start::Bool = false,
-    minlen::Int64 = 6,
+    minlen::Int64 = 6
 ) where {N, F<:GeneFinderMethod}
-    seq = typeof(input) === String ? fasta2bioseq(input)[1] : input
+    seq = fasta2bioseq(input)[1]
     orfs = findorfs(seq; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
