@@ -62,35 +62,4 @@ ATGTGTCCAACGGCAGCCTGA
 ATGCAACCCTGA
 ```
 
-### Combining `FASTX` for reading and writing fastas
-
-We can now combine the `FASTX` package with the function `write_orfs_faa` to write a `FASTA` file with the protein sequences of the translated ORFs obtained from an external `FASTA` file. 
-
-```julia
-infile = "test/data/NC_001884.fasta"
-outfile = "test/data/NC_001884-orfs.faa"
-
-open(inputfile) do io
-    write_orfs_faa(infile, outfile, NaiveFinder())
-end
-```
-
-```bash
-head test/data/NC_001884-orfs.faa
-
->ORF0001 id=0001 start=41 stop=145 strand=- frame=2
-MTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
->ORF0002 id=0002 start=41 stop=172 strand=- frame=2
-MVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDLTATNSFH*
->ORF0003 id=0003 start=41 stop=454 strand=- frame=2
-MSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRFNFIFDL
-TATNSFH*
->ORF0004 id=0004 start=41 stop=472 strand=- frame=2
-MKTKKQMSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIPAQFEITPILRF
-NFIFDLTATNSFH*
->ORF0005 id=0005 start=41 stop=505 strand=- frame=2
-MLSKYEDDNSNMKTKKQMSEHLSQKEKELKNKENFIFDKYESGIYSDELFLKRKAALDEEFKELQNAKNELNGLQDTQSEIDSNTVRNNINKIIDQYHIESSSEKKNELLRMVLKDVIVNMTQKRKGPIP
-AQFEITPILRFNFIFDLTATNSFH*
-```
-
 This could also be done to writting a `FASTA` file with the nucleotide sequences of the ORFs using the `write_orfs_fna` function. Similarly for the `BED` and `GFF` files using the `write_orfs_bed` and `write_orfs_gff` functions respectively.
