@@ -30,13 +30,6 @@ Modules = [GeneFinder]
 Pages = ["algorithms/naivefinder.jl"]
 ```
 
-<!-- ## Geting ORFs sequences
-
-```@autodocs
-Modules = [GeneFinder]
-Pages = ["getorfs.jl"]
-``` -->
-
 ## Writing ORFs to files
 
 ```@autodocs
