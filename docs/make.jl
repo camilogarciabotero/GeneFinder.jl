@@ -27,4 +27,4 @@ makedocs(;
     warnonly = true,
 )
 
-deploydocs(; repo = "https://github.com/camilogarciabotero/GeneFinder.jl", devbranch = "scoredocs", mainbranch = "main")
+deploydocs(; repo = "https://github.com/camilogarciabotero/GeneFinder.jl", devbranch = "main")
