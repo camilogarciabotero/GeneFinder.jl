@@ -72,34 +72,6 @@ orfsdna = findorfs(seq, minlen=75, alternative_start=true) .|> sequence
 
 ```
 
-Now, we can score the sequences using the *log-odds ratio* score in the same line:
-
-```julia
-orfsfeat = findorfs(seq, minlen=75, alternative_start=true, scheme=lors) .|> features
-
-20-element Vector{@NamedTuple{score::Float64}}:
- (score = -2.5146325834372343,)
- (score = -4.857592765476053,)
- (score = -1.9986133020444345,)
- (score = -3.4106894574555824,)
- (score = -1.763485388728319,)
- (score = 0.6825864481251348,)
- (score = 0.21287161698917936,)
- (score = -0.28187825646085224,)
- (score = -1.373474082107631,)
- (score = -4.273794970087796,)
- (score = -2.3961559066784597,)
- (score = -2.3663038090046142,)
- (score = -0.8406863072332524,)
- (score = 1.8013554455006733,)
- (score = -2.0768031699080756,)
- (score = -1.734088708668584,)
- (score = -2.9820908143871194,)
- (score = -3.072550585883162,)
- (score = -2.712493281013948,)
- (score = -2.0453354284951786,)
-```
-
 Now the question is which of those sequences can we consider as coding sequences. We can use the `iscoding` predicate to check whether a sequence is coding or not based on the *log-odds ratio* decision rule:
 
 ```julia

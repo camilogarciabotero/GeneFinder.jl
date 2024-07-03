@@ -63,7 +63,7 @@ orfs = findorfs(seq, finder=NaiveFinder)
 Two other methods where implemented into `sequence` to get the ORFs in DNA or aminoacid sequences, respectively. They use the `findorfs` function to first get the ORFs and then get the correspondance array of `BioSequence` objects.
 
 ```julia
-sequece.(orfs)
+sequence.(orfs)
 
 12-element Vector{NucSeq{4, DNAAlphabet{4}}}
  ATGCAACCCTGA
