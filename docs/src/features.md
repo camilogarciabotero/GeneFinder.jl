@@ -82,55 +82,57 @@ features.(phiorfs)
  (score = -4.459423419810693,)
 ```
 
-In this case the `lors` calculates the log odds ratio of the ORF sequence given two Markov models, one for the coding region and one for the non-coding region. The score is stored in the `score` field of the `NamedTuple` returned by the `features` function. By default the `lors` function return the base 2 logarithm of the odds ratio, so it is analogous to the bits of information that the ORF sequence is coding.
+## Analysing Lamda ORFs
 
-The `NaiveFinder` method takes also `kwargs...` that are passed the the scoring function, so the `lors` function could be modified to calculate the inverse of the odds ratio by simply calling the models in the opposite order.
+In this case the `lors` calculates the log odds ratio of the ORF sequence given two Markov models (by default: ECOLICDS and ECOLINOCDS), one for the coding region and one for the non-coding region. The score is stored in the `score` field of the `NamedTuple` returned by the `features` function. By default the `lors` function return the base 2 logarithm of the odds ratio, so it is analogous to the bits of information that the ORF sequence is coding.
 
-```julia
- invphiorfs = findorfs(phi, finder=NaiveFinder, minlen=75, scheme=lors, modela=ECOLINOCDS, modelb=ECOLICDS)
-
-features.(invphiorfs)
-
-124-element Vector{@NamedTuple{score::Float64}}:
- (score = 3.0024613660873727,)
- (score = 10.814621287968192,)
- (score = 5.344187934894256,)
- (score = 1.316724559874125,)
- (score = 1.7966312005621363,)
- (score = 3.265151860826984,)
- (score = 1.401926444108279,)
- (score = 2.319234959010748,)
- (score = -5.055524446434286,)
- (score = -2.711639722489663,)
- (score = -2.256464059240233,)
- (score = -1.7774995819401198,)
- (score = -2.347481190801142,)
- (score = -2.3856818835280125,)
- (score = -2.498608044469844,)
- ⋮
- (score = 5.474837954151802,)
- (score = -0.6909362932156132,)
- (score = 5.900045211699445,)
- (score = -1.2010656615619424,)
- (score = -0.8541931309205605,)
- (score = -2.789796164314777,)
- (score = 4.428903467704666,)
- (score = 5.406242417264438,)
- (score = 0.8080572222081076,)
- (score = 5.571494087742444,)
- (score = 4.882156920421224,)
- (score = 5.639670353834972,)
- (score = 0.8764121443326848,)
- (score = 4.308687693802271,)
- (score = 4.459423419810688,)
-```
-
-This is the same as the previous example but with the inverse of the odds ratio, meaning that the score is the the chance of the ORF sequence being non-coding given the same two models used before (i.e. ECOLICDS and ECOLINOCDS). Now we can even analyse how is the distribution of the scores in the ORFs.
+Now we can even analyse how is the distribution of the ORFs' scores as a function of their lengths compared to random sequences.
 
 ```julia
-using UnicodePlots
+
+lambda = fasta_to_dna("test/data/NC_001416.1.fasta")[1]
+
+lambaorfs = findorfs(lambda, finder=NaiveFinder, minlen=100, scheme=lors)
+
+lamdascores = score.(lambaorfs)
+lambdalengths = length.(lambaorfs)
+
+## get some random sequences of variable lengths
+vseqs = LongDNA[]
+for i in 1:708
+    push!(vseqs, randdnaseq(rand(100:1000)))
+end
+
+## get the lengths and scores of the random generated sequences
+randlengths = length.(vseqs)
+randscores = lors.(vseqs)
+
+## plot the scores as a function of the lengths
+using CairoMakie
+
+f = Figure()
+ax = Axis(f[1, 1], xlabel="Length", ylabel="Log-odds ratio (Bits)")
+
+scatter!(ax,
+    randlengths,
+    randscores,
+    marker = :circle, 
+    markersize = 6, 
+    color = :black, 
+    label = "Random sequences"
+)
+scatter!(ax,
+    lambdalengths, 
+    lambdascores, 
+    marker = :rect, 
+    markersize = 6, 
+    color = :blue, 
+    label = "Lambda ORFs"
+)
+
+axislegend(ax)
+
+f
 ```
 
-
-
-
+![](assets/lors-lamda.png)
