@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Scoring ORFs · GeneFinder.jl</title><meta name="title" content="Scoring ORFs · GeneFinder.jl"/><meta property="og:title" content="Scoring ORFs · GeneFinder.jl"/><meta property="twitter:title" content="Scoring ORFs · GeneFinder.jl"/><meta name="description" content="Documentation for GeneFinder.jl."/><meta property="og:description" content="Documentation for GeneFinder.jl."/><meta property="twitter:description" content="Documentation for GeneFinder.jl."/><meta property="og:url" content="https://camilogarciabotero.github.io/GeneFinder.jl/features/"/><meta property="twitter:url" content="https://camilogarciabotero.github.io/GeneFinder.jl/features/"/><link rel="canonical" href="https://camilogarciabotero.github.io/GeneFinder.jl/features/"/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.svg" alt="GeneFinder.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">GeneFinder.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../naivefinder/">Finding ORFs</a></li><li class="is-active"><a class="tocitem" href>Scoring ORFs</a><ul class="internal"><li><a class="tocitem" href="#The-ORF-features"><span>The ORF features</span></a></li><li><a class="tocitem" href="#Analysing-Lamda-ORFs"><span>Analysing Lamda ORFs</span></a></li></ul></li><li><a class="tocitem" href="../simplecodingrule/">A Simple Coding Rule</a></li><li><a class="tocitem" href="../iodocs/">Wrtiting ORFs In Files</a></li><li><a class="tocitem" href="../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Scoring ORFs</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Scoring ORFs</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/camilogarciabotero/GeneFinder.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/camilogarciabotero/GeneFinder.jl/" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h2 id="The-ORF-features"><a class="docs-heading-anchor" href="#The-ORF-features">The ORF features</a><a id="The-ORF-features-1"></a><a class="docs-heading-anchor-permalink" href="#The-ORF-features" title="Permalink"></a></h2><p>The <code>ORF</code> type is designed to be flexible and can store various types of information about the ORF. This versatility allows it to hold data such as the score of the ORF based on a scoring function, the sequence of the ORF, or even the translated amino acid sequence. For example, in the <code>NaiveFinder</code> method, the <code>score</code> subfield is utilized to store the score of the ORF obtained from the scoring function. This capability is possible because the <code>ORF</code> type not only captures structural details of the ORF, such as the range, strand, and frame, but also provides a convenient field called <code>Features</code> for additional information.</p><pre><code class="language-julia hljs">phi = dna&quot;GTGTGAGGTTATAACGCCGAAGCGGTAAAAATTTTAATTTTTGCCGCTGAGGGGTTGACCAAGCGAAGCGCGGTAGGTTTTCTGCTTAGGAGTTTAATCATGTTTCAGACTTTTATTTCTCGCCATAATTCAAACTTTTTTTCTGATAAGCTGGTTCTCACTTCTGTTACTCCAGCTTCTTCGGCACCTGTTTTACAGACACCTAAAGCTACATCGTCAACGTTATATTTTGATAGTTTGACGGTTAATGCTGGTAATGGTGGTTTTCTTCATTGCATTCAGATGGATACATCTGTCAACGCCGCTAATCAGGTTGTTTCTGTTGGTGCTGATATTGCTTTTGATGCCGACCCTAAATTTTTTGCCTGTTTGGTTCGCTTTGAGTCTTCTTCGGTTCCGACTACCCTCCCGACTGCCTATGATGTTTATCCTTTGAATGGTCGCCATGATGGTGGTTATTATACCGTCAAGGACTGTGTGACTATTGACGTCCTTCCCCGTACGCCGGGCAATAACGTTTATGTTGGTTTCATGGTTTGGTCTAACTTTACCGCTACTAAATGCCGCGGATTGGTTTCGCTGAATCAGGTTATTAAAGAGATTATTTGTCTCCAGCCACTTAAGTGAGGTGATTTATGTTTGGTGCTATTGCTGGCGGTATTGCTTCTGCTCTTGCTGGTGGCGCCATGTCTAAATTGTTTGGAGGCGGTCAAAAAGCCGCCTCCGGTGGCATTCAAGGTGATGTGCTTGCTACCGATAACAATACTGTAGGCATGGGTGATGCTGGTATTAAATCTGCCATTCAAGGCTCTAATGTTCCTAACCCTGATGAGGCCGCCCCTAGTTTTGTTTCTGGTGCTATGGCTAAAGCTGGTAAAGGACTTCTTGAAGGTACGTTGCAGGCTGGCACTTCTGCCGTTTCTGATAAGTTGCTTGATTTGGTTGGACTTGGTGGCAAGTCTGCCGCTGATAAAGGAAAGGATACTCGTGATTATCTTGCTGCTGCATTTCCTGAGCTTAATGCTTGGGAGCGTGCTGGTGCTGATGCTTCCTCTGCTGGTATGGTTGACGCCGGATTTGAGAATCAAAAAGAGCTTACTAAAATGCAACTGGACAATCAGAAAGAGATTGCCGAGATGCAAAATGAGACTCAAAAAGAGATTGCTGGCATTCAGTCGGCGACTTCACGCCAGAATACGAAAGACCAGGTATATGCACAAAATGAGATGCTTGCTTATCAACAGAAGGAGTCTACTGCTCGCGTTGCGTCTATTATGGAAAACACCAATCTTTCCAAGCAACAGCAGGTTTCCGAGATTATGCGCCAAATGCTTACTCAAGCTCAAACGGCTGGTCAGTATTTTACCAATGACCAAATCAAAGAAATGACTCGCAAGGTTAGTGCTGAGGTTGACTTAGTTCATCAGCAAACGCAGAATCAGCGGTATGGCTCTTCTCATATTGGCGCTACTGCAAAGGATATTTCTAATGTCGTCACTGATGCTGCTTCTGGTGTGGTTGATATTTTTCATGGTATTGATAAAGCTGTTGCCGATACTTGGAACAATTTCTGGAAAGACGGTAAAGCTGATGGTATTGGCTCTAATTTGTCTAGGAAATAACCGTCAGGATTGACACCCTCCCAATTGTATGTTTTCATGCCTCCAAATCTTGGAGGCTTTTTTATGGTTCGTTCTTATTACCCTTCTGAATGTCACGCTGATTATTTTGACTTTGAGCGTATCGAGGCTCTTAAACCTGCTATTGAGGCTTGTGGCATTTCTACTCTTTCTCAATCCCCAATGCTTGGCTTCCATAAGCAGATGGATAACCGCATCAAGCTCTTGGAAGAGATTCTGTCTTTTCGTATGCAGGGCGTTGAGTTCGATAATGGTGATATGTATGTTGACGGCCATAAGGCTGCTTCTGACGTTCGTGATGAGTTTGTATCTGTTACTGAGAAGTTAATGGATGAATTGGCACAATGCTACAATGTGCTCCCCCAACTTGATATTAATAACACTATAGACCACCGCCCCGAAGGGGACGAAAAATGGTTTTTAGAGAACGAGAAGACGGTTACGCAGTTTTGCCGCAAGCTGGCTGCTGAACGCCCTCTTAAGGATATTCGCGATGAGTATAATTACCCCAAAAAGAAAGGTATTAAGGATGAGTGTTCAAGATTGCTGGAGGCCTCCACTATGAAATCGCGTAGAGGCTTTGCTATTCAGCGTTTGATGAATGCAATGCGACAGGCTCATGCTGATGGTTGGTTTATCGTTTTTGACACTCTCACGTTGGCTGACGACCGATTAGAGGCGTTTTATGATAATCCCAATGCTTTGCGTGACTATTTTCGTGATATTGGTCGTATGGTTCTTGCTGCCGAGGGTCGCAAGGCTAATGATTCACACGCCGACTGCTATCAGTATTTTTGTGTGCCTGAGTATGGTACAGCTAATGGCCGTCTTCATTTCCATGCGGTGCACTTTATGCGGACACTTCCTACAGGTAGCGTTGACCCTAATTTTGGTCGTCGGGTACGCAATCGCCGCCAGTTAAATAGCTTGCAAAATACGTGGCCTTATGGTTACAGTATGCCCATCGCAGTTCGCTACACGCAGGACGCTTTTTCACGTTCTGGTTGGTTGTGGCCTGTTGATGCTAAAGGTGAGCCGCTTAAAGCTACCAGTTATATGGCTGTTGGTTTCTATGTGGCTAAATACGTTAACAAAAAGTCAGATATGGACCTTGCTGCTAAAGGTCTAGGAGCTAAAGAATGGAACAACTCACTAAAAACCAAGCTGTCGCTACTTCCCAAGAAGCTGTTCAGAATCAGAATGAGCCGCAACTTCGGGATGAAAATGCTCACAATGACAAATCTGTCCACGGAGTGCTTAATCCAACTTACCAAGCTGGGTTACGACGCGACGCCGTTCAACCAGATATTGAAGCAGAACGCAAAAAGAGAGATGAGATTGAGGCTGGGAAAAGTTACTGTAGCCGACGTTTTGGCGGCGCAACCTGTGACGACAAATCTGCTCAAATTTATGCGCGCTTCGATAAAAATGATTGGCGTATCCAACCTGCAGAGTTTTATCGCTTCCATGACGCAGAAGTTAACACTTTCGGATATTTCTGATGAGTCGAAAAATTATCTTGATAAAGCAGGAATTACTACTGCTTGTTTACGAATTAAATCGAAGTGGACTGCTGGCGGAAAATGAGAAAATTCGACCTATCCTTGCGCAGCTCGAGAAGCTCTTACTTTGCGACCTTTCGCCATCAACTAACGATTCTGTCAAAAACTGACGCGTTGGATGAGGAGAAGTGGCTTAATATGCTTGGCACGTTCGTCAAGGACTGGTTTAGATATGAGTCACATTTTGTTCATGGTAGAGATTCTCTTGTTGACATTTTAAAAGAGCGTGGATTACTATCTGAGTCCGATGCTGTTCAACCACTAATAGGTAAGAAATCATGAGTCAAGTTACTGAACAATCCGTACGTTTCCAGACCGCTTTGGCCTCTATTAAGCTCATTCAGGCTTCTGCCGTTTTGGATTTAACCGAAGATGATTTCGATTTTCTGACGAGTAACAAAGTTTGGATTGCTACTGACCGCTCTCGTGCTCGTCGCTGCGTTGAGGCTTGCGTTTATGGTACGCTGGACTTTGTGGGATACCCTCGCTTTCCTGCTCCTGTTGAGTTTATTGCTGCCGTCATTGCTTATTATGTTCATCCCGTCAACATTCAAACGGCCTGTCTCATCATGGAAGGCGCTGAATTTACGGAAAACATTATTAATGGCGTCGAGCGTCCGGTTAAAGCCGCTGAATTGTTCGCGTTTACCTTGCGTGTACGCGCAGGAAACACTGACGTTCTTACTGACGCAGAAGAAAACGTGCGTCAAAAATTACGTGCGGAAGGAGTGATGTAATGTCTAAAGGTAAAAAACGTTCTGGCGCTCGCCCTGGTCGTCCGCAGCCGTTGCGAGGTACTAAAGGCAAGCGTAAAGGCGCTCGTCTTTGGTATGTAGGTGGTCAACAATTTTAATTGCAGGGGCTTCGGCCCCTTACTTGAGGATAAATTATGTCTAATATTCAAACTGGCGCCGAGCGTATGCCGCATGACCTTTCCCATCTTGGCTTCCTTGCTGGTCAGATTGGTCGTCTTATTACCATTTCAACTACTCCGGTTATCGCTGGCGACTCCTTCGAGATGGACGCCGTTGGCGCTCTCCGTCTTTCTCCATTGCGTCGTGGCCTTGCTATTGACTCTACTGTAGACATTTTTACTTTTTATGTCCCTCATCGTCACGTTTATGGTGAACAGTGGATTAAGTTCATGAAGGATGGTGTTAATGCCACTCCTCTCCCGACTGTTAACACTACTGGTTATATTGACCATGCCGCTTTTCTTGGCACGATTAACCCTGATACCAATAAAATCCCTAAGCATTTGTTTCAGGGTTATTTGAATATCTATAACAACTATTTTAAAGCGCCGTGGATGCCTGACCGTACCGAGGCTAACCCTAATGAGCTTAATCAAGATGATGCTCGTTATGGTTTCCGTTGCTGCCATCTCAAAAACATTTGGACTGCTCCGCTTCCTCCTGAGACTGAGCTTTCTCGCCAAATGACGACTTCTACCACATCTATTGACATTATGGGTCTGCAAGCTGCTTATGCTAATTTGCATACTGACCAAGAACGTGATTACTTCATGCAGCGTTACCATGATGTTATTTCTTCATTTGGAGGTAAAACCTCTTATGACGCTGACAACCGTCCTTTACTTGTCATGCGCTCTAATCTCTGGGCATCTGGCTATGATGTTGATGGAACTGACCAAACGTCGTTAGGCCAGTTTTCTGGTCGTGTTCAACAGACCTATAAACATTCTGTGCCGCGTTTCTTTGTTCCTGAGCATGGCACTATGTTTACTCTTGCGCTTGTTCGTTTTCCGCCTACTGCGACTAAAGAGATTCAGTACCTTAACGCTAAAGGTGCTTTGACTTATACCGATATTGCTGGCGACCCTGTTTTGTATGGCAACTTGCCGCCGCGTGAAATTTCTATGAAGGATGTTTTCCGTTCTGGTGATTCGTCTAAGAAGTTTAAGATTGCTGAGGGTCAGTGGTATCGTTATGCGCCTTCGTATGTTTCTCCTGCTTATCACCTTCTTGAAGGCTTCCCATTCATTCAGGAACCGCCTTCTGGTGATTTGCAAGAACGCGTACTTATTCGCCACCATGATTATGACCAGTGTTTCCAGTCCGTTCAGTTGTTGCAGTGGAATAGTCAGGTTAAATTTAATGTGACCGTTTATCGCAATCTGCCGACCACTCGCGATTCAATCATGACTTCGTGATAAAAGATTGA&quot;
+
+phiorfs = findorfs(phi, finder=NaiveFinder, minlen=75, scheme=lors)
+
+124-element Vector{ORF{4, NaiveFinder}}:
+ ORF{NaiveFinder}(9:101, &#39;-&#39;, 3)
+ ORF{NaiveFinder}(100:627, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(223:447, &#39;-&#39;, 1)
+ ORF{NaiveFinder}(248:436, &#39;+&#39;, 2)
+ ORF{NaiveFinder}(257:436, &#39;+&#39;, 2)
+ ORF{NaiveFinder}(283:627, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(344:436, &#39;+&#39;, 2)
+ ORF{NaiveFinder}(532:627, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(636:1622, &#39;+&#39;, 3)
+ ORF{NaiveFinder}(687:1622, &#39;+&#39;, 3)
+ ORF{NaiveFinder}(774:1622, &#39;+&#39;, 3)
+ ORF{NaiveFinder}(781:1389, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(814:1389, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(829:1389, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(861:1622, &#39;+&#39;, 3)
+ ⋮
+ ORF{NaiveFinder}(4671:5375, &#39;+&#39;, 3)
+ ORF{NaiveFinder}(4690:4866, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(4728:5375, &#39;+&#39;, 3)
+ ORF{NaiveFinder}(4741:4866, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(4744:4866, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(4777:4866, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(4806:5375, &#39;+&#39;, 3)
+ ORF{NaiveFinder}(4863:5258, &#39;-&#39;, 3)
+ ORF{NaiveFinder}(4933:5019, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(4941:5375, &#39;+&#39;, 3)
+ ORF{NaiveFinder}(5082:5375, &#39;+&#39;, 3)
+ ORF{NaiveFinder}(5089:5325, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(5122:5202, &#39;-&#39;, 1)
+ ORF{NaiveFinder}(5152:5325, &#39;+&#39;, 1)
+ ORF{NaiveFinder}(5164:5325, &#39;+&#39;, 1)</code></pre><p>In the example above we calculated a score using the <code>lors</code> scoring scheme (see <a href="https://github.com/camilogarciabotero/BioMarkovChains.jl/blob/533e53d97cf5951f1ca050454bce1423ec8d7c36/src/transitions.jl#L179">lors</a> from the <a href="https://camilogarciabotero.github.io/BioMarkovChains.jl/dev/">BioMarkovChains.jl</a> package). The score is stored in the <code>score</code> subfield of the <code>ORF</code> .</p><p>All features can be accesed using a conviniente funciton called <code>features</code> that returns a <code>NamedTuple</code> with the features of the <code>ORF</code> and can be broadcasted to the entire collection of <code>ORF</code>s using the <code>.</code> syntax.</p><pre><code class="language-julia hljs">features.(phiorfs)
+
+124-element Vector{@NamedTuple{score::Float64}}:
+ (score = -3.002461366087374,)
+ (score = -10.814621287968222,)
+ (score = -5.344187934894264,)
+ (score = -1.316724559874126,)
+ (score = -1.796631200562138,)
+ (score = -3.2651518608269856,)
+ (score = -1.4019264441082822,)
+ (score = -2.3192349590107475,)
+ (score = 5.055524446434241,)
+ (score = 2.7116397224896436,)
+ (score = 2.2564640592402165,)
+ (score = 1.777499581940097,)
+ (score = 2.3474811908011186,)
+ (score = 2.38568188352799,)
+ (score = 2.498608044469827,)
+ ⋮
+ (score = -5.474837954151803,)
+ (score = 0.6909362932156138,)
+ (score = -5.900045211699447,)
+ (score = 1.2010656615619415,)
+ (score = 0.8541931309205604,)
+ (score = 2.7897961643147777,)
+ (score = -4.42890346770467,)
+ (score = -5.40624241726446,)
+ (score = -0.8080572222081075,)
+ (score = -5.571494087742448,)
+ (score = -4.882156920421228,)
+ (score = -5.639670353834974,)
+ (score = -0.8764121443326865,)
+ (score = -4.308687693802273,)
+ (score = -4.459423419810693,)</code></pre><h2 id="Analysing-Lamda-ORFs"><a class="docs-heading-anchor" href="#Analysing-Lamda-ORFs">Analysing Lamda ORFs</a><a id="Analysing-Lamda-ORFs-1"></a><a class="docs-heading-anchor-permalink" href="#Analysing-Lamda-ORFs" title="Permalink"></a></h2><p>In this case the <code>lors</code> calculates the log odds ratio of the ORF sequence given two Markov models (by default: ECOLICDS and ECOLINOCDS), one for the coding region and one for the non-coding region. The score is stored in the <code>score</code> field of the <code>NamedTuple</code> returned by the <code>features</code> function. By default the <code>lors</code> function return the base 2 logarithm of the odds ratio, so it is analogous to the bits of information that the ORF sequence is coding.</p><p>Now we can even analyse how is the distribution of the ORFs&#39; scores as a function of their lengths compared to random sequences.</p><pre><code class="language-julia hljs">
+lambda = fasta_to_dna(&quot;test/data/NC_001416.1.fasta&quot;)[1]
+
+lambaorfs = findorfs(lambda, finder=NaiveFinder, minlen=100, scheme=lors)
+
+lamdascores = score.(lambaorfs)
+lambdalengths = length.(lambaorfs)
+
+## get some random sequences of variable lengths
+vseqs = LongDNA[]
+for i in 1:708
+    push!(vseqs, randdnaseq(rand(100:1000)))
+end
+
+## get the lengths and scores of the random generated sequences
+randlengths = length.(vseqs)
+randscores = lors.(vseqs)
+
+## plot the scores as a function of the lengths
+using CairoMakie
+
+f = Figure()
+ax = Axis(f[1, 1], xlabel=&quot;Length&quot;, ylabel=&quot;Log-odds ratio (Bits)&quot;)
+
+scatter!(ax,
+    randlengths,
+    randscores,
+    marker = :circle, 
+    markersize = 6, 
+    color = :black, 
+    label = &quot;Random sequences&quot;
+)
+scatter!(ax,
+    lambdalengths, 
+    lambdascores, 
+    marker = :rect, 
+    markersize = 6, 
+    color = :blue, 
+    label = &quot;Lambda ORFs&quot;
+)
+
+axislegend(ax)
+
+f</code></pre><p><img src="../assets/lors-lamda.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../naivefinder/">« Finding ORFs</a><a class="docs-footer-nextpage" href="../simplecodingrule/">A Simple Coding Rule »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.5.0 on <span class="colophon-date" title="Wednesday 3 July 2024 22:47">Wednesday 3 July 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
