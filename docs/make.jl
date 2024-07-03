@@ -18,6 +18,7 @@ makedocs(;
     pages = [
         "Home" => "index.md",
         "Finding ORFs" => "naivefinder.md",
+        "Scoring ORFs" => "features.md",
         "A Simple Coding Rule" => "simplecodingrule.md",
         "Wrtiting ORFs In Files" => "iodocs.md",
         "API" => "api.md",
