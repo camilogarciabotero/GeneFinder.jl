@@ -89,7 +89,7 @@ In this case the `lors` calculates the log odds ratio of the ORF sequence given 
 Now we can even analyse how is the distribution of the ORFs' scores as a function of their lengths compared to random sequences.
 
 ```julia
-lambda = fasta_to_dna("test/data/NC_001416.1.fasta")[1]
+lambda = fasta2bioseq("test/data/NC_001416.1.fasta")[1]
 
 lambaorfs = findorfs(lambda, finder=NaiveFinder, minlen=100, scheme=lors)
 
