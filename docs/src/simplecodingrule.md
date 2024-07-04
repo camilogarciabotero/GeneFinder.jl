@@ -1,36 +1,3 @@
-## Scoring a sequence using a Markov model
-
-A sequence of DNA could be scored using a Markov model of the transition probabilities of a known sequence. This could be done using a *log-odds ratio score*, which is the logarithm of the ratio of the transition probabilities of the sequence given a model and. The log-odds ratio score is defined as:
-
-```math
-\begin{align}
-S(x) = \sum_{i=1}^{L} \beta_{x_{i}x} = \sum_{i=1} \log \frac{a^{\mathscr{m}_{1}}_{i-1} x_i}{a^{\mathscr{m}_{2}}_{i-1} x_i}
-\end{align}
-```
-
-Where the ``a^{\mathscr{m}_{1}}_{i-1} x_i`` is the transition probability of the first model (in this case the calculated for the given sequence) from the state ``x_{i-1}`` to the state ``x_i`` and ``a^{\mathscr{m}_{2}}_{i-1} x_i`` is the transition probability of the second model from the state ``x_{i-1}`` to the state ``x_i``. The score is the sum of the log-odds ratio of the transition probabilities of the sequence given the two models.
-
-In the current implementation the second model is a CDS transition probability model of *E. coli*. This classification score is implemented in the `naivescorefinder` method. This method will return ORFs with the associated score of the sequence given the CDS model of *E. coli*.
-
-```julia
-using GeneFinder, BioSequences
-
-seq = dna"TTCGTCAGTCGTTCTGTTTCATTCAATACGATAGTAATGTATTTTTCGTGCATTTCCGGTGGAATCGTGCCGTCCAGCATAGCCTCCAGATATCCCCTTATAGAGGTCAGAGGGGAACGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGATCATCCTCGGAACGGGCAATTTCGCTTGCCATATAATTCAGACAGGAAGCCAGATAACCGATTTCATCCTCACTATCGACCTGAAATTCATAATGCATATTACCGGCAGCATACTGCTCTGTGGCATGAGTGATCTTCCTCAGAGGAATATATACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAGCAGGAACAGGATTGCCAGGGTGATATAGGAAATATTCAGCAGGTTGTTACAGGATTTCTGAATATCATTCATATCAGTATGGATGACTACATAGCCTTTTACCTTGTAGTTGGAGGTAATGGGAGCAAATACAGTAAGTACATCCGAATCAAAATTACCGAAGAAATCACCAACAATGTAATAGGAGCCGCTGGTTACGGTCGAATCAAAATTCTCAATGACAACCACATTCTCCACATCTAAGGGACTATTGGTATCCAGTACCAGTCGTCCGGAGGGATTGATGATGCGAATCTCGGAATTCAGGTAGACCGCCAGGGAGTCCAGCTGCATTTTAACGGTCTCCAAAGTTGTTTCACTGGTGTACAATCCGCCGGCATAGGTTCCGGCGATCAGGGTTGCTTCGGAATAGAGACTTTCTGCCTTTTCCCGGATCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAACAATGATGAAACCAAATACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAAAGTGTTTTTTTCATAACAAATCCTGCTTTTGGTATGACTTAATTACGTACTTCGAATTTATAGCCGATGCCCCAGATGGTGCTGATCTTCCAGTTGGCATGATCCTTGATCTTCTC"
-
-findorfs(seq, minlen=75, finder=NaiveFinder)
-
-9-element Vector{ORF{4, NaiveFinder}}:
- ORF{NaiveFinder}(37:156, '+', 1,)
- ORF{NaiveFinder}(194:268, '-', 2)
- ORF{NaiveFinder}(194:283, '-', 2)
- ORF{NaiveFinder}(249:347, '+', 3)
- ORF{NaiveFinder}(426:590, '+', 3)
- ORF{NaiveFinder}(565:657, '+', 1)
- ORF{NaiveFinder}(650:727, '-', 2)
- ORF{NaiveFinder}(786:872, '+', 3)
- ORF{NaiveFinder}(887:976, '-', 2)
-```
-
 ## The *log-odds ratio* decision rule
 
 The sequence probability given a transition probability model could be used as the source of a sequence classification based on a decision rule to classify whether a sequence correspond to a model or another. Now, imagine we got two DNA sequence transition models, a CDS model and a No-CDS model. The *log-odds ratio* decision rule could be establish as:
@@ -46,7 +13,11 @@ Where the ``P_{C}`` is the probability of the sequence given a CDS model, ``P_{N
 In this package we have implemented this rule and call some basic models of CDS and No-CDS of *E. coli* from Axelson-Fisk (2015) work (implemented in `BioMarkovChains.jl` package). To check whether a random sequence could be coding based on these decision we use the predicate `log_odds_ratio_decision_rule` with the `ECOLICDS` and `ECOLINOCDS` models:
 
 ```julia
-orfsdna = findorfs(seq, minlen=75, alternative_start=true) .|> sequence
+using GeneFinder, BioSequences
+
+seq = dna"TTCGTCAGTCGTTCTGTTTCATTCAATACGATAGTAATGTATTTTTCGTGCATTTCCGGTGGAATCGTGCCGTCCAGCATAGCCTCCAGATATCCCCTTATAGAGGTCAGAGGGGAACGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGATCATCCTCGGAACGGGCAATTTCGCTTGCCATATAATTCAGACAGGAAGCCAGATAACCGATTTCATCCTCACTATCGACCTGAAATTCATAATGCATATTACCGGCAGCATACTGCTCTGTGGCATGAGTGATCTTCCTCAGAGGAATATATACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAGCAGGAACAGGATTGCCAGGGTGATATAGGAAATATTCAGCAGGTTGTTACAGGATTTCTGAATATCATTCATATCAGTATGGATGACTACATAGCCTTTTACCTTGTAGTTGGAGGTAATGGGAGCAAATACAGTAAGTACATCCGAATCAAAATTACCGAAGAAATCACCAACAATGTAATAGGAGCCGCTGGTTACGGTCGAATCAAAATTCTCAATGACAACCACATTCTCCACATCTAAGGGACTATTGGTATCCAGTACCAGTCGTCCGGAGGGATTGATGATGCGAATCTCGGAATTCAGGTAGACCGCCAGGGAGTCCAGCTGCATTTTAACGGTCTCCAAAGTTGTTTCACTGGTGTACAATCCGCCGGCATAGGTTCCGGCGATCAGGGTTGCTTCGGAATAGAGACTTTCTGCCTTTTCCCGGATCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAACAATGATGAAACCAAATACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAAAGTGTTTTTTTCATAACAAATCCTGCTTTTGGTATGACTTAATTACGTACTTCGAATTTATAGCCGATGCCCCAGATGGTGCTGATCTTCCAGTTGGCATGATCCTTGATCTTCTC"
+
+orfsdna = findorfs(seq, finder=NaiveFinder, minlen=75, alternative_start=true) .|> sequence
 
 20-element Vector{NucSeq{4, DNAAlphabet{4}}}
  ATGTATTTTTCGTGCATTTCCGGTGGAATCGTGCCGTCC…CGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGA
@@ -124,7 +95,6 @@ orfs[iscoding.(orfsdna)]
  ORF{NaiveFinder}(194:283, '-', 2, -0.010354615336667268)
  ORF{NaiveFinder}(650:727, '-', 2, -0.04303976584597201)
 ```
-
 
 Or in a single line using another genome sequence:
 
