@@ -29,7 +29,7 @@ sequence = randdnaseq(120)
 findorfs(sequence, finder=NaiveFinder)
 
 1-element Vector{ORF}:
- ORF{NaiveFinder}(77:118, '-', 2, 0.0)
+ ORF{NaiveFinder}(77:118, '-', 2)
 ```
 
 """
