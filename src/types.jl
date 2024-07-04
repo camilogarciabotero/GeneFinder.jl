@@ -42,7 +42,7 @@ The `ORF` struct represents an Open Reading Frame (ORF) in genomics.
 - `features::Features`: The features associated with the ORF.
 - `scheme::Union{Nothing,Function}`: The scheme used for the ORF.
 
-# Constructor
+# Main Constructor
 
 ```julia
 ORF{N,F}(
@@ -54,7 +54,7 @@ ORF{N,F}(
     features::Features,
     scheme::Union{Nothing,Function}
 )
-
+```
 # Example
 
 A full instance `ORF`
@@ -194,7 +194,7 @@ Extracts the features from an `ORF` object.
 - `i::ORF{N,F}`: An `ORF` object.
 
 # Returns
-The features of the `ORF` object.
+The features of the `ORF` object. Those could be defined by each `GeneFinderMethod`.
 
 """
 function features(i::ORF{N,F}) where {N,F}

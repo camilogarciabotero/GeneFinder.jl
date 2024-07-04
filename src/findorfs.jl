@@ -1,14 +1,14 @@
 export findorfs
 
 """
-    findorfs(sequence::NucleicSeqOrView{DNAAlphabet{N}}; ::M, kwargs...) where {N, M<:GeneFinderMethod}
+    findorfs(sequence::NucleicSeqOrView{DNAAlphabet{N}}; ::F, kwargs...) where {N, F<:GeneFinderMethod}
 
 This is the main interface method for finding open reading frames (ORFs) in a DNA sequence.
 
 It takes the following required arguments:
 
 - `sequence`: The nucleic acid sequence to search for ORFs.
-- `method`: The algorithm used to find ORFs. It can be either `NaiveFinder()`, `NaiveFinderScored()` or yet other implementations.
+- `finder`: The algorithm used to find ORFs. It can be either `NaiveFinder`, `NaiveCollector` or yet other implementations.
 
 ## Keyword Arguments regardless of the finder method:
 - `alternative_start::Bool`: A boolean indicating whether to consider alternative start codons. Default is `false`.
@@ -26,7 +26,7 @@ sequence = randdnaseq(120)
 120nt DNA Sequence:
  GCCGGACAGCGAAGGCTAATAAATGCCCGTGCCAGTATC…TCTGAGTTACTGTACACCCGAAAGACGTTGTACGCATTT
 
-findorfs(sequence, NaiveFinder())
+findorfs(sequence, finder=NaiveFinder)
 
 1-element Vector{ORF}:
  ORF{NaiveFinder}(77:118, '-', 2, 0.0)
