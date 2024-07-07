@@ -1,5 +1,5 @@
 import GenomicFeatures: first, last, length, strand, groupname, metadata
-import FASTX: sequence
+# import FASTX: sequence
 
 export Features, RBS, ORF
 export features, sequence, source
