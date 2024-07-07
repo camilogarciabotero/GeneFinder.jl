@@ -22,8 +22,8 @@ function write_orfs_bed(
     alternative_start::Bool = false,
     minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    seq = fasta2bioseq(input)[1]
-    orfs = findorfs(seq; finder, alternative_start, minlen)
+    # seq = fasta2bioseq(input)[1]
+    orfs = findorfs(input; finder, alternative_start, minlen)
     @inbounds for orf in orfs
         println(output, orf.first, "\t", orf.last, "\t", orf.strand, "\t", orf.frame)
     end
@@ -36,8 +36,8 @@ function write_orfs_bed(
     alternative_start::Bool = false,
     minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    seq = fasta2bioseq(input)[1]
-    orfs = findorfs(seq; finder, alternative_start, minlen)
+    # seq = fasta2bioseq(input)[1]
+    orfs = findorfs(input; finder, alternative_start, minlen)
     open(output, "w") do f
         @inbounds for orf in orfs
             write(f, "$(orf.first)\t$(orf.last)\t$(orf.strand)\t$(orf.frame)\n")
@@ -81,14 +81,14 @@ function write_orfs_fna(
     alternative_start::Bool = false, 
     minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    seq = fasta2bioseq(input)[1]
-    orfs = findorfs(seq; finder, alternative_start, minlen)
+    # seq = fasta2bioseq(input)[1]
+    orfs = findorfs(input; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
         println(output, ">", orf.groupname, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " score=", orf.features.fts.score)
-        println(output, sequence(orf))
+        println(output, input[orf]) #
     end
 end
 
@@ -99,14 +99,14 @@ function write_orfs_fna(
     alternative_start::Bool = false,
     minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    seq = fasta2bioseq(input)[1]
-    orfs = findorfs(seq; finder, alternative_start, minlen)
+    # seq = fasta2bioseq(input)[1]
+    orfs = findorfs(input; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
         for (i, orf) in enumerate(orfs)
             id = string(lpad(string(i), padding, "0"))
-            write(f, ">$(orf.groupname) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) score=$(orf.features.fts.score)\n$(sequence(orf))\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
+            write(f, ">$(orf.groupname) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) score=$(orf.features.fts.score)\n$(input[orf]))\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
         end
     end
 end
@@ -148,14 +148,14 @@ function write_orfs_faa(
     minlen::Int64 = 6,
     code::GeneticCode = ncbi_trans_table[1]
 ) where {N,F<:GeneFinderMethod}
-    seq = fasta2bioseq(input)[1]
-    orfs = findorfs(seq; finder, alternative_start, minlen)
+    # seq = fasta2bioseq(input)[1]
+    orfs = findorfs(input; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        println(output, ">ORF", id, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " score=", orf.features.fts.score)
-        println(output, translate(orf; code))
+        println(output, ">", orf.groupname, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " score=", orf.features.fts.score)
+        println(output, translate(input[orf]; code))
     end
 end
 
@@ -167,14 +167,14 @@ function write_orfs_faa(
     minlen::Int64 = 6,
     code::GeneticCode = ncbi_trans_table[1]
 ) where {N,F<:GeneFinderMethod}
-    seq = fasta2bioseq(input)[1]
-    orfs = findorfs(seq; finder, alternative_start, minlen)
+    # seq = fasta2bioseq(input)[1]
+    orfs = findorfs(input; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
         for (i, orf) in enumerate(orfs)
             id = string(lpad(string(i), padding, "0"))
-            write(f, ">ORF$(id) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) score=$(orf.features.fts.score)\n$(translate(orf; code))\n")
+            write(f, ">$(orf.groupname) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) score=$(orf.features.fts.score)\n$(translate(input[orf]; code))\n")
         end
     end
 end
@@ -204,8 +204,8 @@ function write_orfs_gff(
     alternative_start::Bool = false,
     minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    seq = fasta2bioseq(input)[1]
-    orfs = findorfs(seq; finder, alternative_start, minlen)
+    # seq = fasta2bioseq(input)[1]
+    orfs = findorfs(input; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
@@ -222,8 +222,8 @@ function write_orfs_gff(
     alternative_start::Bool = false,
     minlen::Int64 = 6
 ) where {N, F<:GeneFinderMethod}
-    seq = fasta2bioseq(input)[1]
-    orfs = findorfs(seq; finder, alternative_start, minlen)
+    # seq = fasta2bioseq(input)[1]
+    orfs = findorfs(input; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
