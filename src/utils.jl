@@ -1,4 +1,4 @@
-export hasprematurestop, fasta2bioseq, _varname, _varsymbol
+export hasprematurestop, _varname, _varsymbol #fasta2bioseq
 
 # General purposes methods supporting main functions
 
@@ -34,11 +34,11 @@ end
 
 Converts a FASTA formatted file (even if it is a multi-fasta) to an array of `LongSequence{DNAAlphabet{4}}` objects.
 """
-function fasta2bioseq(input::AbstractString)::Vector{LongSequence{DNAAlphabet{4}}}
-    FASTAReader(open(input)) do reader
-        return [LongSequence{DNAAlphabet{4}}(sequence(record)) for record in reader]
-    end
-end
+# function fasta2bioseq(input::AbstractString)::Vector{LongSequence{DNAAlphabet{4}}}
+#     FASTAReader(open(input)) do reader
+#         return [LongSequence{DNAAlphabet{4}}(sequence(record)) for record in reader]
+#     end
+# end
 
 function _varname(var::Any)
     for name in names(Main)
