@@ -1,4 +1,3 @@
-
 @testitem "ORF instances" begin
     # cd(@__DIR__)
     using BioSequences, GeneFinder
@@ -100,7 +99,14 @@ end
 @testitem "NaiveFinder lambda" begin
     cd(@__DIR__) # Required to find the fasta file
 
-    using BioSequences, GeneFinder
+    using BioSequences, GeneFinder, FASTX
+
+    function fasta2bioseq(input::AbstractString)::Vector{LongSequence{DNAAlphabet{4}}}
+        FASTAReader(open(input)) do reader
+            return [LongSequence{DNAAlphabet{4}}(FASTX.sequence(record)) for record in reader]
+        end
+    end
+
     # Lambda phage tests
     # Compare to https://github.com/jonas-fuchs/viral_orf_finder/blob/master/orf_finder.py 
     # Salisbury and Tsorukas (2019) paper used the Lambda phage genome with 73 CDS and 545 non-CDS ORFs (a total of 618).
@@ -110,7 +116,7 @@ end
     # findorfs (GeneFinder.jl) --> 885
     # NCBI ORFfinder --> 375 ORFs
     # orfipy --> 375 (`orfipy NC_001416.1.fasta --start ATG --include-stop --min 75`)
-    
+
     lambda = fasta2bioseq("data/NC_001416.1.fasta")[1]
     lambdaorfs = findorfs(lambda, finder=NaiveFinder, minlen=75)
     
