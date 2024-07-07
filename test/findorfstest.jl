@@ -65,21 +65,27 @@ end
     orfs = findorfs(seq, finder=NaiveFinder, minlen=75, alternative_start=true)
     @test length(orfs) == 20
 
-    orfstest = [ 
-        ORF{NaiveFinder}(37:156, '+', 1), 
-        ORF{NaiveFinder}(48:347, '+', 3), # Appears in Pyrodigal 
-        ORF{NaiveFinder}(67:156, '+', 1),
-        ORF{NaiveFinder}(126:347, '+', 3),
-        ORF{NaiveFinder}(182:289, '+', 2),
-        ORF{NaiveFinder}(194:268, '-', 2),
-        ORF{NaiveFinder}(194:283, '-', 2),
-        ORF{NaiveFinder}(249:347, '+', 3),
-        ORF{NaiveFinder}(286:375, '+', 1),
-        ORF{NaiveFinder}(426:590, '+', 3), # Appears in Pyrodigal
+    orfstest = [
+                        # |- oubounds notation for the NCBI ORFfinder 
+        #               (>3:890, '-', 3)      NCBI-ORFfinder
+        ORF{NaiveFinder}(37:156, '+', 1),   # NCBI-ORFfinder
+        ORF{NaiveFinder}(48:347, '+', 3),   # Pyrodigal & NCBI-ORFfinder
+        ORF{NaiveFinder}(67:156, '+', 1),   
+        #               (153:347, '+', 3)     NCBI-ORFfinder 
+        ORF{NaiveFinder}(126:347, '+', 3),  
+        ORF{NaiveFinder}(182:289, '+', 2),  # NCBI-ORFfinder
+        ORF{NaiveFinder}(194:268, '-', 2),   
+        ORF{NaiveFinder}(194:283, '-', 2),  # NCBI-ORFfinder
+        ORF{NaiveFinder}(249:347, '+', 3),  
+        ORF{NaiveFinder}(286:375, '+', 1),  
+        #               (405:590, '+', 3)     NCBI-ORFfinder
+        ORF{NaiveFinder}(426:590, '+', 3),  # Pyrodigal
         ORF{NaiveFinder}(446:520, '-', 2),
         ORF{NaiveFinder}(446:523, '-', 2),
+        #               (538:657, '+', 1)     NCBI-ORFfinder
         ORF{NaiveFinder}(565:657, '+', 1),
         ORF{NaiveFinder}(650:727, '-', 2),
+        #               (675:872, '+', 3)     NCBI-ORFfinder
         ORF{NaiveFinder}(698:820, '+', 2),
         ORF{NaiveFinder}(746:820, '+', 2),
         ORF{NaiveFinder}(786:872, '+', 3),
@@ -88,15 +94,17 @@ end
         ORF{NaiveFinder}(887:976, '-', 2),
     ]
 
+    @test println(orfs) == println(orfstest)
 end
 
 @testitem "NaiveFinder lambda" begin
     cd(@__DIR__) # Required to find the fasta file
-    
+
     using BioSequences, GeneFinder
     # Lambda phage tests
     # Compare to https://github.com/jonas-fuchs/viral_orf_finder/blob/master/orf_finder.py 
-    # Salisbury and Tsorukas (2019) paper used the Lambda phage genome with 73 CDS and 545 non-CDS ORFs (a total of 618) to compare predictions between several Gene Finder programs
+    # Salisbury and Tsorukas (2019) paper used the Lambda phage genome with 73 CDS and 545 non-CDS ORFs (a total of 618).
+    
     # For a minimal length of 75 nt the following ORFs are predicted: 
     # orf_finder.py --> 885 (222 complete)
     # findorfs (GeneFinder.jl) --> 885
