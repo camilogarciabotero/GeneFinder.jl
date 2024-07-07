@@ -63,24 +63,24 @@ The `NaiveFinder` method takes a LongSequence{DNAAlphabet{4}} sequence and retur
 
 """
 function NaiveFinder(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}};
+    seq::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
     minlen::Int64 = 6,
     scheme::Union{Nothing,Function} = nothing,
     kwargs...
 ) where {N}
-    seqlen = length(sequence)
+    seqlen = length(seq)
     framedict = Dict(0 => 3, 1 => 1, 2 => 2)
     orfs = Vector{ORF{N,NaiveFinder}}()
     
     # Handle the sequence name
-    seqname = _varname(sequence)
+    seqname = _varname(seq)
     if seqname === nothing
         seqname = "unnamedseq"
     end
 
     for strand in (STRAND_POS, STRAND_NEG)
-        s = strand == STRAND_NEG ? reverse_complement(sequence) : sequence
+        s = strand == STRAND_NEG ? reverse_complement(seq) : seq
         @inbounds for location in @views _locationiterator(s; alternative_start)
             if length(location) >= minlen
                 #main fields
@@ -91,8 +91,8 @@ function NaiveFinder(
                 if scheme === nothing
                     scr = 0.0
                 else
-                    seq = strand == STRAND_POS ? @view(sequence[start:stop]) : reverse_complement(@view(sequence[start:stop]))
-                    scr = scheme(seq; kwargs...)
+                    orientseq = strand == STRAND_POS ? @view(seq[start:stop]) : reverse_complement(@view(seq[start:stop]))
+                    scr = scheme(orientseq; kwargs...)
                 end
 
                 #populate the feature tuple
