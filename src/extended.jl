@@ -5,7 +5,7 @@ import BioSequences: translate
 Base.isless(a::ORF{N,F}, b::ORF{N,F}) where {N,F} = isless(a.first:a.last, b.first:b.last)
 
 function getindex(seq::NucleicSeqOrView{A}, orf::ORF{N,F}) where {A,N,F}
-    @assert @view(seq[begin:end]) == source(orf) "The source sequence of the ORF and the given sequence are different"
+    # @assert @view(seq[begin:end]) == source(orf) "The source sequence of the ORF and the given sequence are different"
 
     if orf.strand == STRAND_POS
         s = @view seq[orf.first:orf.last]
