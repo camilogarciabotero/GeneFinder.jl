@@ -107,7 +107,7 @@ lambda = fasta2bioseq("test/data/NC_001416.1.fasta")[1]
 
 lambaorfs = findorfs(lambda, finder=NaiveFinder, minlen=100, scheme=lors)
 
-lamdascores = score.(lambaorfs)
+lambdascores = score.(lambaorfs)
 lambdalengths = length.(lambaorfs)
 
 ## get some random sequences of variable lengths
