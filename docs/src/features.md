@@ -103,9 +103,17 @@ As mentioned above the `lors` calculates the log odds ratio of the ORF sequence 
 Now we can even analyse how is the distribution of the ORFs' scores as a function of their lengths compared to random sequences.
 
 ```julia
-lambda = fasta2bioseq("test/data/NC_001416.1.fasta")[1]
+using FASTX, CairoMakie
 
-lambaorfs = findorfs(lambda, finder=NaiveFinder, minlen=100, scheme=lors)
+lambdafile = "test/data/NC_001416.1.fasta"
+
+# read the lambda genome as a `BioSequence`
+open(FASTA.Reader, lambdafile) do reader
+    lambdaseq = FASTX.sequence(LongDNA{4}, collect(reader)[1])
+end
+
+# find the ORFs in the lambda genome
+lambaorfs = findorfs(lambdaseq, finder=NaiveFinder, minlen=100, scheme=lors)
 
 lambdascores = score.(lambaorfs)
 lambdalengths = length.(lambaorfs)
@@ -121,8 +129,6 @@ randlengths = length.(vseqs)
 randscores = lors.(vseqs)
 
 ## plot the scores as a function of the lengths
-using CairoMakie
-
 f = Figure()
 ax = Axis(f[1, 1], xlabel="Length", ylabel="Log-odds ratio (Bits)")
 
