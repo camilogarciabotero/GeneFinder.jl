@@ -1,12 +1,6 @@
 @testitem "writting methods" begin
     cd(@__DIR__) # Required to find the fasta file    
     using BioSequences, GeneFinder, FASTX
-
-    function fasta2bioseq(input::AbstractString)::Vector{LongSequence{DNAAlphabet{4}}}
-        FASTAReader(open(input)) do reader
-            return [LongSequence{DNAAlphabet{4}}(FASTX.sequence(record)) for record in reader]
-        end
-    end
 # 
     # Test case 1 fna
 # 
