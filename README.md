@@ -24,32 +24,34 @@
 
 >This is a species-agnostic, algorithm extensible, sequence-anonymous (genome, metagenomes) *gene finder* library framework for the Julia Language.
 
-The main goal of `GeneFinder` is to create a versatile module that enables apply different implemented algorithm to DNA sequences. See, for instance, BioAlignment implementations of different sequence alignment algorithms (local, global, edit-distance).
+The `GeneFinder` package aims to be a versatile module that enables the application of different gene finding algorithms to the `BioSequence` type, by providing a common interface and a flexible data structure to store the predicted ORF or genes. The package is designed to be easily extensible, allowing users to implement their own algorithms and integrate them into the framework.
+
+!!! warning
+  This package is currently under development and is not yet ready for production use. The API is subject to change.
 
 ## Installation
 
-You can install GeneFinder from the julia REPL. Press `]` to enter pkg mode, and enter the following:
+You can install `GeneFinder` from the julia REPL. Press `]` to enter pkg mode, and enter the following command:
 
 ```julia
 add GeneFinder
 ```
 
-If you are interested in the cutting edge of the development, please check out
-the master branch to try new features before release.
-
 ## Finding complete and overlapped ORFs
 
-The first implemented function is `findorfs` a very non-restrictive ORF finder function that will catch all ORFs in a dedicated structure. Note that this will catch random ORFs not necesarily genes since it has no ORFs size or overlapping condition contraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFs.
+The main package function is `findorfs`. Under the hood, the `findorfs` function is an interface for different gene finding algorithms that can be plugged using the `finder` keyword argument. By default it uses the `NaiveFinder` algorithm, which is a simple algorithm that finds all (non-outbounded) ORFs in a DNA sequence (see the [NaiveFinder](https://camilogarciabotero.github.io/GeneFinder.jl/dev/api/#GeneFinder.NaiveFinder-Union{Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}}},%20Tuple{N}}%20where%20N) documentation for more details).
+
+!!! note
+  The `minlen` kwarg in the `NaiveFinder` mehtod has been set to 6nt, so it will catch random ORFs not necesarily genes thus it might consider `dna"ATGTGA"` -> `aa"M*"` as a plausible ORF.
+
+Here is an example of how to use the `findorfs` function with the `NaiveFinder` algorithm:
 
 ```julia
 using BioSequences, GeneFinder
 
 # > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
 seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
-```
-Now lest us find the ORFs
 
-```julia
 orfs = findorfs(seq, finder=NaiveFinder) # use finder=NaiveCollector as an alternative
 
 12-element Vector{ORF{4, NaiveFinder}}:
@@ -67,7 +69,7 @@ orfs = findorfs(seq, finder=NaiveFinder) # use finder=NaiveCollector as an alter
  ORF{NaiveFinder}(695:706, '+', 2)
 ```
 
-The `ORF` structure contains also the sequence of the ORF, the frame, and several features. If you want to get the sequence of the ORFs you can broadcast the `sequence` function to safely extract the sequences of all ORFs.
+The `ORF` structure displays the location, frame, and strand, but currently does not include the sequence *per se*. To extract the sequence of an `ORF` instance, you can use the `sequence` method directly on it, or you can also broadcast it over the `orfs` collection using the dot syntax `.`:
 
 ```julia
 sequence.(orfs)
@@ -107,9 +109,41 @@ translate.(orfs)
  MQP*
 ```
 
-## Writting ORF information into bioinformatic formats
+## Let's score the ORFs
 
-This package facilitates now the creation of `FASTA`, `BED`, and `GFF` files, specifically extracting Open Reading Frame (ORF) information from `BioSequence` instances, particularly those of type `NucleicSeqOrView{A} where A`, and then writing the information into the desired format.
+ORFs sequences can be scored using different schemes that evaluate them under a biological context. The `NaiveFinder` algorithm provides a simple `scheme` kwarg that allows scoring the ORFs based on any method that takes a `BioSequence` as input, returning a score.
+
+A commonly used scoring scheme for ORFs is the *log-odds ratio* score. This score is based on the likelihood of a sequence belonging to a specific stochastic model, such as coding or non-coding. The [BioMarkovChains](https://github.com/camilogarciabotero/BioMarkovChains.jl) package provides a `log_odds_ratio_score` method (currently imported), also known as `lors`, which can be used to score ORFs using the log-odds ratio approach.
+
+```julia
+orfs = findorfs(seq, finder=NaiveFinder, scheme=lors)
+```
+
+The `score` method can be used later to extract the score of the ORFs.
+
+```julia
+score.(orfs)
+
+12-element Vector{Float64}:
+ 0.469404606944017
+ 1.0174520899042823
+ 1.5914902556997463
+ 0.9772187907841964
+ 0.6106494455192994
+ 0.7089167973379216
+ 0.469404606944017
+ 1.5523291911446804
+ 0.5282685400427601
+ 0.6106494455192994
+ 0.7405746713921604
+ 0.469404606944017
+```
+
+To see more about scoring ORFs, check out the [Scoring ORFs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/features/) section in the documentation.
+
+## Writting ORFs   into bioinformatic formats
+
+`GeneFinder` also now facilitates the generation of `FASTA`, `BED`, and `GFF` files directly from the found ORFs. This feature is particularly useful for downstream analysis and visualization of the ORFs. To accomplish this, the package provides the following functions: `write_orfs_fna`, `write_orfs_faa`, `write_orfs_bed`, and `write_orfs_gff`.
 
 Functionality:
 
@@ -122,8 +156,7 @@ The package provides four distinct functions for writing files in different form
 | `write_orfs_bed`    | Outputs information in BED format.                           |
 | `write_orfs_gff`    | Generates files in GFF format.                              |
 
-
-All these functions support processing both `BioSequence` instances and external `FASTA` files. In the case of a `BioSequence` instace into external files, simply provide the path to the `FASTA` file using a `String` to the path. To demonstrate the use of the `write_*` methods with a `BioSequence`, consider the following example:
+All these function support processing `BioSequences` instances. To demonstrate the use of the `write_*` methods with a `BioSequence`, consider the following example:
 
 ```julia
 using BioSequences, GeneFinder
@@ -132,7 +165,7 @@ using BioSequences, GeneFinder
 seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
 ```
 
-Once a `BioSequence` object has been instantiated, the `write_orfs_fna` function proves useful for generating a `FASTA` file containing the nucleotide sequences of the ORFs. Notably, the `write_orfs*` methods support either an `IOStream` or an `IOBuffer` as an output argument, allowing flexibility in directing the output either to a file or a buffer. In the following example, we demonstrate writing the output directly to a file.
+Once a `BioSequence` object has been created, the `write_orfs_fna` function proves useful for generating a `FASTA` file containing the nucleotide sequences of the ORFs. Notably, the `write_orfs*` methods support either an `IOStream` or an `IOBuffer` as an output argument, allowing flexibility in directing the output either to a file or a buffer. In the following example, we demonstrate writing the output directly to a file.
 
 ```julia
 outfile = "LFLS01000089.fna"
