@@ -1,16 +1,9 @@
 export iscoding
 
 @doc raw"""
-    iscoding(
-        sequence::LongSequence{DNAAlphabet{4}},
-        scoring::NaiveScoringScheme;
-        codingmodel::BioMarkovChain,
-        noncodingmodel::BioMarkovChain,
-        η::Float64 = 1e-5
-        )
+    iscoding(sequence::LongSequence{DNAAlphabet{4}}; criteria::Function = lordr, kwargs...) -> Bool
 
 Check if a given DNA sequence is likely to be coding based on a scoring scheme.
-
 
 ```
 sequence = dna"ATGGCATCTAG"
@@ -28,12 +21,11 @@ function iscoding(
 end
 
 function iscoding(
-    orf::ORF{N,F};
+    orf::ORF{F};
     criteria::Function = lordr,
     kwargs...
-) where {N,F<:GeneFinderMethod}
+) where {F<:GeneFinderMethod}
     return criteria(sequence(orf); kwargs...)
 end
-
 
 # iscoding.(seq[i for i in allorfs])
