@@ -37,7 +37,7 @@ function findorfs(
     sequence::NucleicSeqOrView{DNAAlphabet{N}};
     finder::Type{F}=NaiveFinder,
     kwargs...
-) where {N, F<:GeneFinderMethod}
+) where {N,F<:GeneFinderMethod}
     return finder(sequence; kwargs...)::Vector{ORF{N,F}}
 end
 
