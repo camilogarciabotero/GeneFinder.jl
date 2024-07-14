@@ -13,7 +13,11 @@ This is an iterator function that uses regular expressions to search the entire 
 !!! note
     As a note of the implementation we want to expand on how the ORFs are found:
 
-    The expression `(?:[N]{3})*?` serves as the boundary between the start and stop codons. Within this expression, the character class `[N]{3}` captures exactly three occurrences of any character (representing nucleotides using IUPAC codes). This portion functions as the regular codon matches. Since it is enclosed within a non-capturing group `(?:)` and followed by `*?`, it allows for the matching of intermediate codons, but with a preference for the smallest number of repetitions. 
+    The expression `(?:[N]{3})*?` serves as the boundary between the start and stop codons. 
+    Within this expression, the character class `[N]{3}` captures exactly three occurrences of any character (representing nucleotides using IUPAC codes). 
+    This portion functions as the regular codon matches. 
+    Since it is enclosed within a non-capturing group `(?:)` and followed by `*?`, it allows for the matching of intermediate codons,
+    but with a preference for the smallest number of repetitions. 
     
     In summary, the regular expression `ATG(?:[N]{3})*?T(AG|AA|GA)` identifies patterns that start with "ATG," followed by any number of three-character codons (represented by "N" in the IUPAC code), and ends with a stop codon "TAG," "TAA," or "TGA." This pattern is commonly used to identify potential protein-coding regions within genetic sequences.
 
@@ -21,13 +25,13 @@ This is an iterator function that uses regular expressions to search the entire 
 
 """
 function _locationiterator(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}};
+    seq::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false
 ) where {N}
-    regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
+    regorf = alternative_start ? biore"NTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
     # regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG([N]{3})*T(AG|AA|GA)?"dna # an attempt to make it non PCRE non-determinsitic
-    finder(x) = findfirst(regorf, sequence, first(x) + 1) # + 3
-    itr = takewhile(!isnothing, iterated(finder, findfirst(regorf, sequence)))
+    finder(x) = findfirst(regorf, seq, first(x) + 1) # + 3
+    itr = takewhile(!isnothing, iterated(finder, findfirst(regorf, seq)))
     return itr
 end
 
@@ -66,7 +70,6 @@ function NaiveFinder(
     seq::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
     minlen::Int64 = 6,
-    scheme::Union{Nothing,Function} = nothing,
     kwargs...
 ) where {N}
     seqlen = length(seq)
@@ -79,7 +82,7 @@ function NaiveFinder(
         seqname = "unnamedseq"
     end
 
-    for strand in (STRAND_POS, STRAND_NEG)
+    @inbounds for strand in (STRAND_POS, STRAND_NEG)
         s = strand == STRAND_NEG ? reverse_complement(seq) : seq
         @inbounds for location in @views _locationiterator(s; alternative_start)
             if length(location) >= minlen
@@ -87,20 +90,13 @@ function NaiveFinder(
                 start = strand == STRAND_POS ? location.start : seqlen - location.stop + 1
                 stop = start + length(location) - 1
                 frame = strand == STRAND_POS ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
-                
-                if scheme === nothing
-                    scr = 0.0
-                else
-                    orientseq = strand == STRAND_POS ? @view(seq[start:stop]) : reverse_complement(@view(seq[start:stop]))
-                    scr = scheme(orientseq; kwargs...)
-                end
+                fts = NamedTuple()
 
-                #populate the feature tuple
-                fts = Features((score = scr,)) # rbs = RBS(biore"RRR"dna, 3:4, 1.0)
-
-                push!(orfs, ORF{N,NaiveFinder}(seqname, start, stop, strand, frame, fts, scheme)) #seq
+                push!(orfs, ORF{N,NaiveFinder}(seqname, start, stop, strand, frame, @view(s[location.start:location.stop]), fts)) #seq scheme
             end
         end
     end
     return sort!(orfs)
 end
+
+# oseq = strand == STRAND_POS ? @view(seq[start:stop]) : reverse_complement(@view(seq[start:stop]))
