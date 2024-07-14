@@ -1,16 +1,12 @@
 import GenomicFeatures: first, last, length, strand, groupname, metadata
 # import FASTX: sequence
 
-export Features, RBS, ORF
+export RBS, ORF
 export features, sequence, source
 export groupname, finder, frame, scheme, score, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
 
-#### Ribosome Binding Site (RBS) struct ####
-struct Features{K}
-    fts::K
-end
+# #### Ribosome Binding Site (RBS) struct ####
 
-Features(fts::NamedTuple) = Features{typeof(fts)}(fts)
 struct RBS
     motif::BioRegex{DNA}
     offset::UnitRange{Int64} # offset
@@ -19,6 +15,7 @@ struct RBS
     function RBS(motif::BioRegex{DNA}, offset::UnitRange{Int64}, score::Float64)
         return new(motif, offset, score)
     end
+    # rbsinst = RBS(biore"RRR"dna, 3:4, 1.0)
 end
 
 # seq[orf.first-bin01.offset.start:orf.first-1]
@@ -26,7 +23,6 @@ end
 # motifs = [dna"GGA", dna"GAG", dna"AGG"]
 
 ####### End of RBS struct #######
-
 
 """
     struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
@@ -39,8 +35,8 @@ The `ORF` struct represents an Open Reading Frame (ORF) in genomics.
 - `last::Int64`: The ending position of the ORF.
 - `strand::Strand`: The strand on which the ORF is located.
 - `frame::Int`: The reading frame of the ORF.
+- `seq::LongSubSeq{DNAAlphabet{N}}`: The DNA sequence of the ORF.
 - `features::Features`: The features associated with the ORF.
-- `scheme::Union{Nothing,Function}`: The scheme used for the ORF.
 
 # Main Constructor
 
@@ -52,7 +48,7 @@ ORF{N,F}(
     strand::Strand,
     frame::Int,
     features::Features,
-    scheme::Union{Nothing,Function}
+    seq::LongSubSeq{DNAAlphabet{N}}
 )
 ```
 # Example
@@ -74,24 +70,9 @@ struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
     first::Int64
     last::Int64
     strand::Strand
-    frame::Int
-    features::Features
-    scheme::Union{Nothing,Function}
-
-    function ORF{N,F}(
-        groupname::String,
-        first::Int64,
-        last::Int64,
-        strand::Strand,
-        frame::Int,
-        features::Features,
-        scheme::Union{Nothing,Function}
-    ) where {N,F}
-        @assert frame in (1, 2, 3) "Invalid frame value. Frame must be 1, 2, or 3."
-
-        return new{N,F}(groupname, first, last, strand, frame, features, scheme)
-    end
-    
+    frame::Int8
+    seq::LongSubSeq{DNAAlphabet{N}}
+    features::NamedTuple
 end
 
 function ORF{N,F}(
@@ -100,25 +81,11 @@ function ORF{N,F}(
     first::Int64,
     last::Int64,
     strand::Strand,
-    frame::Int,
-    features::Features, # ::Dict{Symbol,Any} or # ::@NamedTuple{score::Float64, rbs::Any} or @NamedTuple{Vararg{typeof(...)}}
-    scheme::Union{Nothing,Function}=nothing
+    frame::Int8,
+    seq::LongSubSeq{DNAAlphabet{N}},
+    features::NamedTuple # ::Dict{Symbol,Any} or # ::@NamedTuple{score::Float64, rbs::Any} or @NamedTuple{Vararg{typeof(...)}} NTuple?
 ) where {N,F<:GeneFinderMethod}
-    return ORF{N,F}(groupname, first, last, strand, frame, features, scheme) #finder seq
-end
-
-function ORF{F}(
-    range::UnitRange{Int64},
-     strand::Char,
-     frame::Int
-) where {F<:GeneFinderMethod}
-    groupname = "unnamedsource"
-    first = range.start
-    last = range.stop
-    features = Features(NamedTuple())
-    scheme = nothing
-    strand = strand == '+' ? STRAND_POS : STRAND_NEG
-    return ORF{4,F}(groupname, first, last, strand, frame, features, scheme)
+    return ORF{N,F}(groupname, first, last, strand, frame, seq, features) #finder seq schemes
 end
 
 """
@@ -134,11 +101,8 @@ Extracts the DNA sequence corresponding to the given open reading frame (ORF).
 
 """
 function sequence(i::ORF{N,F}) where {N,F}
-    seqsymb = Symbol(i.groupname)
-    seq = getfield(Main, seqsymb)
-    return i.strand == STRAND_POS ? @view(seq[i.first:i.last]) : reverse_complement(@view(seq[i.first:i.last])) #seq[i.first:i.last]
+    return i.seq
 end
-
 
 """
     source(i::ORF{N,F})
@@ -181,9 +145,12 @@ ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA
 """
 function source(i::ORF{N,F}) where {N,F}
     seqsymb = Symbol(i.groupname)
-    return getfield(Main, seqsymb)
+    try
+        return getfield(Main, seqsymb)
+    catch e
+        error("The source sequence of the ORF is defined as $(i.groupname). Make sure to either define it or supply the correct source sequence.")
+    end
 end
-
 
 """
     features(i::ORF{N,F})
@@ -198,7 +165,7 @@ The features of the `ORF` object. Those could be defined by each `GeneFinderMeth
 
 """
 function features(i::ORF{N,F}) where {N,F}
-    return i.features.fts
+    return i.features
 end
 
 function groupname(i::ORF{N,F}) where {N,F}
@@ -217,18 +184,8 @@ function frame(i::ORF{N,F}) where {N,F}
     return i.frame
 end
 
-finder(i::ORF{N,F}) where {N,F} = F
-
-function scheme(i::ORF{N,F}) where {N,F}
-    return i.scheme
-end
-
 function score(i::ORF{N,F}) where {N,F}
-    return i.features.fts[:score]
-end
-
-function length(i::ORF{N,F}) where {N,F}
-    return length(sequence(i))
+    return i.features[:score]
 end
 
 function strand(i::ORF{N,F}) where {N,F}
@@ -239,11 +196,13 @@ function metadata(i::ORF{N,F}) where {N,F}
     return features(i)
 end
 
+finder(i::ORF{N,F}) where {N,F} = F
+
 function Base.show(io::IO, i::ORF{N,F}) where {N,F}
     if get(io, :compact, false)
-        print(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") #{$(typeof(finder(i)))} $(score(i))
+        println(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") #{$(typeof(finder(i)))} $(score(i))
     else
-        print(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") # , $(score(i))
+        println(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") # , $(score(i))
     end
 end
 
@@ -252,4 +211,5 @@ end
 # struct CDS <: AbstractGene
 #     orf::ORF
 #     coding::Bool
+#     join::Bool
 # end
