@@ -16,7 +16,7 @@
         write_orfs_fna(seq, io, finder=NaiveFinder)
     end
 # 
-    seqfnarecords = open(collect, FASTAReader, "data/out-seq.fna")
+    seqfnarecords = open(collect, FASTA.Reader, "data/out-seq.fna")
 # 
     @test seqfnarecords[1] == FASTX.FASTA.Record("unnamedseq id=01 start=5 stop=22 strand=- frame=2 score=0.0", "ATGAAACAGAACGACTGA")
     @test length(seqfnarecords) == 32
@@ -31,7 +31,7 @@
         write_orfs_faa(seq, io, finder=NaiveFinder)
     end
 # 
-    seqfaarecords = open(collect, FASTAReader, "data/out-seq.faa")
+    seqfaarecords = open(collect, FASTA.Reader, "data/out-seq.faa")
 # 
     @test seqfaarecords[2] == FASTX.FASTA.Record("unnamedseq id=02 start=37 stop=156 strand=+ frame=1 score=0.0", "MYFSCISGGIVPSSIASRYPLIEVRGERKSWDTLATNFF*")
     @test length(seqfaarecords) == 32
