@@ -1,16 +1,18 @@
 # Methods from main packages that expand their fuctions to this package structs
-import Base: isless, iterate, sort, getindex, length
+import Base: isless, iterate, sort, getindex, length, ==
 import BioSequences: translate
 
 Base.isless(a::ORF{N,F}, b::ORF{N,F}) where {N,F} = isless(a.first:a.last, b.first:b.last)
 
-function getindex(seq::NucleicSeqOrView{A}, orf::ORF{N,F}) where {A,N,F}
-    # @assert @view(seq[begin:end]) == source(orf) "The source sequence of the ORF and the given sequence are different"
-
-    if orf.strand == STRAND_POS
-        s = @view seq[orf.first:orf.last]
+function Base.getindex(seq::NucleicSeqOrView{A}, orf::ORF{N,F}) where {A,N,F}
+    # @assert @view(seq[begin:end]) == @view(source(orf)[begin:end]) "The source sequence of the ORF and the given sequence are different"
+    # @view(seq[begin:end]) == @view(source(orf)[begin:end]) || throw(ArgumentError("The source sequence of the ORF and the given sequence are different"))
+    seq[begin:end] == source(orf) || throw(ArgumentError("The source sequence of the ORF and the given sequence are different"))
+    
+    if orf.strand == STRAND_NEG
+        s = reverse_complement(seq[orf.first:orf.last])
     else
-        s = reverse_complement(@view seq[orf.first:orf.last])
+        s = seq[orf.first:orf.last]
     end
 
     if !occursin(biore"T(AG|AA|GA)"dna, s)
@@ -20,6 +22,12 @@ function getindex(seq::NucleicSeqOrView{A}, orf::ORF{N,F}) where {A,N,F}
     return s
 end
 
+function Base.length(i::ORF{N,F}) where {N,F}
+    return length(sequence(i))
+end
+
 function translate(orf::ORF{N,F}; kwargs...) where {N,F}
     return translate(sequence(orf); kwargs...)
 end
+
+==(a::ORF{N,F}, b::ORF{N,F}) where {N,F} = a.first == b.first && a.last == b.last && a.strand == b.strand && a.frame == b.frame && a.groupname == b.groupname && a.seq == b.seq
