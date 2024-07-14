@@ -48,7 +48,11 @@ function lordr( #log_odds_ratio_decision, also lordr/cudr/kfdr/aadr
     η::Float64 = 5e-3
 ) where {N}
 
-    logodds = log_odds_ratio_score(sequence; modela=modela, modelb=modelb, b=b)
+    scorea = log_odds_ratio_score(sequence; modela=modela, b=b)
+    scoreb = log_odds_ratio_score(sequence; modela=modelb, b=b)
+    
+    logodds = scorea / scoreb
+
     if logodds > η
         return true
     else
