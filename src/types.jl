@@ -1,9 +1,8 @@
 import GenomicFeatures: first, last, length, strand, groupname, metadata
-# import FASTX: sequence
 
 export RBS, ORF
 export features, sequence, source
-export groupname, finder, frame, scheme, score, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
+export groupname, finder, frame, score, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
 
 # #### Ribosome Binding Site (RBS) struct ####
 
@@ -200,9 +199,9 @@ finder(i::ORF{N,F}) where {N,F} = F
 
 function Base.show(io::IO, i::ORF{N,F}) where {N,F}
     if get(io, :compact, false)
-        println(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") #{$(typeof(finder(i)))} $(score(i))
+        print(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") #{$(typeof(finder(i)))} $(score(i))
     else
-        println(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") # , $(score(i))
+        print(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") # , $(score(i))
     end
 end
 
