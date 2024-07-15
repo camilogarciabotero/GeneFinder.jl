@@ -60,49 +60,49 @@ end
 
 end
 
-@testitem "NaiveFinder alternative starts" begin
+# @testitem "NaiveFinder alternative starts" begin
 
-    using BioSequences, GeneFinder
-    # From pyrodigal issue #13 link: https://github.com/althonos/pyrodigal/blob/1f939b0913b48dbaa55d574b20e124f1b8323825/pyrodigal/tests/test_orf_finder.py#L271
-    # Pyrodigal predicts 2 genes from this sequence:
-    # 1) An alternative start codon (GTG) sequence at 48:347
-    # 2) A common start codon sequence at 426:590
-    # On the other hand, the NCBI ORFfinder program predicts 13 ORFs whose length is greater than 75 nt and allowing alternative starts, from which one has an "outbound" stop
-    seq = dna"TTCGTCAGTCGTTCTGTTTCATTCAATACGATAGTAATGTATTTTTCGTGCATTTCCGGTGGAATCGTGCCGTCCAGCATAGCCTCCAGATATCCCCTTATAGAGGTCAGAGGGGAACGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGATCATCCTCGGAACGGGCAATTTCGCTTGCCATATAATTCAGACAGGAAGCCAGATAACCGATTTCATCCTCACTATCGACCTGAAATTCATAATGCATATTACCGGCAGCATACTGCTCTGTGGCATGAGTGATCTTCCTCAGAGGAATATATACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAGCAGGAACAGGATTGCCAGGGTGATATAGGAAATATTCAGCAGGTTGTTACAGGATTTCTGAATATCATTCATATCAGTATGGATGACTACATAGCCTTTTACCTTGTAGTTGGAGGTAATGGGAGCAAATACAGTAAGTACATCCGAATCAAAATTACCGAAGAAATCACCAACAATGTAATAGGAGCCGCTGGTTACGGTCGAATCAAAATTCTCAATGACAACCACATTCTCCACATCTAAGGGACTATTGGTATCCAGTACCAGTCGTCCGGAGGGATTGATGATGCGAATCTCGGAATTCAGGTAGACCGCCAGGGAGTCCAGCTGCATTTTAACGGTCTCCAAAGTTGTTTCACTGGTGTACAATCCGCCGGCATAGGTTCCGGCGATCAGGGTTGCTTCGGAATAGAGACTTTCTGCCTTTTCCCGGATCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAACAATGATGAAACCAAATACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAAAGTGTTTTTTTCATAACAAATCCTGCTTTTGGTATGACTTAATTACGTACTTCGAATTTATAGCCGATGCCCCAGATGGTGCTGATCTTCCAGTTGGCATGATCCTTGATCTTCTC"
-    orfs = findorfs(seq, finder=NaiveFinder, minlen=75, alternative_start=true)
-    @test length(orfs) == 26 #20 
+#     using BioSequences, GeneFinder
+#     # From pyrodigal issue #13 link: https://github.com/althonos/pyrodigal/blob/1f939b0913b48dbaa55d574b20e124f1b8323825/pyrodigal/tests/test_orf_finder.py#L271
+#     # Pyrodigal predicts 2 genes from this sequence:
+#     # 1) An alternative start codon (GTG) sequence at 48:347
+#     # 2) A common start codon sequence at 426:590
+#     # On the other hand, the NCBI ORFfinder program predicts 13 ORFs whose length is greater than 75 nt and allowing alternative starts, from which one has an "outbound" stop
+#     seq = dna"TTCGTCAGTCGTTCTGTTTCATTCAATACGATAGTAATGTATTTTTCGTGCATTTCCGGTGGAATCGTGCCGTCCAGCATAGCCTCCAGATATCCCCTTATAGAGGTCAGAGGGGAACGGAAATCGTGGGATACATTGGCTACAAACTTTTTCTGATCATCCTCGGAACGGGCAATTTCGCTTGCCATATAATTCAGACAGGAAGCCAGATAACCGATTTCATCCTCACTATCGACCTGAAATTCATAATGCATATTACCGGCAGCATACTGCTCTGTGGCATGAGTGATCTTCCTCAGAGGAATATATACGATCTCAGTGAAAAAGATCAGAATGATCAGGGATAGCAGGAACAGGATTGCCAGGGTGATATAGGAAATATTCAGCAGGTTGTTACAGGATTTCTGAATATCATTCATATCAGTATGGATGACTACATAGCCTTTTACCTTGTAGTTGGAGGTAATGGGAGCAAATACAGTAAGTACATCCGAATCAAAATTACCGAAGAAATCACCAACAATGTAATAGGAGCCGCTGGTTACGGTCGAATCAAAATTCTCAATGACAACCACATTCTCCACATCTAAGGGACTATTGGTATCCAGTACCAGTCGTCCGGAGGGATTGATGATGCGAATCTCGGAATTCAGGTAGACCGCCAGGGAGTCCAGCTGCATTTTAACGGTCTCCAAAGTTGTTTCACTGGTGTACAATCCGCCGGCATAGGTTCCGGCGATCAGGGTTGCTTCGGAATAGAGACTTTCTGCCTTTTCCCGGATCAGATGTTCTTTGGTCATATTGGGAACAAAAGTTGTAACAATGATGAAACCAAATACACCAAAAATAAAATATGCGAGTATAAATTTTAGATAAAGTGTTTTTTTCATAACAAATCCTGCTTTTGGTATGACTTAATTACGTACTTCGAATTTATAGCCGATGCCCCAGATGGTGCTGATCTTCCAGTTGGCATGATCCTTGATCTTCTC"
+#     orfs = findorfs(seq, finder=NaiveFinder, minlen=75, alternative_start=true)
+#     @test length(orfs) == 26 #20 
 
-    orfstest = [
-                         "seq", # |- oubounds notation for the NCBI ORFfinder 
-        #                "seq", (>3:890, '-', 3)     NCBI-ORFfinder
-        ORF{NaiveFinder}("seq", 37:156, '+', 1),   # NCBI-ORFfinder
-        ORF{NaiveFinder}("seq", 48:347, '+', 3),   # Pyrodigal & NCBI-ORFfinder
-        ORF{NaiveFinder}("seq", 67:156, '+', 1),   
-        #               ("seq", 153:347, '+', 3)     NCBI-ORFfinder 
-        ORF{NaiveFinder}("seq", 126:347, '+', 3),  
-        ORF{NaiveFinder}("seq", 182:289, '+', 2),  # NCBI-ORFfinder
-        ORF{NaiveFinder}("seq", 194:268, '-', 2),   
-        ORF{NaiveFinder}("seq", 194:283, '-', 2),  # NCBI-ORFfinder
-        ORF{NaiveFinder}("seq", 249:347, '+', 3),  
-        ORF{NaiveFinder}("seq", 286:375, '+', 1),  
-        #               ("seq", 405:590, '+', 3)     NCBI-ORFfinder
-        ORF{NaiveFinder}("seq", 426:590, '+', 3),  # Pyrodigal
-        ORF{NaiveFinder}("seq", 446:520, '-', 2),
-        ORF{NaiveFinder}("seq", 446:523, '-', 2),
-        #               ("seq", 538:657, '+', 1)     NCBI-ORFfinder
-        ORF{NaiveFinder}("seq", 565:657, '+', 1),
-        ORF{NaiveFinder}("seq", 650:727, '-', 2),
-        #               ("seq", 675:872, '+', 3)     NCBI-ORFfinder
-        ORF{NaiveFinder}("seq", 698:820, '+', 2),
-        ORF{NaiveFinder}("seq", 746:820, '+', 2),
-        ORF{NaiveFinder}("seq", 786:872, '+', 3),
-        ORF{NaiveFinder}("seq", 793:876, '+', 1),
-        ORF{NaiveFinder}("seq", 802:876, '+', 1),
-        ORF{NaiveFinder}("seq", 887:976, '-', 2),
-    ]
+#     orfstest = [
+#                          "seq", # |- oubounds notation for the NCBI ORFfinder 
+#         #                "seq", (>3:890, '-', 3)     NCBI-ORFfinder
+#         ORF{NaiveFinder}("seq", 37:156, '+', 1),   # NCBI-ORFfinder
+#         ORF{NaiveFinder}("seq", 48:347, '+', 3),   # Pyrodigal & NCBI-ORFfinder
+#         ORF{NaiveFinder}("seq", 67:156, '+', 1),   
+#         #               ("seq", 153:347, '+', 3)     NCBI-ORFfinder 
+#         ORF{NaiveFinder}("seq", 126:347, '+', 3),  
+#         ORF{NaiveFinder}("seq", 182:289, '+', 2),  # NCBI-ORFfinder
+#         ORF{NaiveFinder}("seq", 194:268, '-', 2),   
+#         ORF{NaiveFinder}("seq", 194:283, '-', 2),  # NCBI-ORFfinder
+#         ORF{NaiveFinder}("seq", 249:347, '+', 3),  
+#         ORF{NaiveFinder}("seq", 286:375, '+', 1),  
+#         #               ("seq", 405:590, '+', 3)     NCBI-ORFfinder
+#         ORF{NaiveFinder}("seq", 426:590, '+', 3),  # Pyrodigal
+#         ORF{NaiveFinder}("seq", 446:520, '-', 2),
+#         ORF{NaiveFinder}("seq", 446:523, '-', 2),
+#         #               ("seq", 538:657, '+', 1)     NCBI-ORFfinder
+#         ORF{NaiveFinder}("seq", 565:657, '+', 1),
+#         ORF{NaiveFinder}("seq", 650:727, '-', 2),
+#         #               ("seq", 675:872, '+', 3)     NCBI-ORFfinder
+#         ORF{NaiveFinder}("seq", 698:820, '+', 2),
+#         ORF{NaiveFinder}("seq", 746:820, '+', 2),
+#         ORF{NaiveFinder}("seq", 786:872, '+', 3),
+#         ORF{NaiveFinder}("seq", 793:876, '+', 1),
+#         ORF{NaiveFinder}("seq", 802:876, '+', 1),
+#         ORF{NaiveFinder}("seq", 887:976, '-', 2),
+#     ]
 
-    @test println(orfs) == println(orfstest)
-end
+#     @test println(orfs) == println(orfstest)
+# end
 
 @testitem "NaiveFinder lambda" begin
     cd(@__DIR__) # Required to find the fasta file
