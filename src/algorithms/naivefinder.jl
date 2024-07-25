@@ -89,7 +89,7 @@ function NaiveFinder(
                 #main fields
                 start = strand == STRAND_POS ? location.start : seqlen - location.stop + 1
                 stop = start + length(location) - 1
-                frame = strand == STRAND_POS ? framedict[location.start % 3] : framedict[(seqlen - location.stop + 1) % 3]
+                frm = start % 3 == 0 ? 3 : start % 3
                 fts = NamedTuple()
 
                 push!(orfs, ORF{N,NaiveFinder}(seqname, start, stop, strand, frame, @view(s[location.start:location.stop]), fts)) #seq scheme
