@@ -1,4 +1,4 @@
-export log_odds_ratio_decision_rule, lordr, lors
+export log_odds_ratio_decision_rule, lordr #lors
 
 @doc raw"""
     log_odds_ratio_decision_rule(
@@ -61,4 +61,3 @@ function lordr( #log_odds_ratio_decision, also lordr/cudr/kfdr/aadr
 end
 
 const log_odds_ratio_decision_rule = lordr # criteria
-const lors = log_odds_ratio_score # from BioMarkovChains

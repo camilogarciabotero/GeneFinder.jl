@@ -30,4 +30,25 @@ function translate(orf::ORF{N,F}; kwargs...) where {N,F}
     return translate(sequence(orf); kwargs...)
 end
 
-==(a::ORF{N,F}, b::ORF{N,F}) where {N,F} = a.first == b.first && a.last == b.last && a.strand == b.strand && a.frame == b.frame && a.groupname == b.groupname && a.seq == b.seq
+# Define custom equality function for ORF structs
+function ==(a::ORF{N,F}, b::ORF{N,F}) where {N,F}
+    return a.first == b.first && a.last == b.last && a.strand == b.strand && a.frame == b.frame && a.groupname == b.groupname && a.seq == b.seq
+end
+
+## Methods from BioMarkovChains that expand their fuctions to this package structs
+import BioMarkovChains: log_odds_ratio_score
+
+export log_odds_ratio_score, lors
+
+function log_odds_ratio_score(
+    orf::ORF{N,F};
+    kwargs...
+) where {N,F}
+    return log_odds_ratio_score(sequence(orf); kwargs...)
+end
+
+const  lors = log_odds_ratio_score
+
+function lordr(orf::ORF{N,F}; kwargs...) where {N,F}
+    return lordr(sequence(orf); kwargs)
+end
