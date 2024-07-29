@@ -111,18 +111,18 @@ translate.(orfs)
 
 ## Let's score the ORFs
 
-ORFs sequences can be scored using different schemes that evaluate them under a biological context. The `NaiveFinder` algorithm provides a simple `scheme` kwarg that allows scoring the ORFs based on any method that takes a `BioSequence` as input, returning a score.
+ORFs sequences can be scored using different schemes that evaluate them under a biological context. There are two ways to make this possible: by adding a scoring method to the finder algorithm or by using a scoring method after predicting the ORFs. The first approach is likely more efficient, but the second approach is more flexible. We will showcase the second approach in this example.
 
 A commonly used scoring scheme for ORFs is the *log-odds ratio* score. This score is based on the likelihood of a sequence belonging to a specific stochastic model, such as coding or non-coding. The [BioMarkovChains](https://github.com/camilogarciabotero/BioMarkovChains.jl) package provides a `log_odds_ratio_score` method (currently imported), also known as `lors`, which can be used to score ORFs using the log-odds ratio approach.
 
 ```julia
-orfs = findorfs(seq, finder=NaiveFinder, scheme=lors)
+orfs = findorfs(seq, finder=NaiveFinder)
 ```
 
-The `score` method can be used later to extract the score of the ORFs.
+The `lors` method has been overloaded to take an ORF object and can be used later to calculate the score of the ORFs.
 
 ```julia
-score.(orfs)
+lors.(orfs)
 
 12-element Vector{Float64}:
  0.469404606944017
@@ -139,7 +139,7 @@ score.(orfs)
  0.469404606944017
 ```
 
-To see more about scoring ORFs, check out the [Scoring ORFs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/features/) section in the documentation.
+We can extend basically any method that scores a `BioSequence` to score an `ORF` object. To see more about scoring ORFs, check out the [Scoring ORFs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/features/) section in the documentation.
 
 ## Writting ORFs   into bioinformatic formats
 
@@ -178,29 +178,29 @@ end
 ```bash
 cat LFLS01000089.fna
 
->seq id=01 start=29 stop=40 strand=+ frame=2 score=0.0
+>seq id=01 start=29 stop=40 strand=+ frame=2 features=[]
 ATGCAACCCTGA
->seq id=02 start=137 stop=145 strand=+ frame=2 score=0.0
+>seq id=02 start=137 stop=145 strand=+ frame=2 features=[]
 ATGCGCTGA
->seq id=03 start=164 stop=184 strand=+ frame=2 score=0.0
+>seq id=03 start=164 stop=184 strand=+ frame=2 features=[]
 ATGCGTCGAATGGCACGGTGA
->seq id=04 start=173 stop=184 strand=+ frame=2 score=0.0
+>seq id=04 start=173 stop=184 strand=+ frame=2 features=[]
 ATGGCACGGTGA
->seq id=05 start=236 stop=241 strand=+ frame=2 score=0.0
+>seq id=05 start=236 stop=241 strand=+ frame=2 features=[]
 ATGTGA
->seq id=06 start=248 stop=268 strand=+ frame=2 score=0.0
+>seq id=06 start=248 stop=268 strand=+ frame=2 features=[]
 ATGTGTCCAACGGCAGTCTGA
->seq id=07 start=362 stop=373 strand=+ frame=2 score=0.0
+>seq id=07 start=362 stop=373 strand=+ frame=2 features=[]
 ATGCAACCCTGA
->seq id=08 start=470 stop=496 strand=+ frame=2 score=0.0
+>seq id=08 start=470 stop=496 strand=+ frame=2 features=[]
 ATGCACTGGCTGGTCCTGTCAATCTGA
->seq id=09 start=551 stop=574 strand=+ frame=2 score=0.0
+>seq id=09 start=551 stop=574 strand=+ frame=2 features=[]
 ATGTCACCGCACAAGGCAATGTGA
->seq id=10 start=569 stop=574 strand=+ frame=2 score=0.0
+>seq id=10 start=569 stop=574 strand=+ frame=2 features=[]
 ATGTGA
->seq id=11 start=581 stop=601 strand=+ frame=2 score=0.0
+>seq id=11 start=581 stop=601 strand=+ frame=2 features=[]
 ATGTGTCCAACGGCAGCCTGA
->seq id=12 start=695 stop=706 strand=+ frame=2 score=0.0
+>seq id=12 start=695 stop=706 strand=+ frame=2 features=[]
 ATGCAACCCTGA
 ```
 
