@@ -6,6 +6,11 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.5.0...main)
 
+## [0.6.0]
+
+- The `ORF` type has been updated to hold a view of the sequence represented by the ORF.
+- Docs have been updated to reflect the new `sequence` method.
+
 ## [0.5.0]
 
 - The `ORF` type has been updated to handle the new `finder` argument type.
