@@ -36,29 +36,29 @@ end
 ```bash
 cat LFLS01000089.fna
 
->seq id=01 start=29 stop=40 strand=+ frame=2 score=0.0
+>seq id=01 start=29 stop=40 strand=+ frame=2 features=[]
 ATGCAACCCTGA
->seq id=02 start=137 stop=145 strand=+ frame=2 score=0.0
+>seq id=02 start=137 stop=145 strand=+ frame=2 features=[]
 ATGCGCTGA
->seq id=03 start=164 stop=184 strand=+ frame=2 score=0.0
+>seq id=03 start=164 stop=184 strand=+ frame=2 features=[]
 ATGCGTCGAATGGCACGGTGA
->seq id=04 start=173 stop=184 strand=+ frame=2 score=0.0
+>seq id=04 start=173 stop=184 strand=+ frame=2 features=[]
 ATGGCACGGTGA
->seq id=05 start=236 stop=241 strand=+ frame=2 score=0.0
+>seq id=05 start=236 stop=241 strand=+ frame=2 features=[]
 ATGTGA
->seq id=06 start=248 stop=268 strand=+ frame=2 score=0.0
+>seq id=06 start=248 stop=268 strand=+ frame=2 features=[]
 ATGTGTCCAACGGCAGTCTGA
->seq id=07 start=362 stop=373 strand=+ frame=2 score=0.0
+>seq id=07 start=362 stop=373 strand=+ frame=2 features=[]
 ATGCAACCCTGA
->seq id=08 start=470 stop=496 strand=+ frame=2 score=0.0
+>seq id=08 start=470 stop=496 strand=+ frame=2 features=[]
 ATGCACTGGCTGGTCCTGTCAATCTGA
->seq id=09 start=551 stop=574 strand=+ frame=2 score=0.0
+>seq id=09 start=551 stop=574 strand=+ frame=2 features=[]
 ATGTCACCGCACAAGGCAATGTGA
->seq id=10 start=569 stop=574 strand=+ frame=2 score=0.0
+>seq id=10 start=569 stop=574 strand=+ frame=2 features=[]
 ATGTGA
->seq id=11 start=581 stop=601 strand=+ frame=2 score=0.0
+>seq id=11 start=581 stop=601 strand=+ frame=2 features=[]
 ATGTGTCCAACGGCAGCCTGA
->seq id=12 start=695 stop=706 strand=+ frame=2 score=0.0
+>seq id=12 start=695 stop=706 strand=+ frame=2 features=[]
 ATGCAACCCTGA
 ```
 
