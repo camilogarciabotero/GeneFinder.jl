@@ -10,8 +10,7 @@ function NaiveCollector(
     overlap::Bool = false,
     kwargs...
 ) where {N}
-    regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
-    framedict = Dict(0 => 3, 1 => 1, 2 => 2)
+    regorf = alternative_start ? biore"NTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
     revseq = reverse_complement(seq)
     seqlen = length(seq)
     seqname = _varname(seq)
@@ -21,15 +20,16 @@ function NaiveCollector(
             if strand == STRAND_POS
                 start = x.captured[1]
                 stop = x.captured[3] + 1
-                frame = framedict[x.captured[1] % 3]
+                # frame = framedict[x.captured[1] % 3]
             else
                 start = seqlen - x.captured[3] 
                 stop = seqlen - x.captured[1] + 1
-                frame = framedict[(seqlen - x.captured[3]) % 3]
+                # frame = framedict[(seqlen - x.captured[3]) % 3]
             end
+            frm = start % 3 == 0 ? 3 : start % 3
             oseq = _orfseq(seq, start, stop, strand)
             fts = NamedTuple()
-            return ORF{N,NaiveCollector}(seqname, start, stop, strand, frame, oseq, fts)
+            return ORF{N,NaiveCollector}(seqname, start, stop, strand, frm, oseq, fts)
         end
     end
 
