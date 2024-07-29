@@ -10,6 +10,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 - The `ORF` type has been updated to hold a view of the sequence represented by the ORF.
 - Docs have been updated to reflect the new `sequence` method.
+- `ORF`s no longer hold score information directly. Instead, the `Feature` field has been added to hold this information in case a new finder method needs it.
 
 ## [0.5.0]
 
