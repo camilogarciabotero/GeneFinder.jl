@@ -91,9 +91,9 @@ orfs = findorfs(seq, minlen=75, finder=NaiveFinder, alternative_start=true) # fi
 orfs[iscoding.(orfsdna)]
 
 3-element Vector{ORF{4, NaiveFinder}}:
- ORF{NaiveFinder}(194:268, '-', 2, -0.026759927376272922)
- ORF{NaiveFinder}(194:283, '-', 2, -0.010354615336667268)
- ORF{NaiveFinder}(650:727, '-', 2, -0.04303976584597201)
+ ORF{NaiveFinder}(194:268, '-', 2)
+ ORF{NaiveFinder}(194:283, '-', 2)
+ ORF{NaiveFinder}(650:727, '-', 2)
 ```
 
 Or in a single line using another genome sequence:
