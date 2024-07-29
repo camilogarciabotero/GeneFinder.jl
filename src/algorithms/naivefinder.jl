@@ -73,7 +73,6 @@ function NaiveFinder(
     kwargs...
 ) where {N}
     seqlen = length(seq)
-    framedict = Dict(0 => 3, 1 => 1, 2 => 2)
     orfs = Vector{ORF{N,NaiveFinder}}()
     
     # Handle the sequence name
@@ -92,7 +91,7 @@ function NaiveFinder(
                 frm = start % 3 == 0 ? 3 : start % 3
                 fts = NamedTuple()
 
-                push!(orfs, ORF{N,NaiveFinder}(seqname, start, stop, strand, frame, @view(s[location.start:location.stop]), fts)) #seq scheme
+                push!(orfs, ORF{N,NaiveFinder}(seqname, start, stop, strand, frm, @view(s[location.start:location.stop]), fts)) #seq scheme
             end
         end
     end
@@ -100,3 +99,5 @@ function NaiveFinder(
 end
 
 # oseq = strand == STRAND_POS ? @view(seq[start:stop]) : reverse_complement(@view(seq[start:stop]))
+
+# a = 1

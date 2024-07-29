@@ -81,13 +81,13 @@ function write_orfs_fna(
     alternative_start::Bool = false, 
     minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    # seq = fasta2bioseq(input)[1]
     orfs = findorfs(input; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        println(output, ">", orf.groupname, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " score=", orf.features.fts.score)
+        fts = isempty(orf.features) ? "" : join(orf.features, ",")
+        println(output, ">", orf.groupname, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " features=[" , fts, "]")
         println(output, input[orf]) #
     end
 end
@@ -99,14 +99,14 @@ function write_orfs_fna(
     alternative_start::Bool = false,
     minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    # seq = fasta2bioseq(input)[1]
     orfs = findorfs(input; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
         for (i, orf) in enumerate(orfs)
             id = string(lpad(string(i), padding, "0"))
-            write(f, ">$(orf.groupname) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) score=$(orf.features.fts.score)\n$(input[orf]))\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
+            fts = isempty(orf.features) ? "" : join(orf.features, ",")
+            write(f, ">$(orf.groupname) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) features=[$(fts)]\n$(input[orf]))\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
         end
     end
 end
@@ -154,7 +154,8 @@ function write_orfs_faa(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        println(output, ">", orf.groupname, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " score=", orf.features.fts.score)
+        fts = isempty(orf.features) ? "" : join(orf.features, ",")
+        println(output, ">", orf.groupname, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " features=[", fts, "]")
         println(output, translate(input[orf]; code))
     end
 end
@@ -174,7 +175,8 @@ function write_orfs_faa(
     open(output, "w") do f
         for (i, orf) in enumerate(orfs)
             id = string(lpad(string(i), padding, "0"))
-            write(f, ">$(orf.groupname) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) score=$(orf.features.fts.score)\n$(translate(input[orf]; code))\n")
+            fts = isempty(orf.features) ? "" : join(orf.features, ",")
+            write(f, ">$(orf.groupname) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) features=[$(fts)]\n$(translate(input[orf]; code))\n")
         end
     end
 end
@@ -211,7 +213,8 @@ function write_orfs_gff(
     println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
     for (i, orf) in enumerate(orfs)
         id = string("ORF", lpad(string(i), padding, "0"))
-        println(output, "Chr\t.\tORF\t", orf.first, "\t", orf.last, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame, ";Score=", orf.features.fts.score)
+        fts = isempty(orf.features) ? "" : join(orf.features, ",")
+        println(output, "Chr\t.\tORF\t", orf.first, "\t", orf.last, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame, ";Features=[", fts, "]")
     end
 end
 
@@ -230,9 +233,10 @@ function write_orfs_gff(
         write(f, "##gff-version 3\n##sequence-region Chr 1 $(length(input))\n") 
         for (i, orf) in enumerate(orfs)
             id = string("ORF", lpad(string(i), padding, "0"))
+            fts = isempty(orf.features) ? "" : join(orf.features, ",")
             write(
                 f,
-                "Chr\t.\tORF\t$(orf.first)\t$(orf.last)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame);Score=$(orf.features.fts.score)\n"
+                "Chr\t.\tORF\t$(orf.first)\t$(orf.last)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame);Features=[$(fts)]\n"
             )
         end
     end
