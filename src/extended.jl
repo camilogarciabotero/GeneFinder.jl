@@ -7,7 +7,7 @@ Base.isless(a::ORF{N,F}, b::ORF{N,F}) where {N,F} = isless(a.first:a.last, b.fir
 function Base.getindex(seq::NucleicSeqOrView{A}, orf::ORF{N,F}) where {A,N,F}
     # @assert @view(seq[begin:end]) == @view(source(orf)[begin:end]) "The source sequence of the ORF and the given sequence are different"
     # @view(seq[begin:end]) == @view(source(orf)[begin:end]) || throw(ArgumentError("The source sequence of the ORF and the given sequence are different"))
-    seq[begin:end] == source(orf) || throw(ArgumentError("The source sequence of the ORF and the given sequence are different"))
+    # seq[begin:end] == source(orf) || throw(ArgumentError("The source sequence of the ORF and the given sequence are different"))
     
     if orf.strand == STRAND_NEG
         s = reverse_complement(seq[orf.first:orf.last])
