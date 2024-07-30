@@ -1,27 +1,9 @@
 import GenomicFeatures: first, last, length, strand, groupname, metadata
 
-export RBS, ORF
+export ORF
 export features, sequence, source
 export groupname, finder, frame, score, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
 
-# #### Ribosome Binding Site (RBS) struct ####
-
-struct RBS
-    motif::BioRegex{DNA}
-    offset::UnitRange{Int64} # offset
-    score::Float64
-
-    function RBS(motif::BioRegex{DNA}, offset::UnitRange{Int64}, score::Float64)
-        return new(motif, offset, score)
-    end
-    # rbsinst = RBS(biore"RRR"dna, 3:4, 1.0)
-end
-
-# seq[orf.first-bin01.offset.start:orf.first-1]
-
-# motifs = [dna"GGA", dna"GAG", dna"AGG"]
-
-####### End of RBS struct #######
 
 """
     struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
@@ -183,10 +165,6 @@ function frame(i::ORF{N,F}) where {N,F}
     return i.frame
 end
 
-function score(i::ORF{N,F}) where {N,F}
-    return i.features[:score]
-end
-
 function strand(i::ORF{N,F}) where {N,F}
     return i.strand
 end
@@ -212,3 +190,22 @@ end
 #     coding::Bool
 #     join::Bool
 # end
+
+# #### Ribosome Binding Site (RBS) struct ####
+
+# struct RBS
+#     motif::BioRegex{DNA}
+#     offset::UnitRange{Int64} # offset
+#     score::Float64
+
+#     function RBS(motif::BioRegex{DNA}, offset::UnitRange{Int64}, score::Float64)
+#         return new(motif, offset, score)
+#     end
+#     # rbsinst = RBS(biore"RRR"dna, 3:4, 1.0)
+# end
+
+# seq[orf.first-bin01.offset.start:orf.first-1]
+
+# motifs = [dna"GGA", dna"GAG", dna"AGG"]
+
+####### End of RBS struct #######

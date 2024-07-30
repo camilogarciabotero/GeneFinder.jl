@@ -1,6 +1,6 @@
-export hasprematurestop, _varname, _varsymbol, _orfseq #fasta2bioseq
+export _hasprematurestop, _varname, _varsymbol, _orfseq #fasta2bioseq
 
-# General purposes methods supporting main functions
+# General purposes private methods supporting main functions
 
 """
     hasprematurestop(seq::LongNucOrView{4})::Bool
@@ -9,7 +9,7 @@ Determine whether the `sequence` of type `LongSequence{DNAAlphabet{4}}` contains
 
 Returns a boolean indicating whether the `sequence` has more than one stop codon.
 """
-function hasprematurestop(seq::NucleicSeqOrView{DNAAlphabet{N}})::Bool where {N}
+function _hasprematurestop(seq::NucleicSeqOrView{DNAAlphabet{N}})::Bool where {N}
     
     stopcodons = [LongDNA{4}("TAA"), LongDNA{4}("TAG"), LongDNA{4}("TGA")]  # Create a set of stop codons
     length(seq) % 3 == 0 || error("The sequence is not divisible by 3")
