@@ -2,8 +2,7 @@ import GenomicFeatures: first, last, length, strand, groupname, metadata
 
 export ORF
 export features, sequence, source
-export groupname, finder, frame, score, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
-
+export groupname, finder, frame, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
 
 """
     struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
