@@ -13,6 +13,7 @@ using BioSequences:
     LongAA,
     LongSequence,
     LongSubSeq,
+    SeqOrView,
     NucleicSeqOrView,
     @biore_str,
     @dna_str,

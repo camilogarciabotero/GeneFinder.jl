@@ -3,20 +3,20 @@ export findorfs
 """
     findorfs(sequence::NucleicSeqOrView{DNAAlphabet{N}}; ::F, kwargs...) where {N, F<:GeneFinderMethod}
 
-This is the main interface method for finding open reading frames (ORFs) in a DNA sequence.
+This is the main interface method for finding open reading frames (ORFIs) in a DNA sequence.
 
 It takes the following required arguments:
 
-- `sequence`: The nucleic acid sequence to search for ORFs.
-- `finder`: The algorithm used to find ORFs. It can be either `NaiveFinder`, `NaiveCollector` or yet other implementations.
+- `sequence`: The nucleic acid sequence to search for ORFIs.
+- `finder`: The algorithm used to find ORFIs. It can be either `NaiveFinder`, `NaiveCollector` or yet other implementations.
 
 ## Keyword Arguments regardless of the finder method:
 - `alternative_start::Bool`: A boolean indicating whether to consider alternative start codons. Default is `false`.
-- `minlen::Int`: The minimum length of an ORF. Default is `6`.
-- `scheme::Function`: The scoring scheme to use for scoring the sequence from the ORF. Default is `nothing`.
+- `minlen::Int`: The minimum length of an ORFI. Default is `6`.
+- `scheme::Function`: The scoring scheme to use for scoring the sequence from the ORFI. Default is `nothing`.
 
 ## Returns
-A vector of `ORF` objects representing the found ORFs.
+A vector of `ORFI` objects representing the found ORFIs.
 
 ## Example
 
@@ -28,8 +28,8 @@ sequence = randdnaseq(120)
 
 findorfs(sequence, finder=NaiveFinder)
 
-1-element Vector{ORF}:
- ORF{NaiveFinder}(77:118, '-', 2)
+1-element Vector{ORFI}:
+ ORFI{NaiveFinder}(77:118, '-', 2)
 ```
 
 """
@@ -38,7 +38,7 @@ function findorfs(
     finder::Type{F}=NaiveFinder,
     kwargs...
 ) where {N,F<:GeneFinderMethod}
-    return finder(sequence; kwargs...)::Vector{ORF{N,F}}
+    return finder(sequence; kwargs...)::Vector{ORFI{N,F}}
 end
 
 
@@ -49,7 +49,7 @@ end
 #     method::Type{M};
 #     kwargs...
 # ) where {N, M<:GeneFinderMethod}
-#     return method(sequence; kwargs...)::Vector{ORF} #alternative_start, minlen, scoringscheme
+#     return method(sequence; kwargs...)::Vector{ORFI} #alternative_start, minlen, scoringscheme
 # end
 
 # This general implementation would allow for the addition of new finder methods without changing the findorfs method.
@@ -76,7 +76,7 @@ end
 #     ) where {N}
 #         seqlen = length(sequence)
 #         framedict = Dict(0 => 3, 1 => 1, 2 => 2)
-#         orfs = Vector{ORF}()
+#         orfs = Vector{ORFI}()
 #         for strand in ('+', '-')
 #             seq = strand == '-' ? reverse_complement(sequence) : sequence
 
@@ -86,7 +86,7 @@ end
 #                     start = strand == '+' ? location.start : seqlen - location.stop + 1
 #                     stop = start + length(location) - 1
 #                     score = -10log10(dnaseqprobability(seq[start:stop], scoringscheme)) # orfs[argmax([orf.score for orf in orfs])]
-#                     push!(orfs, ORF(start:stop, strand, frame, score))
+#                     push!(orfs, ORFI(start:stop, strand, frame, score))
 #                 end
 #             end
 #         end

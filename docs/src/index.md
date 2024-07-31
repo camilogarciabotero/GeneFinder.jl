@@ -62,8 +62,8 @@ add GeneFinder
 	author  = {Camilo García},
 	title   = {GeneFinder.jl},
 	url     = {https://github.com/camilogarciabotero/GeneFinder.jl},
-	version = {v0.3.0},
+	version = {v0.6.0},
 	year    = {2024},
-	month   = {04}
+	month   = {08}
 }
 ```

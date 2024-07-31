@@ -1,27 +1,27 @@
 import GenomicFeatures: first, last, length, strand, groupname, metadata
 
-export ORF
+export ORFI, OpenReadingFrameInterval
 export features, sequence, source
 export groupname, finder, frame, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
 
 """
-    struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
+    struct ORFI{N,F} <: AbstractGenomicInterval{F}
 
-The `ORF` struct represents an Open Reading Frame (ORF) in genomics.
+The `ORFI` struct represents an Open Reading Frame Interval (ORFI) in genomics.
 
 # Fields
-- `groupname::String`: The name of the group to which the ORF belongs.
-- `first::Int64`: The starting position of the ORF.
-- `last::Int64`: The ending position of the ORF.
-- `strand::Strand`: The strand on which the ORF is located.
-- `frame::Int`: The reading frame of the ORF.
-- `seq::LongSubSeq{DNAAlphabet{N}}`: The DNA sequence of the ORF.
-- `features::Features`: The features associated with the ORF.
+- `groupname::String`: The name of the group to which the ORFI belongs.
+- `first::Int64`: The starting position of the ORFI.
+- `last::Int64`: The ending position of the ORFI.
+- `strand::Strand`: The strand on which the ORFI is located.
+- `frame::Int`: The reading frame of the ORFI.
+- `seq::LongSubSeq{DNAAlphabet{N}}`: The DNA sequence of the ORFI.
+- `features::Features`: The features associated with the ORFI.
 
 # Main Constructor
 
 ```julia
-ORF{N,F}(
+ORFI{N,F}(
     groupname::String,
     first::Int64,
     last::Int64,
@@ -33,19 +33,19 @@ ORF{N,F}(
 ```
 # Example
 
-A full instance `ORF`
+A full instance `ORFI`
 
 ```julia
-ORF{4,NaiveFinder}("seq01", 1, 33, STRAND_POS, 1, Features((score = 0.0,)), nothing)
+ORFI{4,NaiveFinder}("seq01", 1, 33, STRAND_POS, 1, Features((score = 0.0,)), nothing)
 ```
 
-A partial instance `ORF`
+A partial instance `ORFI`
 
 ```julia
-ORF{NaiveFinder}(1:33, '+', 1)
+ORFI{NaiveFinder}(1:33, '+', 1)
 ```
 """
-struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
+struct OpenReadingFrameInterval{N,F} <: AbstractGenomicInterval{F} #GenomicFeatures
     groupname::String
     first::Int64
     last::Int64
@@ -55,7 +55,7 @@ struct ORF{N,F} <: GenomicFeatures.AbstractGenomicInterval{F}
     features::NamedTuple
 end
 
-function ORF{N,F}(
+function OpenReadingFrameInterval{N,F}(
     ::Type{F}, #finder
     groupname::String,
     first::Int64,
@@ -65,35 +65,39 @@ function ORF{N,F}(
     seq::LongSubSeq{DNAAlphabet{N}},
     features::NamedTuple # ::Dict{Symbol,Any} or # ::@NamedTuple{score::Float64, rbs::Any} or @NamedTuple{Vararg{typeof(...)}} NTuple?
 ) where {N,F<:GeneFinderMethod}
-    return ORF{N,F}(groupname, first, last, strand, frame, seq, features) #finder seq schemes
+    # @assert frame in (1, 2, 3) "Invalid frame value. Frame must be 1, 2, or 3."
+    # frame in (1, 2, 3) || throw(ArgumentError("The source sequence of the ORFI and the given sequence are different"))
+    return ORFI{N,F}(groupname, first, last, strand, frame, seq, features) #finder seq schemes
 end
 
-"""
-    sequence(i::ORF{N,F})
+const ORFI = OpenReadingFrameInterval
 
-Extracts the DNA sequence corresponding to the given open reading frame (ORF).
+"""
+    sequence(i::ORFI{N,F})
+
+Extracts the DNA sequence corresponding to the given open reading frame (ORFI).
 
 # Arguments
-- `i::ORF{N,F}`: The open reading frame (ORF) for which the DNA sequence needs to be extracted.
+- `i::ORFI{N,F}`: The open reading frame (ORFI) for which the DNA sequence needs to be extracted.
 
 # Returns
-- The DNA sequence corresponding to the given open reading frame (ORF).
+- The DNA sequence corresponding to the given open reading frame (ORFI).
 
 """
-function sequence(i::ORF{N,F}) where {N,F}
+function sequence(i::ORFI{N,F}) where {N,F}
     return i.seq
 end
 
 """
-    source(i::ORF{N,F})
+    source(i::ORFI{N,F})
 
-Get the source sequence associated with the given `ORF` object.
+Get the source sequence associated with the given `ORFI` object.
 
 # Arguments
-- `i::ORF{N,F}`: The `ORF` object for which to retrieve the source sequence.
+- `i::ORFI{N,F}`: The `ORFI` object for which to retrieve the source sequence.
 
 # Returns
-The source sequence associated with the `ORF` object.
+The source sequence associated with the `ORFI` object.
 
 # Examples
 ```julia
@@ -107,85 +111,85 @@ ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA
 
 !!! warning
     The `source` method works if the sequence is defined in the global scope. Otherwise it will throw an error. 
-    For instance a common failure is to define a simple `ORF` that by defualt will have an "unnamedsource" as `groupname` 
+    For instance a common failure is to define a simple `ORFI` that by defualt will have an "unnamedsource" as `groupname` 
     and then try to get the source sequence. 
 
     ```julia
-    orf = ORF{NaiveFinder}(1:33, '+', 1)
+    orf = ORFI{NaiveFinder}(1:33, '+', 1)
     source(orf)
 
     ERROR: UndefVarError: `unnamedsource` not defined
     Stacktrace:
-     [1] source(i::ORF{4, NaiveFinder})
+     [1] source(i::ORFI{4, NaiveFinder})
        @ GeneFinder ~/.julia/dev/GeneFinder/src/types.jl:192
      [2] top-level scope
        @ REPL[12]:1
     ```
 
 """
-function source(i::ORF{N,F}) where {N,F}
+function source(i::ORFI{N,F}) where {N,F}
     seqsymb = Symbol(i.groupname)
     try
         return getfield(Main, seqsymb)
     catch e
-        error("The source sequence of the ORF is defined as $(i.groupname). Make sure to either define it or supply the correct source sequence.")
+        error("The source sequence of the ORFI is defined as $(i.groupname). Make sure to either define it or supply the correct source sequence.")
     end
 end
 
 """
-    features(i::ORF{N,F})
+    features(i::ORFI{N,F})
 
-Extracts the features from an `ORF` object.
+Extracts the features from an `ORFI` object.
 
 # Arguments
-- `i::ORF{N,F}`: An `ORF` object.
+- `i::ORFI{N,F}`: An `ORFI` object.
 
 # Returns
-The features of the `ORF` object. Those could be defined by each `GeneFinderMethod`.
+The features of the `ORFI` object. Those could be defined by each `GeneFinderMethod`.
 
 """
-function features(i::ORF{N,F}) where {N,F}
+function features(i::ORFI{N,F}) where {N,F}
     return i.features
 end
 
-function groupname(i::ORF{N,F}) where {N,F}
+function groupname(i::ORFI{N,F}) where {N,F}
     return i.groupname
 end
 
-function first(i::ORF{N,F}) where {N,F}
+function first(i::ORFI{N,F}) where {N,F}
     return i.first
 end
 
-function last(i::ORF{N,F}) where {N,F}
+function last(i::ORFI{N,F}) where {N,F}
     return i.last
 end
 
-function frame(i::ORF{N,F}) where {N,F}
+function frame(i::ORFI{N,F}) where {N,F}
     return i.frame
 end
 
-function strand(i::ORF{N,F}) where {N,F}
+function strand(i::ORFI{N,F}) where {N,F}
     return i.strand
 end
 
-function metadata(i::ORF{N,F}) where {N,F}
+function metadata(i::ORFI{N,F}) where {N,F}
     return features(i)
 end
 
-finder(i::ORF{N,F}) where {N,F} = F
+finder(i::ORFI{N,F}) where {N,F} = F
 
-function Base.show(io::IO, i::ORF{N,F}) where {N,F}
+function Base.show(io::IO, i::ORFI{N,F}) where {N,F}
     if get(io, :compact, false)
-        print(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") #{$(typeof(finder(i)))} $(score(i))
+        print(io, "ORFI{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") #{$(typeof(finder(i)))} $(score(i))
     else
-        print(io, "ORF{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") # , $(score(i))
+        print(io, "ORFI{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") # , $(score(i))
     end
 end
 
 ## Ideas for Gene struct
 
 # struct CDS <: AbstractGene
-#     orf::ORF
+#     orf::ORFI
 #     coding::Bool
 #     join::Bool
 # end

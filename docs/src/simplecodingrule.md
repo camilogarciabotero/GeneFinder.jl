@@ -73,7 +73,7 @@ iscoding.(orfsdna) # criteria = log_odds_ratio_decision_rule
  0
 ```
 
-In this case, the sequence has 20 ORFs and only 3 of them are classified as coding sequences. The classification is based on the *log-odds ratio* decision rule and the transition probability models of *E. coli* CDS and No-CDS. The `log_odds_ratio_decision_rule` method will return a boolean vector with the classification of each ORF in the sequence. Now we can simply filter the ORFs that are coding sequences:
+In this case, the sequence has 20 ORFIs and only 3 of them are classified as coding sequences. The classification is based on the *log-odds ratio* decision rule and the transition probability models of *E. coli* CDS and No-CDS. The `log_odds_ratio_decision_rule` method will return a boolean vector with the classification of each ORFI in the sequence. Now we can simply filter the ORFIs that are coding sequences:
 
 ```julia
 orfs = filter(orf -> iscoding(orf), orfsdna)
@@ -84,16 +84,16 @@ orfs = filter(orf -> iscoding(orf), orfsdna)
  ATGCCGGCGGATTGTACACCAGTGAAACAACTTTGGAGACCGTTAAAATGCAGCTGGACTCCCTGGCGGTCTACCTGA
 ```
 
-Or in terms of the `ORF` object:
+Or in terms of the `ORFI` object:
 
 ```julia
-orfs = findorfs(seq, minlen=75, finder=NaiveFinder, alternative_start=true) # find ORFs with alternative start as well
+orfs = findorfs(seq, minlen=75, finder=NaiveFinder, alternative_start=true) # find ORFIs with alternative start as well
 orfs[iscoding.(orfsdna)]
 
-3-element Vector{ORF{4, NaiveFinder}}:
- ORF{NaiveFinder}(194:268, '-', 2)
- ORF{NaiveFinder}(194:283, '-', 2)
- ORF{NaiveFinder}(650:727, '-', 2)
+3-element Vector{ORFI{4, NaiveFinder}}:
+ ORFI{NaiveFinder}(194:268, '-', 2)
+ ORFI{NaiveFinder}(194:283, '-', 2)
+ ORFI{NaiveFinder}(650:727, '-', 2)
 ```
 
 Or in a single line using another genome sequence:
@@ -103,36 +103,36 @@ phi = dna"GTGTGAGGTTATAACGCCGAAGCGGTAAAAATTTTAATTTTTGCCGCTGAGGGGTTGACCAAGCGAAGCG
 
 filter(x -> iscoding(sequence(x), η=1e-10) && length(x) > 100, findorfs(phi))
 
-34-element Vector{ORF{4, NaiveFinder}}:
- ORF{NaiveFinder}(636:1622, '+', 3)
- ORF{NaiveFinder}(687:1622, '+', 3)
- ORF{NaiveFinder}(774:1622, '+', 3)
- ORF{NaiveFinder}(781:1389, '+', 1)
- ORF{NaiveFinder}(814:1389, '+', 1)
- ORF{NaiveFinder}(829:1389, '+', 1)
- ORF{NaiveFinder}(861:1622, '+', 3)
- ORF{NaiveFinder}(1021:1389, '+', 1)
- ORF{NaiveFinder}(1386:1622, '+', 3)
- ORF{NaiveFinder}(1447:1635, '+', 1)
- ORF{NaiveFinder}(1489:1635, '+', 1)
- ORF{NaiveFinder}(1501:1635, '+', 1)
- ORF{NaiveFinder}(1531:1635, '+', 1)
- ORF{NaiveFinder}(2697:3227, '+', 3)
- ORF{NaiveFinder}(2745:3227, '+', 3)
+34-element Vector{ORFI{4, NaiveFinder}}:
+ ORFI{NaiveFinder}(636:1622, '+', 3)
+ ORFI{NaiveFinder}(687:1622, '+', 3)
+ ORFI{NaiveFinder}(774:1622, '+', 3)
+ ORFI{NaiveFinder}(781:1389, '+', 1)
+ ORFI{NaiveFinder}(814:1389, '+', 1)
+ ORFI{NaiveFinder}(829:1389, '+', 1)
+ ORFI{NaiveFinder}(861:1622, '+', 3)
+ ORFI{NaiveFinder}(1021:1389, '+', 1)
+ ORFI{NaiveFinder}(1386:1622, '+', 3)
+ ORFI{NaiveFinder}(1447:1635, '+', 1)
+ ORFI{NaiveFinder}(1489:1635, '+', 1)
+ ORFI{NaiveFinder}(1501:1635, '+', 1)
+ ORFI{NaiveFinder}(1531:1635, '+', 1)
+ ORFI{NaiveFinder}(2697:3227, '+', 3)
+ ORFI{NaiveFinder}(2745:3227, '+', 3)
  ⋮
- ORF{NaiveFinder}(2874:3227, '+', 3)
- ORF{NaiveFinder}(2973:3227, '+', 3)
- ORF{NaiveFinder}(3108:3227, '+', 3)
- ORF{NaiveFinder}(3142:3312, '+', 1)
- ORF{NaiveFinder}(3481:3939, '+', 1)
- ORF{NaiveFinder}(3659:3934, '+', 2)
- ORF{NaiveFinder}(3734:3934, '+', 2)
- ORF{NaiveFinder}(3772:3939, '+', 1)
- ORF{NaiveFinder}(3806:3934, '+', 2)
- ORF{NaiveFinder}(4129:4287, '+', 1)
- ORF{NaiveFinder}(4160:4291, '-', 2)
- ORF{NaiveFinder}(4540:4644, '+', 1)
- ORF{NaiveFinder}(4690:4866, '+', 1)
- ORF{NaiveFinder}(4741:4866, '+', 1)
- ORF{NaiveFinder}(4744:4866, '+', 1)
+ ORFI{NaiveFinder}(2874:3227, '+', 3)
+ ORFI{NaiveFinder}(2973:3227, '+', 3)
+ ORFI{NaiveFinder}(3108:3227, '+', 3)
+ ORFI{NaiveFinder}(3142:3312, '+', 1)
+ ORFI{NaiveFinder}(3481:3939, '+', 1)
+ ORFI{NaiveFinder}(3659:3934, '+', 2)
+ ORFI{NaiveFinder}(3734:3934, '+', 2)
+ ORFI{NaiveFinder}(3772:3939, '+', 1)
+ ORFI{NaiveFinder}(3806:3934, '+', 2)
+ ORFI{NaiveFinder}(4129:4287, '+', 1)
+ ORFI{NaiveFinder}(4160:4291, '-', 2)
+ ORFI{NaiveFinder}(4540:4644, '+', 1)
+ ORFI{NaiveFinder}(4690:4866, '+', 1)
+ ORFI{NaiveFinder}(4741:4866, '+', 1)
+ ORFI{NaiveFinder}(4744:4866, '+', 1)
 ```

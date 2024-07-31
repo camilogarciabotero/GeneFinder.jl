@@ -21,7 +21,7 @@ function iscoding(
 end
 
 function iscoding(
-    orf::ORF{F};
+    orf::ORFI{F};
     criteria::Function = lordr,
     kwargs...
 ) where {F<:GeneFinderMethod}
