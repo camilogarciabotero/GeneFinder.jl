@@ -1,5 +1,4 @@
 # Methods from main packages that expand their fuctions to this package structs
-# import Base: isless, getindex, length, ==
 
 @inline Base.isless(a::ORFI{N,F}, b::ORFI{N,F}) where {N,F} = isless(a.first:a.last, b.first:b.last)
 @inline Base.length(orf::ORFI{N,F}) where {N,F} = length(sequence(orf))
