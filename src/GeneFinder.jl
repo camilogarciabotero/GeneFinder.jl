@@ -25,7 +25,7 @@ using BioSequences:
 
 using BioMarkovChains: BioMarkovChain, ECOLICDS, ECOLINOCDS, log_odds_ratio_score
 using IterTools: takewhile, iterated
-using GenomicFeatures: GenomicFeatures, AbstractGenomicInterval, GenomicInterval, Strand, summary, groupname, strand, metadata, STRAND_POS, STRAND_NEG, STRAND_BOTH, STRAND_NA, leftposition, rightposition, length
+using GenomicFeatures: GenomicFeatures, AbstractGenomicInterval, Strand, summary, groupname, strand, metadata, STRAND_POS, STRAND_NEG, STRAND_BOTH, STRAND_NA, leftposition, rightposition
 
 # Finder Algorithms
 include("algorithms/naivefinder.jl")
@@ -44,6 +44,7 @@ include("io.jl")
 include("utils.jl")
 include("extended.jl")
 
+# Precompiled workloads
 include("workload.jl")
 
 end
