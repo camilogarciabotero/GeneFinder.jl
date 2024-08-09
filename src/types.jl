@@ -1,8 +1,8 @@
-import GenomicFeatures: first, last, length, strand, groupname, metadata
+import GenomicFeatures: first, last, strand, groupname, metadata
 
 export ORFI, OpenReadingFrameInterval
-export features, sequence, source
-export groupname, finder, frame, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
+export features, sequence, source, finder, frame
+export groupname, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
 
 """
     struct ORFI{N,F} <: AbstractGenomicInterval{F}
