@@ -1,6 +1,6 @@
 ## Scoring ORFs
 
-The `ORF` type is designed to be flexible and can store various types of information about the ORF. A very neat feature is that stores a view of the sequence that the ORF represents. Since the the ORF sequence is stored in the struct, then any method that can be applied to a sequence can be applied to the ORF sequence. This is useful for scoring the ORFs by overloading a method that calculates a score for a `BioSequence`. For instance the `lors` function from the [BioMarkovChains.jl](https://camilogarciabotero.github.io/BioMarkovChains.jl/dev/) package can be used to calculate a score of the ORFs predicted for the phi genome.
+The `ORFI` type is designed to be flexible and can store various types of information about ORFs. A very neat feature is that stores a view of the sequence that the ORF represents. Since the the ORFI sequence is stored in the struct, then any method that can be applied to a sequence can be applied to the ORF sequence. This is useful for scoring the ORFs by overloading a method that calculates a score for a `BioSequence`. For instance the `lors` function from the [BioMarkovChains.jl](https://camilogarciabotero.github.io/BioMarkovChains.jl/dev/) package can be used to calculate a score of the ORFs predicted for the phi genome.
 
 Take the following example:
 
@@ -9,38 +9,38 @@ phi = dna"GTGTGAGGTTATAACGCCGAAGCGGTAAAAATTTTAATTTTTGCCGCTGAGGGGTTGACCAAGCGAAGCG
 
 phiorfs = findorfs(phi, finder=NaiveFinder, minlen=75)
 
-124-element Vector{ORF{4, NaiveFinder}}:
- ORF{NaiveFinder}(9:101, '-', 3)
- ORF{NaiveFinder}(100:627, '+', 1)
- ORF{NaiveFinder}(223:447, '-', 1)
- ORF{NaiveFinder}(248:436, '+', 2)
- ORF{NaiveFinder}(257:436, '+', 2)
- ORF{NaiveFinder}(283:627, '+', 1)
- ORF{NaiveFinder}(344:436, '+', 2)
- ORF{NaiveFinder}(532:627, '+', 1)
- ORF{NaiveFinder}(636:1622, '+', 3)
- ORF{NaiveFinder}(687:1622, '+', 3)
- ORF{NaiveFinder}(774:1622, '+', 3)
- ORF{NaiveFinder}(781:1389, '+', 1)
- ORF{NaiveFinder}(814:1389, '+', 1)
- ORF{NaiveFinder}(829:1389, '+', 1)
- ORF{NaiveFinder}(861:1622, '+', 3)
+124-element Vector{ORFI{4, NaiveFinder}}:
+ ORFI{NaiveFinder}(9:101, '-', 3)
+ ORFI{NaiveFinder}(100:627, '+', 1)
+ ORFI{NaiveFinder}(223:447, '-', 1)
+ ORFI{NaiveFinder}(248:436, '+', 2)
+ ORFI{NaiveFinder}(257:436, '+', 2)
+ ORFI{NaiveFinder}(283:627, '+', 1)
+ ORFI{NaiveFinder}(344:436, '+', 2)
+ ORFI{NaiveFinder}(532:627, '+', 1)
+ ORFI{NaiveFinder}(636:1622, '+', 3)
+ ORFI{NaiveFinder}(687:1622, '+', 3)
+ ORFI{NaiveFinder}(774:1622, '+', 3)
+ ORFI{NaiveFinder}(781:1389, '+', 1)
+ ORFI{NaiveFinder}(814:1389, '+', 1)
+ ORFI{NaiveFinder}(829:1389, '+', 1)
+ ORFI{NaiveFinder}(861:1622, '+', 3)
  ⋮
- ORF{NaiveFinder}(4671:5375, '+', 3)
- ORF{NaiveFinder}(4690:4866, '+', 1)
- ORF{NaiveFinder}(4728:5375, '+', 3)
- ORF{NaiveFinder}(4741:4866, '+', 1)
- ORF{NaiveFinder}(4744:4866, '+', 1)
- ORF{NaiveFinder}(4777:4866, '+', 1)
- ORF{NaiveFinder}(4806:5375, '+', 3)
- ORF{NaiveFinder}(4863:5258, '-', 3)
- ORF{NaiveFinder}(4933:5019, '+', 1)
- ORF{NaiveFinder}(4941:5375, '+', 3)
- ORF{NaiveFinder}(5082:5375, '+', 3)
- ORF{NaiveFinder}(5089:5325, '+', 1)
- ORF{NaiveFinder}(5122:5202, '-', 1)
- ORF{NaiveFinder}(5152:5325, '+', 1)
- ORF{NaiveFinder}(5164:5325, '+', 1)
+ ORFI{NaiveFinder}(4671:5375, '+', 3)
+ ORFI{NaiveFinder}(4690:4866, '+', 1)
+ ORFI{NaiveFinder}(4728:5375, '+', 3)
+ ORFI{NaiveFinder}(4741:4866, '+', 1)
+ ORFI{NaiveFinder}(4744:4866, '+', 1)
+ ORFI{NaiveFinder}(4777:4866, '+', 1)
+ ORFI{NaiveFinder}(4806:5375, '+', 3)
+ ORFI{NaiveFinder}(4863:5258, '-', 3)
+ ORFI{NaiveFinder}(4933:5019, '+', 1)
+ ORFI{NaiveFinder}(4941:5375, '+', 3)
+ ORFI{NaiveFinder}(5082:5375, '+', 3)
+ ORFI{NaiveFinder}(5089:5325, '+', 1)
+ ORFI{NaiveFinder}(5122:5202, '-', 1)
+ ORFI{NaiveFinder}(5152:5325, '+', 1)
+ ORFI{NaiveFinder}(5164:5325, '+', 1)
 ```
 
 We can now calculate a score using the `lors` (`logg_odds_ratio_score`) scoring scheme (see [lors](https://github.com/camilogarciabotero/BioMarkovChains.jl/blob/533e53d97cf5951f1ca050454bce1423ec8d7c36/src/transitions.jl#L179) from the [BioMarkovChains.jl](https://camilogarciabotero.github.io/BioMarkovChains.jl/dev/) package).
@@ -96,9 +96,9 @@ In the `lors` case, the two models are the coding and non-coding models of the *
 
 ## Analysing Lambda ORFs
 
-As mentioned above the `lors` calculates the log odds ratio of the ORF sequence given two Markov models (by default: [ECOLICDS](https://github.com/camilogarciabotero/BioMarkovChains.jl/blob/533e53d97cf5951f1ca050454bce1423ec8d7c36/src/models.jl#L3) and [ECOLINOCDS](https://github.com/camilogarciabotero/BioMarkovChains.jl/blob/533e53d97cf5951f1ca050454bce1423ec8d7c36/src/models.jl#L16)), one for the coding region and one for the non-coding region. By default the `lors` function return the base 2 logarithm of the odds ratio, so it is analogous to the bits of information that the ORF sequence is coding.
+As mentioned above the `lors` calculates the log odds ratio of the ORFI sequence given two Markov models (by default: [ECOLICDS](https://github.com/camilogarciabotero/BioMarkovChains.jl/blob/533e53d97cf5951f1ca050454bce1423ec8d7c36/src/models.jl#L3) and [ECOLINOCDS](https://github.com/camilogarciabotero/BioMarkovChains.jl/blob/533e53d97cf5951f1ca050454bce1423ec8d7c36/src/models.jl#L16)), one for the coding region and one for the non-coding region. By default the `lors` function return the base 2 logarithm of the odds ratio, so it is analogous to the bits of information that the ORFI sequence is coding.
 
-Now we can even analyse how is the distribution of the ORFs' scores as a function of their lengths compared to random sequences.
+Now we can even analyse how is the distribution of the ORFIs' scores as a function of their lengths compared to random sequences.
 
 ```julia
 using FASTX, CairoMakie
@@ -154,4 +154,4 @@ f
 
 ![](assets/lors-lambda.png)
 
-What this plot shows is that the ORFs in the lambda genome have a higher scores than random sequences of the same length. The score is a measure of how likely a sequence given the coding model is compared to the non-coding model. In other words, the higher the score the more likely the sequence is coding. So, the plot shows that the ORFs in the lambda genome are more likely to be coding regions than random sequences. It also shows that the longer the ORF the higher the score, which is expected since longer ORFs are more likely to be coding regions than shorter ones.
+What this plot shows is that the ORFs in the lambda genome have a higher scores than random sequences of the same length. The score is a measure of how likely a sequence given the coding model is compared to the non-coding model. In other words, the higher the score the more likely the sequence is coding. So, the plot shows that the ORFs in the lambda genome are more likely to be coding regions than random sequences. It also shows that the longer the ORFI the higher the score, which is expected since longer ORFs are more likely to be coding regions than shorter ones.

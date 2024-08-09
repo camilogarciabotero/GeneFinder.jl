@@ -1,6 +1,5 @@
-export _hasprematurestop, _varname, _varsymbol, _orfseq #fasta2bioseq
-
-# General purposes private methods supporting main functions
+# General purposes methods supporting main functions
+export _hasprematurestop, _varname, _varsymbol, _orfseq # ougth to be public but unexported
 
 """
     hasprematurestop(seq::LongNucOrView{4})::Bool
@@ -28,11 +27,11 @@ function _hasprematurestop(seq::NucleicSeqOrView{DNAAlphabet{N}})::Bool where {N
 end
 
 """
-    _orfseq(seq::LongSequence{DNAAlphabet{N}}, start::Int64, stop::Int64, strand::Strand) where {N}
+    _orfseq(seq::LongSequence{DNAAlphabet{N}}, start::Int64, stop::Int64, strand::Strand) where {N} -> LongSubSeq{DNAAlphabet{N}}
 
-Extract the ORF sequence from the `seq` of type `LongSequence{DNAAlphabet{N}}` given the `start` and `stop` positions and the `strand`.
+Extract the ORFI sequence from the `seq` of type `LongSequence{DNAAlphabet{N}}` given the `start` and `stop` positions and the `strand`.
 """
-function _orfseq(seq::LongSequence{DNAAlphabet{N}}, start::Int64, stop::Int64, strand::Strand) where {N}
+function _orfseq(seq::SeqOrView{DNAAlphabet{N}}, start::Int64, stop::Int64, strand::Strand) where {N}
     if strand == STRAND_POS
         return convert(LongSubSeq, seq[start:stop])
     else
@@ -41,7 +40,7 @@ function _orfseq(seq::LongSequence{DNAAlphabet{N}}, start::Int64, stop::Int64, s
 end
 
 """
-    _varname(var::Any)
+    _varname(var::Any) -> String
 
 Get the name of the variable `var` in the current scope.
 """
@@ -60,7 +59,7 @@ function _varname(var::Any)
 end
 
 """
-    _varsymbol(var::Any)
+    _varsymbol(var::Any) -> Symbol
 
 Get the symbol of the variable `var` in the current scope.
 """

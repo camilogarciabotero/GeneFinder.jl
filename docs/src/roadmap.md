@@ -1,8 +1,8 @@
 ## Roadmap
 
-### Coding genes (CDS - ORFs)
+### Coding genes (CDS - ORFIs)
 
--   ☒ [Finding ORFs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/simplefinder/)
+-   ☒ [Finding ORFIs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/simplefinder/)
 -   ☐ EasyGene
 -   ☐ GLIMMER
 -   ☐ Prodigal - Pyrodigal
@@ -23,7 +23,7 @@
 -   ☐ incorporate Programmed Reading Frame Shifting (PRFS)
 -   ☐ specialized types
     -   ☒ Gene
-    -   ☒ ORF
+    -   ☒ ORFI
     -   ☒ Codon
     -   ☒ CDS
     -   ☐ EukaryoticGene (?)

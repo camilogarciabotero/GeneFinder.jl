@@ -9,7 +9,7 @@ Write BED data to a file.
 # Arguments
 - `input`: The input DNA sequence NucSeq or a view.
 - `output`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
-- `finder`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
+- `finder`: The algorithm used to find ORFIs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
 
 # Keywords
 - `alternative_start::Bool=false`: If true, alternative start codons will be used when identifying CDSs. Default is `false`.
@@ -55,7 +55,7 @@ Write a file containing the coding sequences (CDSs) of a given DNA sequence to t
 # Arguments
 - `input::NucleicAcidAlphabet{DNAAlphabet{N}}`: The input DNA sequence.
 - `output::IO`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
-- `finder::F`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
+- `finder::F`: The algorithm used to find ORFIs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
 
 # Keywords
 
@@ -120,13 +120,13 @@ Write the protein sequences encoded by the coding sequences (CDSs) of a given DN
 # Arguments
 - `input`: The input DNA sequence NucSeq or a view.
 - `output`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
-- `finder`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
+- `finder`: The algorithm used to find ORFIs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
 
 # Keywords
 
 - `code::GeneticCode=BioSequences.standard_genetic_code`: The genetic code by which codons will be translated. See `BioSequences.ncbi_trans_table` for more info. 
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
-- `minlen::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
+- `minlen::Int64=6`:  Length of the allowed ORFI. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFIs.
 
 # Examples 
 
@@ -190,13 +190,13 @@ Write GFF data to a file.
 # Arguments
 - `input`: The input DNA sequence NucSeq or a view.
 - `output`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
-- `finder`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
+- `finder`: The algorithm used to find ORFIs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
 
 # Keywords
 
 - `code::GeneticCode=BioSequences.standard_genetic_code`: The genetic code by which codons will be translated. See `BioSequences.ncbi_trans_table` for more info. 
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
-- `minlen::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
+- `minlen::Int64=6`:  Length of the allowed ORFI. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFIs.
 
 """
 function write_orfs_gff(
@@ -212,9 +212,9 @@ function write_orfs_gff(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
     for (i, orf) in enumerate(orfs)
-        id = string("ORF", lpad(string(i), padding, "0"))
+        id = string("ORFI", lpad(string(i), padding, "0"))
         fts = isempty(orf.features) ? "" : join(orf.features, ",")
-        println(output, "Chr\t.\tORF\t", orf.first, "\t", orf.last, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame, ";Features=[", fts, "]")
+        println(output, "Chr\t.\tORFI\t", orf.first, "\t", orf.last, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame, ";Features=[", fts, "]")
     end
 end
 
@@ -232,11 +232,11 @@ function write_orfs_gff(
     open(output, "w") do f
         write(f, "##gff-version 3\n##sequence-region Chr 1 $(length(input))\n") 
         for (i, orf) in enumerate(orfs)
-            id = string("ORF", lpad(string(i), padding, "0"))
+            id = string("ORFI", lpad(string(i), padding, "0"))
             fts = isempty(orf.features) ? "" : join(orf.features, ",")
             write(
                 f,
-                "Chr\t.\tORF\t$(orf.first)\t$(orf.last)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame);Features=[$(fts)]\n"
+                "Chr\t.\tORFI\t$(orf.first)\t$(orf.last)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame);Features=[$(fts)]\n"
             )
         end
     end
