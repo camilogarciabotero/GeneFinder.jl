@@ -2,7 +2,7 @@
 
 @inline Base.isless(a::ORFI{N,F}, b::ORFI{N,F}) where {N,F} = isless(a.first:a.last, b.first:b.last)
 @inline Base.length(orf::ORFI{N,F}) where {N,F} = length(sequence(orf))
-@inline Base.getindex(seq::SeqOrView{DNAAlphabet{N}}, orf::ORFI{N,F}) where {N,F} =  _orfseq(seq, orf.first, orf.last, orf.strand)
+@inline Base.getindex(seq::SeqOrView{DNAAlphabet{N}}, orf::ORFI{N,F}) where {N,F} = _orfseq(seq, orf.first, orf.last, orf.strand)
 
 function Base.:(==)(a::ORFI{N,F}, b::ORFI{N,F}) where {N,F}
     return a.first == b.first && a.last == b.last && a.strand == b.strand && a.frame == b.frame && a.groupname == b.groupname && a.seq == b.seq # all(name -> getproperty(a, name) == getproperty(b, name), propertynames(a))
