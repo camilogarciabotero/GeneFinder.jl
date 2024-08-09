@@ -30,8 +30,8 @@ function _locationiterator(
 ) where {N}
     regorf = alternative_start ? biore"NTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
     # regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG([N]{3})*T(AG|AA|GA)?"dna # an attempt to make it non PCRE non-determinsitic
-    finder(x) = findfirst(regorf, seq, first(x) + 1) # + 3
-    itr = takewhile(!isnothing, iterated(finder, findfirst(regorf, seq)))
+    fdr(x) = findfirst(regorf, seq, first(x) + 1) # + 3
+    itr = takewhile(!isnothing, iterated(fdr, findfirst(regorf, seq)))
     return itr
 end
 
@@ -88,9 +88,8 @@ function NaiveFinder(
                 start = strand == STRAND_POS ? location.start : seqlen - location.stop + 1
                 stop = start + length(location) - 1
                 frm = start % 3 == 0 ? 3 : start % 3
-                fts = NamedTuple()
 
-                push!(orfs, ORFI{N,NaiveFinder}(seqname, start, stop, strand, frm, @view(s[location.start:location.stop]), fts)) #seq scheme
+                push!(orfs, ORFI{N,NaiveFinder}(seqname, start, stop, strand, frm, @view(s[location.start:location.stop]), NamedTuple()))
             end
         end
     end
