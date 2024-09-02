@@ -4,6 +4,8 @@ export ORFI, OpenReadingFrameInterval
 export features, sequence, source, finder, frame
 export groupname, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
 
+# abstract type GeneFinderMethod end # This should've been defined here
+
 """
     struct ORFI{N,F} <: AbstractGenomicInterval{F}
 
@@ -45,7 +47,7 @@ A partial instance `ORFI`
 ORFI{NaiveFinder}(1:33, '+', 1)
 ```
 """
-struct OpenReadingFrameInterval{N,F} <: AbstractGenomicInterval{F} #GenomicFeatures
+struct OpenReadingFrameInterval{N,F<:GeneFinderMethod} <: AbstractGenomicInterval{F} #GenomicFeatures
     groupname::String
     first::Int64
     last::Int64
@@ -53,6 +55,10 @@ struct OpenReadingFrameInterval{N,F} <: AbstractGenomicInterval{F} #GenomicFeatu
     frame::Int8
     seq::LongSubSeq{DNAAlphabet{N}}
     features::NamedTuple
+    
+    # todo: add an inner construct to enforce invariants (e.g. frame in (1, 2, 3)) as an outer construct doesn't allow for this
+    # @assert frame in (1, 2, 3) "Invalid frame value. Frame must be 1, 2, or 3."
+    # frame in (1, 2, 3) || throw(ArgumentError("The source sequence of the ORFI and the given sequence are different"))
 end
 
 function OpenReadingFrameInterval{N,F}(
@@ -65,8 +71,6 @@ function OpenReadingFrameInterval{N,F}(
     seq::LongSubSeq{DNAAlphabet{N}},
     features::NamedTuple # ::Dict{Symbol,Any} or # ::@NamedTuple{score::Float64, rbs::Any} or @NamedTuple{Vararg{typeof(...)}} NTuple?
 ) where {N,F<:GeneFinderMethod}
-    # @assert frame in (1, 2, 3) "Invalid frame value. Frame must be 1, 2, or 3."
-    # frame in (1, 2, 3) || throw(ArgumentError("The source sequence of the ORFI and the given sequence are different"))
     return ORFI{N,F}(groupname, first, last, strand, frame, seq, features) #finder seq schemes
 end
 
