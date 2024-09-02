@@ -36,13 +36,13 @@ function NaiveCollector(
     overlap::Bool = false,
     kwargs...
 ) where {N}
-    regorf = alternative_start ? biore"NTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
+    regorf::BioRegex = alternative_start ? biore"NTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
     revseq = reverse_complement(seq)
     seqlen = length(seq)
     seqname = _varname(seq)
     
-    function createorfs(x, strand)
-        while length(x.captured[1]:x.captured[3]) > minlen
+    function createorfs(x, strand::Strand)
+        while length(x.captured[1]:x.captured[3])::Int64 > minlen
             if strand == STRAND_POS
                 start = x.captured[1]
                 stop = x.captured[3] + 1
