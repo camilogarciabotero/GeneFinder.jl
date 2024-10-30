@@ -20,9 +20,7 @@ pgs = [
         "A Simple Coding Rule" => "simplecodingrule.md",
         "Writing ORFs In Files" => "iodocs.md",
     ],
-    "Reference" => [
-        "API" => "api.md",
-    ],
+    "API" => "api.md",
 ]
 
 makedocs(;
