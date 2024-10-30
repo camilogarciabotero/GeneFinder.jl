@@ -2,7 +2,7 @@
 
 The main package function is `findorfs`. Under the hood, the `findorfs` function is an interface for different gene finding algorithms that can be plugged using the `finder` keyword argument. By default it uses the `NaiveFinder` algorithm, which is a simple algorithm that finds all (non-outbounded) ORFIs in a DNA sequence (see the [NaiveFinder](https://camilogarciabotero.github.io/GeneFinder.jl/dev/api/#GeneFinder.NaiveFinder-Union{Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}}},%20Tuple{N}}%20where%20N) documentation for more details).
 
-> [!NOTE] 
+!!! note
   The `minlen` kwarg in the `NaiveFinder` mehtod has been set to 6nt, so it will catch random ORFIs not necesarily genes thus it might consider `dna"ATGTGA"` -> `aa"M*"` as a plausible ORFI.
 
 Here is an example of how to use the `findorfs` function with the `NaiveFinder` algorithm:
