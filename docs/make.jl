@@ -38,6 +38,7 @@ fmt = DocumenterVitepress.MarkdownVitepress(
 
 pgs = [
     "Home" => "index.md",
+    "Get Started" => "getstarted.md",
     "Finding ORFs" => "naivefinder.md",
     "Scoring ORFs" => "features.md",
     "A Simple Coding Rule" => "simplecodingrule.md",
