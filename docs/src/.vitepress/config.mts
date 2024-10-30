@@ -3,6 +3,13 @@ import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 import mathjax3 from "markdown-it-mathjax3";
 import footnote from "markdown-it-footnote";
 
+const nav = [
+  ...navTemp.nav,
+  {
+    component: 'VersionPicker'
+  }
+]
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   base: 'REPLACE_ME_DOCUMENTER_VITEPRESS',// TODO: replace this in makedocs!
@@ -43,7 +50,7 @@ export default defineConfig({
     ],
     footer: {
       message: 'Made with <a href="https://luxdl.github.io/DocumenterVitepress.jl/dev/" target="_blank"><strong>DocumenterVitepress.jl</strong></a><br>',
-      copyright: `© Copyright ${new Date().getUTCFullYear()}.`
+      copyright: `© Copyright ${new Date().getUTCFullYear()}. Released under the MIT License.`
     }
   }
 })
