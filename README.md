@@ -1,6 +1,6 @@
 <p align="center">
   <img src="docs/src/assets/logo.svg" height="150"><br/>
-  <i>A Gene Finder framework for Julia.</i>
+  <i>A Gene Finder Framework for the Julia Programming Language.</i>
 </p>
 
 <div align="center">
