@@ -3,12 +3,12 @@ import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 import mathjax3 from "markdown-it-mathjax3";
 import footnote from "markdown-it-footnote";
 
-const nav = [
-  ...navTemp.nav,
-  {
-    component: 'VersionPicker'
-  }
-]
+// const nav = [
+//   ...navTemp.nav,
+//   {
+//     component: 'VersionPicker'
+//   }
+// ]
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
