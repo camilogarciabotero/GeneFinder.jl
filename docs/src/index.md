@@ -20,11 +20,8 @@ hero:
 ---
 ```
 
-
 Install `GeneFinder` from the julia REPL. Press `]` to enter `pkg` mode, and enter the `add GeneFinder` command.
 
 ```julia
 (@v1.11) pkg> add GeneFinder
 ```
-
-For more information, see the [Get Started](getstarted.md) section.
