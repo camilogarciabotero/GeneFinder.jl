@@ -1,6 +1,6 @@
 ## Finding complete and overlapped ORFIs
 
-The main function in the GeneFinder package is `findorfs`, which serves as an interface to various gene-finding algorithms. By default, `findorfs` uses a `NaiveFinder` algorithm, a simple approach that detects all non-outbounded Open Reading Frames (ORFs) in a DNA sequence. You can also specify a different algorithm by setting the `finder` keyword argument. For more details on the NaiveFinder algorithm, see [NaiveFinder](https://camilogarciabotero.github.io/GeneFinder.jl/dev/api/#GeneFinder.NaiveFinder-Union{Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}}},%20Tuple{N}}%20where%20N) documentation for more details.
+The main function in the GeneFinder package is `findorfs`, which serves as an interface to various gene-finding algorithms. By default, `findorfs` uses a `NaiveFinder` algorithm, a simple approach that detects all non-outbounded Open Reading Frames (ORFs) in a DNA sequence. You can also specify a different algorithm by setting the `finder` keyword argument. For more details on the NaiveFinder algorithm, see [NaiveFinder](https://camilogarciabotero.github.io/GeneFinder.jl/dev/api#GeneFinder.NaiveFinder-Union{Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}}},%20Tuple{N}}%20where%20N) documentation for more details.
 
 !!! note
     The minlen keyword argument in `NaiveFinder` is set to a minimum length of 6 nucleotides (nt). As a result, it may identify short ORFs that aren't necessarily genes, such as dna"ATGTGA" producing the amino acid sequence aa"M*".
@@ -35,7 +35,7 @@ orfs = findorfs(seq, finder=NaiveFinder) # use finder=NaiveCollector as an alter
 
 ## Extracting Sequences from ORFIs
 
-The `ORFI` structure displays the location, frame, and strand, but currently does not include the sequence *per se*. To extract the sequence of an `ORFI` instance, you can use the `sequence` method directly on it, or you can also broadcast it over the `orfs` collection using the dot syntax `.`:
+The `ORFI` structure displays the location, frame, and strand, and other fields (see more about the [OpenReadingFrameInterval struct](https://camilogarciabotero.github.io/GeneFinder.jl/dev/orftype#The-ORFI-type)). To extract the sequence of an `ORFI` instance, you can use the `sequence` method directly on it, or you can also broadcast it over the `orfs` collection using the dot syntax `.`:
 
 ```julia
 julia> sequence.(orfs)
