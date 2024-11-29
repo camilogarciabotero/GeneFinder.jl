@@ -180,6 +180,7 @@ function offset(rbs::RBS)
     return rbs.offset
 end
 
+# filter(x -> _orf_rbs_score(x) > 20 && length(x) > 100, findorfs(phi))
 
 # An idea of another implemetation of the a orf finder would be to use qstart = ExactSearchQuery(dna"ATG") 
 # and then findall the start codons in the sequence and reverse sequence appended (seq * reverse_complement(seq))
