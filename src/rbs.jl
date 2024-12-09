@@ -1,4 +1,4 @@
-export RBS, orf_rbs_score, motifseq, offset
+export RBS, orf_rbs_score, orbs, motifseq, offset
 public _rbswindows, _findrbs
 
 """
@@ -199,7 +199,7 @@ function _findrbs(orf::ORFI{N,F}) where {N,F}
 end
 
 """
-    orf_rbs_score(orf::ORFI{N,F}) where {N,F} -> Float64
+    orf_rbs_score(orf::ORFI{N,F}) where {N,F} -> Int64
 
 Calculate a ribosome binding site (RBS) score for a given open reading frame (ORF).
 
@@ -223,7 +223,7 @@ The function:
 RBS motifs and their scores are predefined in `FORWARDRBSMOTIFS` for positive strand
 and `REVERSERBSMOTIFS` for negative strand sequences.
 """
-function orf_rbs_score(orf::ORFI{N,F}) where {N,F}
+function orbs(orf::ORFI{N,F}) where {N,F}
     # Initialize the score and the max scores dictionary
     wsymb = (:a, :b, :c)
     windows = _rbswindows(orf)
@@ -252,6 +252,8 @@ function orf_rbs_score(orf::ORFI{N,F}) where {N,F}
     
     return totscore
 end
+
+const orf_rbs_score = orbs
 
 export motifseq
 function motifseq(rbs::RBS)
