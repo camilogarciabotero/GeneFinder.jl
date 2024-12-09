@@ -18,6 +18,7 @@ pgs = [
         "The ORF type" => "orftype.md",
         "Scoring ORFs" => "features.md",
         "A Simple Coding Rule" => "simplecodingrule.md",
+        "Ribosome Binding Sites" => "rbsrule.md",
         "Writing ORFs In Files" => "iodocs.md",
     ],
     "API" => "api.md",
