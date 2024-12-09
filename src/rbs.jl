@@ -1,5 +1,4 @@
 export RBS, orf_rbs_score, motifseq, offset
-
 public _rbswindows, _findrbs
 
 """
@@ -81,7 +80,6 @@ const REVERSERBSMOTIFS = Dict(
     ExactSearchQuery(dna"TCGTC", iscompatible)  => 9,
 )
 
-
 ## based on the Prodigal paper:
 # Spacer Range | Representative RBS Motif(s)
 # ------------ | ---------------------------
@@ -142,7 +140,6 @@ function _rbswindows(orf::ORFI{N,F}) where {N,F}
     return filter(window -> first(window) >= 1 && last(window) >= 1, windows)
 end
 
-
 """
     _findrbs(orf::ORFI{N,F}) where {N,F} -> Vector{RBS}
 
@@ -196,10 +193,6 @@ function _findrbs(orf::ORFI{N,F}) where {N,F}
                     push!(rbsvect, RBS(rbseq, offset, symbol, scr, orf.strand))
                 end
             end
-            # if occursin(rbs, sqv)
-            #     push!(rbsvect, RBS(rbs.seq, window, scr, symbol))
-            #     # score += scr  # Use the value associated with the key
-            # end
         end
     end
     return rbsvect

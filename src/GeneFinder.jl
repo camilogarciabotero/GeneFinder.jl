@@ -34,13 +34,9 @@ using GenomicFeatures: GenomicFeatures, AbstractGenomicInterval, Strand, summary
 include("algorithms/naivefinder.jl")
 include("algorithms/naivecollector.jl")
 
-# Coding Criteria
-include("criteria/lordr.jl")
-
 # Main functions
 include("types.jl")
 include("findorfs.jl")
-include("iscoding.jl")
 include("io.jl")
 
 # Utils and extended functions
@@ -49,6 +45,9 @@ include("extended.jl")
 
 # RBS Scoring
 include("rbs.jl")
+
+# Coding Criteria
+include("criteria.jl")
 
 # Precompiled workloads
 include("workload.jl")
