@@ -21,7 +21,10 @@ using BioSequences:
     reverse_complement,
     randdnaseq,
     ncbi_trans_table,
-    translate
+    translate,
+
+    ExactSearchQuery,
+    iscompatible
 
 using BioMarkovChains: BioMarkovChain, ECOLICDS, ECOLINOCDS, log_odds_ratio_score
 using IterTools: takewhile, iterated
@@ -31,18 +34,20 @@ using GenomicFeatures: GenomicFeatures, AbstractGenomicInterval, Strand, summary
 include("algorithms/naivefinder.jl")
 include("algorithms/naivecollector.jl")
 
-# Coding Criteria
-include("criteria/lordr.jl")
-
 # Main functions
 include("types.jl")
 include("findorfs.jl")
-include("iscoding.jl")
 include("io.jl")
 
 # Utils and extended functions
 include("utils.jl")
 include("extended.jl")
+
+# RBS Scoring
+include("rbs.jl")
+
+# Coding Criteria
+include("criteria.jl")
 
 # Precompiled workloads
 include("workload.jl")

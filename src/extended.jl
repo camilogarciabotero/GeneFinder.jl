@@ -14,9 +14,9 @@ import BioSequences: translate
 
 ## Methods from BioMarkovChains that expand their fuctions to this package structs
 import BioMarkovChains: log_odds_ratio_score
-export log_odds_ratio_score, lors
+# export log_odds_ratio_score, lors
 
 @inline log_odds_ratio_score(orf::ORFI{N,F}; kwargs...) where {N,F} = log_odds_ratio_score(sequence(orf); kwargs...)
-@inline log_odds_ratio_decision_rule(orf::ORFI{N,F}; kwargs...) where {N,F} = log_odds_ratio_decision_rule(sequence(orf); kwargs)
+# @inline log_odds_ratio_decision_rule(orf::ORFI{N,F}; kwargs...) where {N,F} = log_odds_ratio_decision_rule(sequence(orf); kwargs)
 
-const  lors = log_odds_ratio_score
+# const  lors = log_odds_ratio_score
