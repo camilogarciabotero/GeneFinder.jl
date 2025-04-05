@@ -76,3 +76,20 @@ function _varsymbol(var::Any)
     end
     return nothing
 end
+
+# export location
+# function location(orf::ORFI{N,F})::UnitRange{Int64} where {N,F}
+#     return orf.first:orf.last
+# end
+
+# export _norfs
+# function _norfs(seq::NucleicSeqOrView{DNAAlphabet{N}}) where {N}
+#     cpseq = copy(seq)
+#     orfs = findorfs(cpseq; finder=NaiveCollector)
+
+#     for l in location.(orfs)
+#         deleteat!(cpseq, l)
+#     end
+
+#     return cpseq
+# end
