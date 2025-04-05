@@ -6,16 +6,17 @@ The `ORFI` type in `GeneFinder` is designed to enforce stricter validation, prev
 ORFI{4,NaiveFinder}(1:10, '+', 4) # Or any F <: GeneFinderMethod
 
 ERROR: MethodError: no method matching OpenReadingFrameInterval{4, NaiveFinder}(::UnitRange{Int64}, ::Char, ::Int64)
+The type `OpenReadingFrameInterval{4, NaiveFinder}` exists, but no method is defined for this combination of argument types when trying to construct it.
 
 Closest candidates are:
-  (::Type{OpenReadingFrameInterval{N, F}} where {N, F})(::Any, ::Any, ::Any, ::Any, ::Any, ::Any, ::Any)
-   @ GeneFinder ~/.julia/dev/GeneFinder/src/types.jl:49
-  OpenReadingFrameInterval{N, F}(::Type{F}, ::String, ::Int64, ::Int64, ::Strand, ::Int8, ::LongSubSeq{DNAAlphabet{N}}, ::NamedTuple) where {N, F<:GeneFinder.GeneFinderMethod}
-   @ GeneFinder ~/.julia/dev/GeneFinder/src/types.jl:58
+  (::Type{OpenReadingFrameInterval{N, F}} where {N, F<:GeneFinder.GeneFinderMethod})(::Any, ::Any, ::Any, ::Any, ::Any, ::Any, ::Any)
+   @ GeneFinder ~/.julia/dev/GeneFinder/src/types.jl:51
+  OpenReadingFrameInterval{N, F}(::Type{F}, ::String, ::Int64, ::Int64, ::GenomicFeatures.Strand, ::Int8, ::BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}, ::NamedTuple) where {N, F<:GeneFinder.GeneFinderMethod}
+   @ GeneFinder ~/.julia/dev/GeneFinder/src/types.jl:64
 
 Stacktrace:
  [1] top-level scope
-   @ REPL[21]:1
+   @ REPL[3]:1
 ```
 
 ### Validation Rules
