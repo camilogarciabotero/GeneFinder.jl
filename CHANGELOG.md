@@ -4,7 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
-## [UNRELEASED](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.5.0...main)
+## [0.7.0](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.6.1...v0.7.0)
+
+- Added a new `CriteriaFunctions` class to encapsulate criteria functions used by `iscoding`.
+- Updated `iscoding` to accept a `criteria` argument, defaulting to the `lordr` function.
+- Removed the `scheme` field from the `ORF` type to simplify its structure.
+- Updated the `IO` methods (`write_orfs_fna`, `write_orfs_faa`, `write_orfs_bed`, `write_orfs_gff`) to return a file or stream instead of `Void`.
+- Improved the `findorfs` method to better integrate with the `GeneFinderMethod` interface.
+- Enhanced documentation to reflect the latest API changes and structural updates.
+
+## [0.6.1](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.6.0...v0.6.1)
+
+- Fixed a bug in the `findorfs` method that caused incorrect frame calculations in certain edge cases.
+- Improved the performance of `iscoding` by optimizing the default `lordr` criteria function.
+- Updated documentation to clarify the usage of `findorfs` and `iscoding` methods.
+- Added additional tests to ensure compatibility with edge cases in sequence processing.
+- Minor refactoring of the `ORF` struct to improve type stability and maintainability.
 
 ## [0.6.0]
 
