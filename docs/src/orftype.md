@@ -1,7 +1,6 @@
+## The ORFI Type
 
-## The ORFI type
-
-For convenience, the `ORFI` type is more stringent in preventing the creation of incompatible instances. As a result, attempting to create an instance with incompatible parameters will result in an error. For instance, the following code snippet will trigger an error:
+The `ORFI` type in `GeneFinder` is designed to enforce stricter validation, preventing the creation of incompatible instances. This ensures greater stability and consistency when working with open reading frames (ORFs). For example, attempting to create an `ORFI` with invalid parameters will result in an error:
 
 ```julia
 ORFI{4,NaiveFinder}(1:10, '+', 4) # Or any F <: GeneFinderMethod
@@ -18,13 +17,33 @@ Stacktrace:
  [1] top-level scope
    @ REPL[21]:1
 ```
- 
-Similar behavior will be encountered when the strand is neither `+` nor `-`. This precautionary measure helps prevent the creation of invalid ORFs, ensuring greater stability and enabling the extension of its interface. For example, after creating a specific `ORFI`, users can seamlessly iterate over a sequence of interest and verify whether the ORFI is contained within the sequence.
+
+### Validation Rules
+
+The `ORFI` type enforces the following rules:
+- The strand must be either `+` or `-`. Any other value will trigger an error.
+- Parameters must align with the expected structure of an open reading frame.
+
+These safeguards help prevent the creation of invalid ORFs, making the system more robust and easier to extend.
+
+### Example Usage
+
+Here is an example of creating a valid `ORFI` instance:
 
 ```julia
-ORFI{4,NaiveFinder}("seq", 1, 33, STRAND_POS, 1, convert(LongSubSeq, dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"), NamedTuple())
+ORFI{4,NaiveFinder}(
+    "seq", 
+    1, 
+    33, 
+    STRAND_POS, 
+    1, 
+    convert(LongSubSeq, dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAG"), 
+    NamedTuple()
+)
 ```
 
+This instance can then be used to iterate over a sequence of interest and verify whether the `ORFI` is contained within the sequence.
+
 !!! warning
-    It is still possible to create an `ORFI` and pass it to a sequence that does not necessarily contain an actual open reading frame. This will be addressed in future versions of the package. But the benefit of having it is that it will retrieve the corresponding subsequence of the sequence in a convinient way (5' to 3') regardless of the strand.
+    While the `ORFI` type ensures stricter validation, it is still possible to create an `ORFI` that does not correspond to an actual open reading frame in the sequence. This limitation will be addressed in future versions of the package. However, the current implementation provides the benefit of retrieving the corresponding subsequence in a convenient 5' to 3' orientation, regardless of the strand.
 
