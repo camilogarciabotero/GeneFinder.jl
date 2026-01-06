@@ -30,72 +30,42 @@ end
 """
     struct ORF{F}
 
-The `ORFI` struct represents an Open Reading Frame Interval (ORFI) in genomics.
+The `ORF` struct represents an Open Reading Frame (ORF) in genomics.
 
 # Fields
-- `groupname::String`: The name of the group to which the ORFI belongs.
-- `first::Int64`: The starting position of the ORFI.
-- `last::Int64`: The ending position of the ORFI.
-- `strand::Strand`: The strand on which the ORFI is located.
-- `frame::Int`: The reading frame of the ORFI.
-- `seq::LongSubSeq{DNAAlphabet{N}}`: The DNA sequence of the ORFI.
-- `features::Features`: The features associated with the ORFI.
+- `seqid::Symbol`: The identifier of the sequence to which the ORF belongs.
+- `range::UnitRange{Int32}`: The position range of the ORF on the sequence.
+- `strand::Strand`: The strand on which the ORF is located.
+- `frame::Int8`: The reading frame of the ORF (1, 2, or 3).
+- `features::NamedTuple`: The features associated with the ORF.
 
-# Main Constructor
-
-```julia
-ORFI{N,F}(
-    groupname::String,
-    first::Int64,
-    last::Int64,
-    strand::Strand,
-    frame::Int,
-    features::Features,
-    seq::LongSubSeq{DNAAlphabet{N}}
-)
-```
 # Example
 
-A full instance `ORFI`
-
 ```julia
-ORFI{4,NaiveFinder}("seq01", 1, 33, STRAND_POS, 1, Features((score = 0.0,)), nothing)
-```
-
-A partial instance `ORFI`
-
-```julia
-ORFI{NaiveFinder}(1:33, '+', 1)
+ORF{NaiveFinder}(:seq01, 1:33, STRAND_POS, 1, (score = 0.8,))
 ```
 """
-struct OpenReadingFrameInterval{N,F<:GeneFinderMethod} <: AbstractGenomicInterval{F} #GenomicFeatures
-    groupname::String
-    first::Int64
-    last::Int64
+struct OpenReadingFrame{F<:GeneFinderMethod}
+    seqid::Symbol
+    range::UnitRange{Int32} # Could be more complex for Introns? But for ORFs it's fine, maybe for the more general GeneInterval
     strand::Strand
     frame::Int8
-    seq::LongSubSeq{DNAAlphabet{N}}
     features::NamedTuple
-    
-    # todo: add an inner construct to enforce invariants (e.g. frame in (1, 2, 3)) as an outer construct doesn't allow for this
-    # @assert frame in (1, 2, 3) "Invalid frame value. Frame must be 1, 2, or 3."
-    # frame in (1, 2, 3) || throw(ArgumentError("The source sequence of the ORFI and the given sequence are different"))
 end
 
-function OpenReadingFrameInterval{N,F}(
-    ::Type{F}, #finder
-    groupname::String,
-    first::Int64,
-    last::Int64,
+function OpenReadingFrame(
+    ::Type{F},
+    seqid::Union{Symbol, String},
+    range::UnitRange{<:Integer},
     strand::Strand,
     frame::Int8,
-    seq::LongSubSeq{DNAAlphabet{N}},
-    features::NamedTuple # ::Dict{Symbol,Any} or # ::@NamedTuple{score::Float64, rbs::Any} or @NamedTuple{Vararg{typeof(...)}} NTuple?
-) where {N,F<:GeneFinderMethod}
-    return ORFI{N,F}(groupname, first, last, strand, frame, seq, features) #finder seq schemes
+    features::NamedTuple = (;)
+) where {F<:GeneFinderMethod}
+    seqid_sym = isa(seqid, Symbol) ? seqid : Symbol(seqid)
+    return ORF{F}(seqid_sym, Int32(Base.first(range)):Int32(Base.last(range)), strand, frame, features)
 end
 
-const ORFI = OpenReadingFrameInterval
+const ORF = OpenReadingFrame
 
 """
     sequence(i::ORFI{N,F})
