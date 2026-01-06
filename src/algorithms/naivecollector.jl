@@ -1,10 +1,9 @@
 export NaiveCollector
 
-# abstract type GeneFinderMethod end
 struct NaiveCollector <: GeneFinderMethod end
 
 """
-    NaiveCollector(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) -> Vector{ORFI{N,F}} where {N,F}
+    NaiveCollector(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) -> Vector{ORF{F}} where {N,F}
 
 The `NaiveCollector` function searches for open reading frames (ORFs) in a DNA sequence. It takes the following arguments:
 
@@ -18,7 +17,7 @@ The `NaiveCollector` function searches for open reading frames (ORFs) in a DNA s
 - `minlen::Int64`: The minimum length of an ORF. Default is `6`.
 - `overlap::Bool`: A flag indicating whether to allow overlapping ORFs. Default is `false`.
 
-The function returns a sorted vector of `ORFI{N,NaiveCollector}` objects, representing the identified ORFs.
+The function returns a sorted vector of `ORF{NaiveCollector}` objects, representing the identified ORFs.
 
 !!! note
     This method finds, by default, non-overlapping ORFs in the given sequence. It is much faster than the `NaiveFinder` method.
@@ -41,31 +40,35 @@ function NaiveCollector(
     seqlen = length(seq)
     seqname = _varname(seq)
     
+    if seqname === nothing
+        seqname = :unnamedseq
+    else
+        seqname = Symbol(seqname)
+    end
+    
     function createorfs(x, strand::Strand)
-        while length(x.captured[1]:x.captured[3])::Int64 > minlen
-            if strand == STRAND_POS
+        if length(x.captured[1]:x.captured[3]) > minlen
+            if strand == PSTRAND
                 start = x.captured[1]
-                stop = x.captured[3] + 1
+                stop = x.captured[3]
             else
-                start = seqlen - x.captured[3] 
+                start = seqlen - x.captured[3] + 1
                 stop = seqlen - x.captured[1] + 1
             end
             frm = start % 3 == 0 ? 3 : start % 3
-            oseq = _orfseq(seq, start, stop, strand)
             fts = NamedTuple()
-            return ORFI{N,NaiveCollector}(seqname, start, stop, strand, frm, oseq, fts)
+            return ORF{NaiveCollector}(seqname, start:stop, strand, Int8(frm), fts)
         end
+        return nothing
     end
 
-    orfs = Vector{ORFI{N,NaiveCollector}}()
-    for strand in (STRAND_POS, STRAND_NEG)
-        s = strand == STRAND_NEG ? @view(revseq[begin:end]) : @view(seq[begin:end])
+    orfs = Vector{ORF{NaiveCollector}}()
+    for strand in (PSTRAND, NSTRAND)
+        s = strand == NSTRAND ? @view(revseq[begin:end]) : @view(seq[begin:end])
         matches = eachmatch(regorf, s, overlap)
         strandedorfs = filter(!isnothing, [createorfs(x, strand) for x in matches])
-        # filter!(x -> !hasprematurestop(sequence(x)), strandedorfs)
         append!(orfs, strandedorfs)
-        # println(strandedorfs)
     end
 
-    return sort!(orfs)#orfs#sort!(orfs)
+    return sort!(orfs)
 end
