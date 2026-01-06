@@ -68,66 +68,52 @@ end
 const ORF = OpenReadingFrame
 
 """
-    sequence(i::ORFI{N,F})
+    sequence(i::ORF{F})
 
-Extracts the DNA sequence corresponding to the given open reading frame (ORFI).
+Extracts the DNA sequence corresponding to the given open reading frame (ORF).
+Uses the source sequence referenced by the ORF's seqid.
+
+For positive strand ORFs, returns a LongSubSeq view (avoiding unnecessary copying).
+For negative strand ORFs, returns the reverse complement (requires allocation).
 
 # Arguments
-- `i::ORFI{N,F}`: The open reading frame (ORFI) for which the DNA sequence needs to be extracted.
+- `i::ORF{F}`: The open reading frame (ORF) for which the DNA sequence needs to be extracted.
 
 # Returns
-- The DNA sequence corresponding to the given open reading frame (ORFI).
-
+- A LongSubSeq for positive strand ORFs, or a reverse complement sequence for negative strand ORFs.
 """
-function sequence(i::ORFI{N,F}) where {N,F}
-    return i.seq
+@inline function sequence(i::ORF{F}) where {F}
+    src = source(i)
+    sub = @view src[i.range]
+
+    if i.strand === PSTRAND
+        return sub
+    elseif i.strand === NSTRAND
+        return convert(LongSubSeq, reverse_complement(sub))
+    else
+        throw(ArgumentError("Cannot extract sequence for strand $(i.strand); expected PSTRAND (+) or NSTRAND (-)"))
+    end
 end
 
 """
-    source(i::ORFI{N,F})
+    source(i::ORF{F})
 
-Get the source sequence associated with the given `ORFI` object.
+Get the source sequence associated with the given `ORF` object.
 
 # Arguments
-- `i::ORFI{N,F}`: The `ORFI` object for which to retrieve the source sequence.
+- `i::ORF{F}`: The `ORF` object for which to retrieve the source sequence.
 
 # Returns
-The source sequence associated with the `ORFI` object.
-
-# Examples
-```julia
-seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-orfs = findorfs(seq)
-source(orfs[1])
-
-44nt DNA Sequence:
-ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA
-```
+The source sequence associated with the `ORF` object.
 
 !!! warning
-    The `source` method works if the sequence is defined in the global scope. Otherwise it will throw an error. 
-    For instance a common failure is to define a simple `ORFI` that by defualt will have an "unnamedsource" as `groupname` 
-    and then try to get the source sequence. 
-
-    ```julia
-    orf = ORFI{NaiveFinder}(1:33, '+', 1)
-    source(orf)
-
-    ERROR: UndefVarError: `unnamedsource` not defined
-    Stacktrace:
-     [1] source(i::ORFI{4, NaiveFinder})
-       @ GeneFinder ~/.julia/dev/GeneFinder/src/types.jl:192
-     [2] top-level scope
-       @ REPL[12]:1
-    ```
-
+    The `source` method works if the sequence is defined in the global scope. Otherwise it will throw an error.
 """
-function source(i::ORFI{N,F}) where {N,F}
-    seqsymb = Symbol(i.groupname)
+function source(i::ORF{F}) where {F}
     try
-        return getfield(Main, seqsymb)
+        return getfield(Main, i.seqid)
     catch e
-        error("The source sequence of the ORFI is defined as $(i.groupname). Make sure to either define it or supply the correct source sequence.")
+        error("The source sequence of the ORF is defined as $(i.seqid). Make sure to either define it or supply the correct source sequence.")
     end
 end
 
