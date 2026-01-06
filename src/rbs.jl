@@ -109,7 +109,7 @@ const REVERSERBSMOTIFS = Dict(
 #                  |----|:RBS(dna"GGAGGA", 1:5, :A, 27, STRAND_POS)
 
 """
-    _rbswindows(orf::ORFI{N,F}) where {N,F} -> Tuple{UnitRange{Int64}, UnitRange{Int64}, UnitRange{Int64}}
+    _rbswindows(orf::ORF{F}) where {F} -> Tuple{UnitRange{Int64}, UnitRange{Int64}, UnitRange{Int64}}
 
 Generate potential ribosome binding site (RBS) windows for a given open reading frame (ORF).
 
@@ -127,21 +127,21 @@ For negative strand ORFs:
 - Window C: +11 to +20 positions downstream of end
 
 # Arguments
-- `orf::ORFI{N,F}`: An ORF instance containing strand and position information
+- `orf::ORF{F}`: An ORF instance containing strand and position information
 
 # Returns
 - Tuple of valid UnitRanges representing RBS windows
 """
-function _rbswindows(orf::ORFI{N,F}) where {N,F}
-    windowa = orf.strand == STRAND_POS ? (orf.first-10:orf.first-3) : (orf.last+3:orf.last+10)
-    windowb = orf.strand == STRAND_POS ? (orf.first-16:orf.first-5) : (orf.last+5:orf.last+16)
-    windowc = orf.strand == STRAND_POS ? (orf.first-20:orf.first-11) : (orf.last+11:orf.last+20)
+function _rbswindows(orf::ORF{F}) where {F}
+    windowa = orf.strand == PSTRAND ? (leftposition(orf)-10:leftposition(orf)-3) : (rightposition(orf)+3:rightposition(orf)+10)
+    windowb = orf.strand == PSTRAND ? (leftposition(orf)-16:leftposition(orf)-5) : (rightposition(orf)+5:rightposition(orf)+16)
+    windowc = orf.strand == PSTRAND ? (leftposition(orf)-20:leftposition(orf)-11) : (rightposition(orf)+11:rightposition(orf)+20)
     windows = (windowa, windowb, windowc)
-    return filter(window -> first(window) >= 1 && last(window) >= 1, windows)
+    return filter(window -> Base.first(window) >= 1 && Base.last(window) >= 1, windows)
 end
 
 """
-    _findrbs(orf::ORFI{N,F}) where {N,F} -> Vector{RBS}
+    _findrbs(orf::ORF{F}) where {F} -> Vector{RBS}
 
 Search for Ribosome Binding Sites (RBS) in the given Open Reading Frame (ORF).
 
@@ -150,7 +150,7 @@ For each window, it searches for predefined RBS motifs (either forward or revers
 the strand orientation) and records their locations and scores.
 
 # Arguments
-- `orf::ORFI{N,F}`: An Open Reading Frame Interface object containing sequence and strand information
+- `orf::ORF{F}`: An Open Reading Frame Interface object containing sequence and strand information
 
 # Returns
 - `Vector{RBS}`: A vector of RBS objects, each containing:
@@ -169,28 +169,23 @@ the strand orientation) and records their locations and scores.
 # Note
 This is an internal and public function as indicated by the leading underscore.
 """
-function _findrbs(orf::ORFI{N,F}) where {N,F}
-    # s = reverse(seq)
-    # score = 0
+function _findrbs(orf::ORF{F}) where {F}
     wsymb = (:A, :B, :C)
     rbsvect = Vector{RBS}()
     windows = _rbswindows(orf)
 
-    # Iterate over the windows and their corresponding symbols
-    for i in 1:3#length(windows)
+    for i in 1:3
         window = windows[i]
         symbol = wsymb[i]
         wsqv = view(source(orf), window)
-        ## here we can apply a logic to decid whether to use the reverse motif or the forward motif
-        motifs = orf.strand == STRAND_POS ? FORWARDRBSMOTIFS : REVERSERBSMOTIFS
+        motifs = strand(orf) == PSTRAND ? FORWARDRBSMOTIFS : REVERSERBSMOTIFS
         for (rbs, scr) in pairs(motifs)
             motifranges::Vector{UnitRange{Int}} = findall(rbs, wsqv)
             if !isempty(motifranges)
                 for motifrange in motifranges
-                    offset = (first(window) + first(motifrange) - 1):(first(window) + last(motifrange) - 1)
-                    # rbseq = orf.strand == STRAND_POS ? view(source(orf), offset) : reverse_complement(view(source(orf), offset))
-                    rbseq = view(wsqv,motifrange)
-                    push!(rbsvect, RBS(rbseq, offset, symbol, scr, orf.strand))
+                    offset = (Base.first(window) + Base.first(motifrange) - 1):(Base.first(window) + Base.last(motifrange) - 1)
+                    rbseq = view(wsqv, motifrange)
+                    push!(rbsvect, RBS(rbseq, offset, symbol, scr, strand(orf)))
                 end
             end
         end
@@ -199,7 +194,7 @@ function _findrbs(orf::ORFI{N,F}) where {N,F}
 end
 
 """
-    orf_rbs_score(orf::ORFI{N,F}) where {N,F} -> Int64
+    orf_rbs_score(orf::ORF{F}) where {F} -> Int64
 
 Calculate a ribosome binding site (RBS) score for a given open reading frame (ORF).
 
@@ -208,7 +203,7 @@ the ORF start codon by searching for known RBS motifs. It returns a total score 
 on the strongest motif found in each window.
 
 # Arguments
-- `orf::ORFI{N,F}`: An open reading frame interface object containing sequence and position information
+- `orf::ORF{F}`: An open reading frame interface object containing sequence and position information
 
 # Returns
 - `Float64`: The sum of the maximum RBS motif scores found in each window
@@ -223,23 +218,19 @@ The function:
 RBS motifs and their scores are predefined in `FORWARDRBSMOTIFS` for positive strand
 and `REVERSERBSMOTIFS` for negative strand sequences.
 """
-function orbs(orf::ORFI{N,F}) where {N,F}
-    # Initialize the score and the max scores dictionary
+function orbs(orf::ORF{F}) where {F}
     wsymb = (:a, :b, :c)
     windows = _rbswindows(orf)
     maxscores = Dict(:a => 0, :b => 0, :c => 0)
 
-    # Iterate over the windows and their corresponding symbols
     @inbounds for i in 1:3
         window = windows[i]
         symbol = wsymb[i]
         wsqv = view(source(orf), window)
 
-        motifs = orf.strand == STRAND_POS ? FORWARDRBSMOTIFS : REVERSERBSMOTIFS
-        # Check for RBS motifs in the sequence view
+        motifs = strand(orf) == PSTRAND ? FORWARDRBSMOTIFS : REVERSERBSMOTIFS
         @inbounds for (rbs, scr) in pairs(motifs)
             if occursin(rbs, wsqv)
-                # Update the max score directly
                 if scr > maxscores[symbol]
                     maxscores[symbol] = scr
                 end
@@ -247,13 +238,9 @@ function orbs(orf::ORFI{N,F}) where {N,F}
         end
     end
 
-    # Sum the maximum scores of each window
     totscore = sum(values(maxscores))
-    
     return totscore
 end
-
-const orf_rbs_score = orbs
 
 export motifseq
 function motifseq(rbs::RBS)
