@@ -1,8 +1,15 @@
-import GenomicFeatures: first, last, strand, groupname, metadata
+export ORF, OpenReadingFrame
+export Strand, GeneFinderMethod
+export features, sequence, source, finder, frame, strand, seqid
 
-export ORFI, OpenReadingFrameInterval
-export features, sequence, source, finder, frame
-export groupname, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
+"""
+    abstract type GeneFinderMethod
+
+Abstract base type for different ORF finding methods/algorithms.
+
+Subtypes should implement the calling interface to find ORFs in a sequence.
+"""
+abstract type GeneFinderMethod end
 
 # abstract type GeneFinderMethod end # This should've been defined here
 
