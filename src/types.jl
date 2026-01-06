@@ -7,7 +7,28 @@ export groupname, strand, STRAND_BOTH, STRAND_NEG, STRAND_POS, STRAND_NA
 # abstract type GeneFinderMethod end # This should've been defined here
 
 """
-    struct ORFI{N,F} <: AbstractGenomicInterval{F}
+    Strand
+
+An enumeration type representing DNA strand orientation.
+"""
+
+@enum Strand::Int8 begin
+    PSTRAND = 1  # Positive/forward strand (+)
+    NSTRAND = 2  # Negative/reverse strand (-)
+end
+
+function Base.show(io::IO, s::Strand)
+    if s === PSTRAND
+        print(io, "+")
+    elseif s === NSTRAND
+        print(io, "-")
+    else
+        print(io, "unknown")
+    end
+end
+
+"""
+    struct ORF{F}
 
 The `ORFI` struct represents an Open Reading Frame Interval (ORFI) in genomics.
 
