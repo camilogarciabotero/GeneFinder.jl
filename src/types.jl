@@ -118,46 +118,38 @@ function source(i::ORF{F}) where {F}
 end
 
 """
-    features(i::ORFI{N,F})
+    features(i::ORF{F})
 
-Extracts the features from an `ORFI` object.
+Extracts the features from an `ORF` object.
 
 # Arguments
-- `i::ORFI{N,F}`: An `ORFI` object.
+- `i::ORF{F}`: An `ORF` object.
 
 # Returns
-The features of the `ORFI` object. Those could be defined by each `GeneFinderMethod`.
-
+The features of the `ORF` object.
 """
-function features(i::ORFI{N,F}) where {N,F}
+function features(i::ORF{F}) where {F}
     return i.features
 end
 
-function groupname(i::ORFI{N,F}) where {N,F}
-    return i.groupname
+function leftposition(i::ORF{F}) where {F}
+    return Int(Base.first(i.range))
 end
 
-function first(i::ORFI{N,F}) where {N,F}
-    return i.first
+function rightposition(i::ORF{F}) where {F}
+    return Int(Base.last(i.range))
 end
 
-function last(i::ORFI{N,F}) where {N,F}
-    return i.last
-end
-
-function frame(i::ORFI{N,F}) where {N,F}
+function frame(i::ORF{F}) where {F}
     return i.frame
 end
 
-function strand(i::ORFI{N,F}) where {N,F}
+function strand(i::ORF{F}) where {F}
     return i.strand
 end
 
-function metadata(i::ORFI{N,F}) where {N,F}
-    return features(i)
-end
+finder(i::ORF{F}) where {F} = F
 
-finder(i::ORFI{N,F}) where {N,F} = F
 
 function Base.show(io::IO, i::ORFI{N,F}) where {N,F}
     if get(io, :compact, false)
