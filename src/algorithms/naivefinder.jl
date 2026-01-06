@@ -1,8 +1,8 @@
-export NaiveFinder
-
-abstract type GeneFinderMethod end
+export NaiveFinder, NaiveFinderLazy
 
 struct NaiveFinder <: GeneFinderMethod end
+
+struct NaiveFinderLazy <: GeneFinderMethod end
 
 """
     _locationiterator(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) where {N}
@@ -29,18 +29,23 @@ function _locationiterator(
     alternative_start::Bool = false
 ) where {N}
     regorf = alternative_start ? biore"NTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
-    # regorf = alternative_start ? biore"DTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG([N]{3})*T(AG|AA|GA)?"dna # an attempt to make it non PCRE non-determinsitic
-    fdr(x) = findfirst(regorf, seq, first(x) + 1) # + 3
+    fdr(x) = findfirst(regorf, seq, first(x) + 1)
+    # function fdr(x)
+    #     offset = first(x)
+    #     result = findfirst(regorf, @view seq[offset+1:end])
+    #     result === nothing && return nothing
+    #     return (first(result) + offset):(last(result) + offset)
+    # end
     itr = takewhile(!isnothing, iterated(fdr, findfirst(regorf, seq)))
     return itr
 end
 
 @doc raw"""
-    NaiveFinder(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) -> Vector{ORFI{N,F}} where {N,F}
+    NaiveFinder(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) -> Vector{ORF{F}} where {N,F}
 
 A simple implementation that finds ORFIs in a DNA sequence.
 
-The `NaiveFinder` method takes a LongSequence{DNAAlphabet{4}} sequence and returns a Vector{ORFI} containing the ORFIs found in the sequence. 
+The `NaiveFinder` method takes a LongSequence{DNAAlphabet{4}} sequence and returns a Vector{ORFIs} containing the ORFIs found in the sequence. 
     It searches entire regularly expressed CDS, adding each ORFI it finds to the vector. The function also searches the reverse complement of the sequence, so it finds ORFIs on both strands.
         Extending the starting codons with the `alternative_start = true` will search for ATG, GTG, and TTG.
     Some studies have shown that in *E. coli* (K-12 strain), ATG, GTG and TTG are used 83 %, 14 % and 3 % respectively.
@@ -72,28 +77,116 @@ function NaiveFinder(
     kwargs...
 ) where {N}
     seqlen = length(seq)
-    orfs = Vector{ORFI{N,NaiveFinder}}()
+    orfs = Vector{ORF{NaiveFinder}}()
     
     # Handle the sequence name
     seqname = _varname(seq)
     if seqname === nothing
-        seqname = "unnamedseq"
+        seqname = :unnamedseq
+    else
+        seqname = Symbol(seqname)
     end
 
-    @inbounds for strand in (STRAND_POS, STRAND_NEG)
-        s = strand == STRAND_NEG ? reverse_complement(seq) : seq
+    @inbounds for strand in (PSTRAND, NSTRAND)
+        s = strand == NSTRAND ? reverse_complement(seq) : seq
         @inbounds for location in @views _locationiterator(s; alternative_start)
             if length(location) >= minlen
-                #main fields
-                start = strand == STRAND_POS ? location.start : seqlen - location.stop + 1
+                start = strand == PSTRAND ? location.start : seqlen - location.stop + 1
                 stop = start + length(location) - 1
                 frm = start % 3 == 0 ? 3 : start % 3
 
-                push!(orfs, ORFI{N,NaiveFinder}(seqname, start, stop, strand, frm, @view(s[location.start:location.stop]), NamedTuple()))
+                push!(orfs, ORF{NaiveFinder}(seqname, start:stop, strand, Int8(frm), NamedTuple()))
             end
         end
     end
     return sort!(orfs)
 end
 
-# oseq = strand == STRAND_POS ? @view(seq[start:stop]) : reverse_complement(@view(seq[start:stop]))
+
+### NAIVE FINDER LAZY IMPLEMENTATION ###
+
+"""
+    _estimate_orf_count(seq::NucleicSeqOrView{DNAAlphabet{N}}; alternative_start::Bool=false) where {N}
+
+Estimate the number of ORFs based on start codon count.
+
+Counts ATG start codons in the sequence using a k-mer iterator.
+Returns the count as a heuristic estimate for pre-allocating the ORF vector.
+"""
+function _estimate_orf_count(seq::LongSequence{DNAAlphabet{4}})
+    # 4^3 = 64 possible 3-mers; only count mer"ATG"d
+    # counts = zeros(Int, 64)
+    counts = 0
+    target = mer"ATG"d
+    # target_idx = only(encoded_data(target)) + 1
+
+    for kmer in FwDNAMers{3}(seq)
+        if kmer == target
+            # @inbounds counts[target_idx] += 1
+            counts += 1
+        end
+    end
+
+    return counts
+end
+
+
+"""
+    _search_strand!(orfs::Vector{ORF{NaiveFinderLazy}}, seq::NucleicSeqOrView{DNAAlphabet{N}}, seqname::Symbol, strand::Strand, seqlen::Int, alternative_start::Bool, minlen::Int64) where {N}
+
+Helper function to search for ORFs in a single strand direction.
+
+Avoids code duplication between forward and reverse strand searching.
+"""
+function _search_strand!(
+    orfs::Vector{ORF{NaiveFinderLazy}},
+    seq::NucleicSeqOrView{DNAAlphabet{N}},
+    seqname::Symbol,
+    strand::Strand,
+    seqlen::Int,
+    alternative_start::Bool,
+    minlen::Int64
+) where {N}
+    @inbounds for location in _locationiterator(seq; alternative_start)
+        if length(location) >= minlen
+            # Adjust coordinates based on strand
+            if strand === PSTRAND
+                start, stop = location.start, location.stop
+            else
+                start = seqlen - location.stop + 1
+                stop = seqlen - location.start + 1
+            end
+            
+            frm = start % 3 == 0 ? 3 : start % 3
+            push!(orfs, ORF{NaiveFinderLazy}(seqname, start:stop, strand, Int8(frm), NamedTuple()))
+        end
+    end
+end
+
+function NaiveFinderLazy(
+    seq::NucleicSeqOrView{DNAAlphabet{N}};
+    alternative_start::Bool = false,
+    minlen::Int64 = 6,
+    kwargs...
+) where {N}
+    seqlen = length(seq)
+    
+    # Estimate ORF count for smart pre-allocation
+    estimated_orfs = _estimate_orf_count(seq)
+    orfs = Vector{ORF{NaiveFinderLazy}}()
+    sizehint!(orfs, estimated_orfs)
+    
+    # Handle the sequence name
+    seqname = _varname(seq)
+    seqname = seqname === nothing ? :unnamedseq : Symbol(seqname)
+
+    # Search forward strand
+    _search_strand!(orfs, seq, seqname, PSTRAND, seqlen, alternative_start, minlen)
+    
+    # Search reverse strand (compute reverse complement once)
+    rev_seq = reverse_complement(seq)
+    _search_strand!(orfs, rev_seq, seqname, NSTRAND, seqlen, alternative_start, minlen)
+    
+    sort!(orfs)
+    return orfs
+end
