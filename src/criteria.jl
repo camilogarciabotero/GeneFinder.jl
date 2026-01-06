@@ -2,9 +2,8 @@ export iscoding,
     log_odds_ratio_decision_rule, lordr,
     ribsome_binding_site_decision_rule, rbsdr
 
-
-    @doc raw"""
-    iscoding(orf::ORFI{N,F}; criteria::Function = lordr, kwargs...) -> Bool
+@doc raw"""
+    iscoding(orf::ORF{F}; criteria::Function = lordr, kwargs...) -> Bool
 
 Check if the given DNA sequence of an ORF is likely to be coding based on a scoring scheme/function.
 
@@ -17,16 +16,16 @@ phi = dna"GTGTGAGGTTATAACGCCGAAGCGGTAAAAATTTTAAT...AGTGTTTCCAGTCCGTTCAGTTAATAGTC
 orfs = findorfs(phi)
 
 orf = orfs[2]
-    ORFI{NaiveFinder}(94:126, '-', 1)
+    ORF{NaiveFinder}(94:126, '-', 1)
 
 iscoding(orf)  # Returns: true
 ```
 """
 function iscoding(
-    orf::ORFI{N,F};
-    criteria::Function = lordr, #rbsdr
+    orf::ORF{F};
+    criteria::Function = lordr,
     kwargs...
-) where {N,F<:GeneFinderMethod}
+) where {F<:GeneFinderMethod}
     return criteria(orf; kwargs...)
 end
 
@@ -74,13 +73,13 @@ sequence = dna"ATGGCATCTAG"
 iscoding(sequence)  # Returns: true or false
 ```
 """
-function lordr( #log_odds_ratio_decision, also lordr/cudr/kfdr/aadr
-    orf::ORFI{N,F};
+function lordr(
+    orf::ORF{F};
     modela::BioMarkovChain = ECOLICDS,
     modelb::BioMarkovChain = ECOLINOCDS,
     b::Number = 2,
     η::Float64 = 5e-3
-) where {N,F<:GeneFinderMethod}
+) where {F<:GeneFinderMethod}
     orfseq = sequence(orf)
     scorea = log_odds_ratio_score(orfseq; modela=modela, b=b)
     scoreb = log_odds_ratio_score(orfseq; modela=modelb, b=b)
@@ -94,12 +93,12 @@ function lordr( #log_odds_ratio_decision, also lordr/cudr/kfdr/aadr
     end
 end
 
-const log_odds_ratio_decision_rule = lordr # criteria
+const log_odds_ratio_decision_rule = lordr
 
 ## Ribosome Binding Site Decision Rule
 
 """
-    ribsome_binding_site_decision_rule(orf::ORFI{N,F}) where {N,F<:GeneFinderMethod} -> Bool
+    ribsome_binding_site_decision_rule(orf::ORF{F}) where {F<:GeneFinderMethod} -> Bool
 
 Evaluates if an Open Reading Frame (ORF) has a significant ribosome binding site (RBS).
 
@@ -107,16 +106,16 @@ The function uses the `orf_rbs_score` to calculate a score for the ORF's RBS reg
 true if the score exceeds a threshold of 9, indicating the presence of at least one RBS.
 
 # Arguments
-- `orf::ORFI{N,F}`: An Open Reading Frame Interface (ORFI) object parameterized by N and F,
+- `orf::ORF{F}`: An Open Reading Frame Interface (ORFI) object parameterized by F,
   where F is a subtype of GeneFinderMethod
 
 # Returns
 - `Bool`: `true` if the RBS score is greater than 9, `false` otherwise
 
 """
-function rbsdr(orf::ORFI{N,F}) where {N,F<:GeneFinderMethod}
+function rbsdr(orf::ORF{F}) where {F<:GeneFinderMethod}
     scr = orf_rbs_score(orf)
-    if scr > 9 # at least one RBS...
+    if scr > 9
         return true
     else
         return false
