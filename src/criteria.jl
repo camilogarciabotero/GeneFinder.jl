@@ -1,6 +1,6 @@
 export iscoding,
     log_odds_ratio_decision_rule, lordr,
-    ribsome_binding_site_decision_rule, rbsdr
+    ribosome_binding_site_decision_rule, rbsdr
 
 @doc raw"""
     iscoding(orf::ORF{F}; criteria::Function = lordr, kwargs...) -> Bool
