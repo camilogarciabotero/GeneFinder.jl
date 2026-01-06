@@ -155,6 +155,8 @@ function strand(i::ORF{F}) where {F}
     return i.strand
 end
 
+finder(i::ORF{F}) where {F} = F
+
 function Base.show(io::IO, i::ORF{F}) where {F}
     print(io, "ORF{", finder(i), "}(", leftposition(i), ":", rightposition(i), ", '")
     show(io, strand(i))
