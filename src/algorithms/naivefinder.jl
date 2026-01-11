@@ -28,13 +28,10 @@ function _locationiterator(
     alternative_start::Bool = false
 ) where {N}
     regorf = alternative_start ? biore"NTG(?:[N]{3})*?T(AG|AA|GA)"dna : biore"ATG(?:[N]{3})*?T(AG|AA|GA)"dna
-    fdr(x) = findfirst(regorf, seq, first(x) + 1)
-    # function fdr(x)
-    #     offset = first(x)
-    #     result = findfirst(regorf, @view seq[offset+1:end])
-    #     result === nothing && return nothing
-    #     return (first(result) + offset):(last(result) + offset)
-    # end
+    fdr(x) = let offset = first(x)
+        r = findfirst(regorf, @view seq[offset+1:end])
+        isnothing(r) ? nothing : (first(r) + offset):(last(r) + offset)
+    end
     itr = takewhile(!isnothing, iterated(fdr, findfirst(regorf, seq)))
     return itr
 end
