@@ -243,7 +243,6 @@ function orbs(orf::ORF{F}) where {F}
 end
 
 const orf_rbs_score = orbs
-const orf_rbs_score = orbs
 
 export motifseq
 function motifseq(rbs::RBS)
