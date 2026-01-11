@@ -177,16 +177,6 @@ function Base.show(io::IO, i::ORF{F}) where {F}
     print(io, "', ", frame(i), ")")
 end
 
-finder(i::ORF{F}) where {F} = F
-
-
-function Base.show(io::IO, i::ORFI{N,F}) where {N,F}
-    if get(io, :compact, false)
-        print(io, "ORFI{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") #{$(typeof(finder(i)))} $(score(i))
-    else
-        print(io, "ORFI{$(finder(i))}($(leftposition(i)):$(rightposition(i)), '$(strand(i))', $(frame(i)))") # , $(score(i))
-    end
-end
 
 ## Ideas for Gene struct
 
