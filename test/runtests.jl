@@ -6,8 +6,6 @@ using FASTX
 using GeneFinder
 using BioMarkovChains
 using Aqua
-# using TestItems
-# using TestItemRunner
 
 # @run_package_tests
 
