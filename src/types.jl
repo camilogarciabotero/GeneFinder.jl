@@ -1,6 +1,6 @@
 export ORF, OpenReadingFrame
 export Strand, GeneFinderMethod
-export features, sequence, source, finder, frame, strand
+export features, sequence, source, finder, frame, strand, seqid, leftposition, rightposition
 
 """
     abstract type GeneFinderMethod
@@ -25,6 +25,16 @@ An enumeration type representing DNA strand orientation.
 end
 
 function Base.show(io::IO, s::Strand)
+    if s === PSTRAND
+        print(io, "+")
+    elseif s === NSTRAND
+        print(io, "-")
+    else
+        print(io, "unknown")
+    end
+end
+
+function Base.print(io::IO, s::Strand)
     if s === PSTRAND
         print(io, "+")
     elseif s === NSTRAND
@@ -153,6 +163,10 @@ end
 
 function strand(i::ORF{F}) where {F}
     return i.strand
+end
+
+function seqid(i::ORF{F}) where {F}
+    return i.seqid
 end
 
 finder(i::ORF{F}) where {F} = F

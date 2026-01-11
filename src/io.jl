@@ -207,9 +207,9 @@ function write_orfs_gff(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
     for (i, orf) in enumerate(orfs)
-        id = string("ORFI", lpad(string(i), padding, "0"))
+        id = string("ORF", lpad(string(i), padding, "0"))
         fts = isempty(features(orf)) ? "" : join(features(orf), ",")
-        println(output, "Chr\t.\tORFI\t", leftposition(orf), "\t", rightposition(orf), "\t.\t", strand(orf), "\t.\tID=", id, ";Name=", id, ";Frame=", frame(orf), ";Features=[", fts, "]")
+        println(output, "Chr\t.\tORF\t", leftposition(orf), "\t", rightposition(orf), "\t.\t", strand(orf), "\t.\tID=", id, ";Name=", id, ";Frame=", frame(orf), ";Features=[", fts, "]")
     end
 end
 
@@ -226,9 +226,9 @@ function write_orfs_gff(
     open(output, "w") do f
         write(f, "##gff-version 3\n##sequence-region Chr 1 $(length(input))\n") 
         for (i, orf) in enumerate(orfs)
-            id = string("ORFI", lpad(string(i), padding, "0"))
+            id = string("ORF", lpad(string(i), padding, "0"))
             fts = isempty(features(orf)) ? "" : join(features(orf), ",")
-            write(f, "Chr\t.\tORFI\t$(leftposition(orf))\t$(rightposition(orf))\t.\t$(strand(orf))\t.\tID=$(id);Name=$(id);Frame=$(frame(orf));Features=[$(fts)]\n")
+            write(f, "Chr\t.\tORF\t$(leftposition(orf))\t$(rightposition(orf))\t.\t$(strand(orf))\t.\tID=$(id);Name=$(id);Frame=$(frame(orf));Features=[$(fts)]\n")
         end
     end
 end
