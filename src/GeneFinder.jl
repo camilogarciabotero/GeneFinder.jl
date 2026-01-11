@@ -22,15 +22,17 @@ using BioSequences:
     randdnaseq,
     ncbi_trans_table,
     translate,
+    findnext,
 
     ExactSearchQuery,
+    # ApproximateSearchQuery,
     iscompatible
 
 using BioMarkovChains: BioMarkovChain, ECOLICDS, ECOLINOCDS, log_odds_ratio_score
 using IterTools: takewhile, iterated
 
 using BioSymbols: encoded_data
-using Kmers: @mer_str, FwDNAMers
+using Kmers: @mer_str, FwDNAMers, FwRvIterator, Kmer
 
 # Main types (must come first - defines Strand, ORF, etc.)
 include("types.jl")
