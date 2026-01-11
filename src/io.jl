@@ -1,4 +1,4 @@
-export write_orfs_fna, write_orfs_faa, write_orfs_bed, write_orfs_gff
+export write_orfs_fna, write_orfs_faa, write_orfs_bed, write_orfs_gff, visualize, visualize_orfs
 
 """
     write_orfs_bed(input::NucleicSeqOrView{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}, finder::F; kwargs...)
@@ -22,10 +22,9 @@ function write_orfs_bed(
     alternative_start::Bool = false,
     minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    # seq = fasta2bioseq(input)[1]
     orfs = findorfs(input; finder, alternative_start, minlen)
     @inbounds for orf in orfs
-        println(output, orf.first, "\t", orf.last, "\t", orf.strand, "\t", orf.frame)
+        println(output, leftposition(orf), "\t", rightposition(orf), "\t", strand(orf), "\t", frame(orf))
     end
 end
 
@@ -36,11 +35,10 @@ function write_orfs_bed(
     alternative_start::Bool = false,
     minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    # seq = fasta2bioseq(input)[1]
     orfs = findorfs(input; finder, alternative_start, minlen)
     open(output, "w") do f
         @inbounds for orf in orfs
-            write(f, "$(orf.first)\t$(orf.last)\t$(orf.strand)\t$(orf.frame)\n")
+            write(f, "$(leftposition(orf))\t$(rightposition(orf))\t$(strand(orf))\t$(frame(orf))\n")
         end
     end
 end
@@ -86,9 +84,9 @@ function write_orfs_fna(
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        fts = isempty(orf.features) ? "" : join(orf.features, ",")
-        println(output, ">", orf.groupname, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " features=[" , fts, "]")
-        println(output, input[orf]) #
+        fts = isempty(features(orf)) ? "" : join(features(orf), ",")
+        println(output, ">", seqid(orf), " id=", id, " start=", leftposition(orf), " stop=", rightposition(orf), " strand=", strand(orf), " frame=", frame(orf), " features=[", fts, "]")
+        println(output, sequence(orf))
     end
 end
 
@@ -105,8 +103,8 @@ function write_orfs_fna(
     open(output, "w") do f
         for (i, orf) in enumerate(orfs)
             id = string(lpad(string(i), padding, "0"))
-            fts = isempty(orf.features) ? "" : join(orf.features, ",")
-            write(f, ">$(orf.groupname) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) features=[$(fts)]\n$(input[orf]))\n") # i.strand == '+' ? input[i.location] : reverse_complement(@view input[i.location])
+            fts = isempty(features(orf)) ? "" : join(features(orf), ",")
+            write(f, ">$(seqid(orf)) id=$(id) start=$(leftposition(orf)) stop=$(rightposition(orf)) strand=$(strand(orf)) frame=$(frame(orf)) features=[$(fts)]\n$(sequence(orf))\n")
         end
     end
 end
@@ -148,15 +146,14 @@ function write_orfs_faa(
     minlen::Int64 = 6,
     code::GeneticCode = ncbi_trans_table[1]
 ) where {N,F<:GeneFinderMethod}
-    # seq = fasta2bioseq(input)[1]
     orfs = findorfs(input; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     @inbounds for (i, orf) in enumerate(orfs)
         id = string(lpad(string(i), padding, "0"))
-        fts = isempty(orf.features) ? "" : join(orf.features, ",")
-        println(output, ">", orf.groupname, " id=", id, " start=", orf.first, " stop=", orf.last, " strand=", orf.strand, " frame=", orf.frame, " features=[", fts, "]")
-        println(output, translate(input[orf]; code))
+        fts = isempty(features(orf)) ? "" : join(features(orf), ",")
+        println(output, ">", seqid(orf), " id=", id, " start=", leftposition(orf), " stop=", rightposition(orf), " strand=", strand(orf), " frame=", frame(orf), " features=[", fts, "]")
+        println(output, translate(sequence(orf); code))
     end
 end
 
@@ -168,15 +165,14 @@ function write_orfs_faa(
     minlen::Int64 = 6,
     code::GeneticCode = ncbi_trans_table[1]
 ) where {N,F<:GeneFinderMethod}
-    # seq = fasta2bioseq(input)[1]
     orfs = findorfs(input; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     open(output, "w") do f
         for (i, orf) in enumerate(orfs)
             id = string(lpad(string(i), padding, "0"))
-            fts = isempty(orf.features) ? "" : join(orf.features, ",")
-            write(f, ">$(orf.groupname) id=$(id) start=$(orf.first) stop=$(orf.last) strand=$(orf.strand) frame=$(orf.frame) features=[$(fts)]\n$(translate(input[orf]; code))\n")
+            fts = isempty(features(orf)) ? "" : join(features(orf), ",")
+            write(f, ">$(seqid(orf)) id=$(id) start=$(leftposition(orf)) stop=$(rightposition(orf)) strand=$(strand(orf)) frame=$(frame(orf)) features=[$(fts)]\n$(translate(sequence(orf); code))\n")
         end
     end
 end
@@ -206,15 +202,14 @@ function write_orfs_gff(
     alternative_start::Bool = false,
     minlen::Int64 = 6
 ) where {N,F<:GeneFinderMethod}
-    # seq = fasta2bioseq(input)[1]
     orfs = findorfs(input; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
     println(output, "##gff-version 3\n##sequence-region Chr 1 $(length(input))")
     for (i, orf) in enumerate(orfs)
         id = string("ORFI", lpad(string(i), padding, "0"))
-        fts = isempty(orf.features) ? "" : join(orf.features, ",")
-        println(output, "Chr\t.\tORFI\t", orf.first, "\t", orf.last, "\t.\t", orf.strand, "\t.\tID=", id, ";Name=", id, ";Frame=", orf.frame, ";Features=[", fts, "]")
+        fts = isempty(features(orf)) ? "" : join(features(orf), ",")
+        println(output, "Chr\t.\tORFI\t", leftposition(orf), "\t", rightposition(orf), "\t.\t", strand(orf), "\t.\tID=", id, ";Name=", id, ";Frame=", frame(orf), ";Features=[", fts, "]")
     end
 end
 
@@ -225,7 +220,6 @@ function write_orfs_gff(
     alternative_start::Bool = false,
     minlen::Int64 = 6
 ) where {N, F<:GeneFinderMethod}
-    # seq = fasta2bioseq(input)[1]
     orfs = findorfs(input; finder, alternative_start, minlen)
     norfs = length(orfs)
     padding = norfs < 10 ? length(string(norfs)) + 1 : length(string(norfs))
@@ -233,14 +227,10 @@ function write_orfs_gff(
         write(f, "##gff-version 3\n##sequence-region Chr 1 $(length(input))\n") 
         for (i, orf) in enumerate(orfs)
             id = string("ORFI", lpad(string(i), padding, "0"))
-            fts = isempty(orf.features) ? "" : join(orf.features, ",")
-            write(
-                f,
-                "Chr\t.\tORFI\t$(orf.first)\t$(orf.last)\t.\t$(orf.strand)\t.\tID=$(id);Name=$(id);Frame=$(orf.frame);Features=[$(fts)]\n"
-            )
+            fts = isempty(features(orf)) ? "" : join(features(orf), ",")
+            write(f, "Chr\t.\tORFI\t$(leftposition(orf))\t$(rightposition(orf))\t.\t$(strand(orf))\t.\tID=$(id);Name=$(id);Frame=$(frame(orf));Features=[$(fts)]\n")
         end
     end
 end
 
-
-# Chr needs to be changed for fasta (?) or the name of seq (?) to fit well on IGV 
+# Chr needs to be changed for fasta (?) or the name of seq (?) to fit well on IGV
