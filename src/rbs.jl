@@ -1,5 +1,5 @@
 export RBS, orf_rbs_score, orbs, motifseq, offset
-public _rbswindows, _findrbs
+# public _rbswindows, _findrbs
 
 """
     RBS(motif::LongSubSeq, offset::UnitRange{Int64}, windowsymbol::Symbol, score::Int64, strand::Strand)
