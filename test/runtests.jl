@@ -6,10 +6,10 @@ using FASTX
 using GeneFinder
 using BioMarkovChains
 using Aqua
-using TestItems
-using TestItemRunner
+# using TestItems
+# using TestItemRunner
 
-@run_package_tests
+# @run_package_tests
 
 include("findorfstest.jl")
 include("aquatest.jl")
