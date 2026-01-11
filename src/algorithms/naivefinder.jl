@@ -110,15 +110,13 @@ Counts ATG start codons in the sequence using a k-mer iterator.
 Returns the count as a heuristic estimate for pre-allocating the ORF vector.
 """
 function _estimate_orf_count(seq::NucleicSeqOrView{DNAAlphabet{N}}) where {N}
-    # 4^3 = 64 possible 3-mers; only count mer"ATG"d
-    # counts = zeros(Int, 64)
+    # 4^3 = 64 possible 3-mers; only count ATG
     counts = 0
-    target = mer"ATG"d
-    # target_idx = only(encoded_data(target)) + 1
+    forwardtarget = Kmer{DNAAlphabet{4},3,1}(dna"ATG")
+    reversetarget = Kmer{DNAAlphabet{4},3,1}(dna"CAT")  # Reverse complement of ATG
 
-    for kmer in FwDNAMers{3}(seq)
-        if kmer == target
-            # @inbounds counts[target_idx] += 1
+    for (fwdkmer, revkmer) in FwRvIterator{DNAAlphabet{4},3}(seq)
+        if fwdkmer == forwardtarget || revkmer == reversetarget
             counts += 1
         end
     end
