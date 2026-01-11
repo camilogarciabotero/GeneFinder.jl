@@ -28,8 +28,6 @@ jobs:
         exclude:
           - os: macos-latest
             arch: x86
-          - os: macos-latest
-            version: 'nightly'
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
