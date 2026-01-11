@@ -50,7 +50,7 @@ function NaiveCollector(
         if length(x.captured[1]:x.captured[3]) > minlen
             if strand == PSTRAND
                 start = x.captured[1]
-                stop = x.captured[3]
+                stop = x.captured[3] + 1
             else
                 start = seqlen - x.captured[3] + 1
                 stop = seqlen - x.captured[1] + 1
