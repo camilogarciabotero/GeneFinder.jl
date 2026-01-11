@@ -53,7 +53,7 @@ Write a file containing the coding sequences (CDSs) of a given DNA sequence to t
 # Arguments
 - `input::NucleicAcidAlphabet{DNAAlphabet{N}}`: The input DNA sequence.
 - `output::IO`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
-- `finder::F`: The algorithm used to find ORFIs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
+- `finder::F`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
 
 # Keywords
 
@@ -186,13 +186,13 @@ Write GFF data to a file.
 # Arguments
 - `input`: The input DNA sequence NucSeq or a view.
 - `output`: The otput format, it can be a file (`String`) or a buffer (`IOStream` or `IOBuffer)
-- `finder`: The algorithm used to find ORFIs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
+- `finder`: The algorithm used to find ORFs. It can be either `NaiveFinder()` or `NaiveFinderScored()`.
 
 # Keywords
 
 - `code::GeneticCode=BioSequences.standard_genetic_code`: The genetic code by which codons will be translated. See `BioSequences.ncbi_trans_table` for more info. 
 - `alternative_start::Bool=false`: If true will pass the extended start codons to search. This will increase 3x the exec. time.
-- `minlen::Int64=6`:  Length of the allowed ORFI. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFIs.
+- `minlen::Int64=6`:  Length of the allowed ORF. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFs.
 
 """
 function write_orfs_gff(
