@@ -113,7 +113,7 @@ Estimate the number of ORFs based on start codon count.
 Counts ATG start codons in the sequence using a k-mer iterator.
 Returns the count as a heuristic estimate for pre-allocating the ORF vector.
 """
-function _estimate_orf_count(seq::LongSequence{DNAAlphabet{4}})
+function _estimate_orf_count(seq::NucleicSeqOrView{DNAAlphabet{N}}) where {N}
     # 4^3 = 64 possible 3-mers; only count mer"ATG"d
     # counts = zeros(Int, 64)
     counts = 0
