@@ -38,7 +38,7 @@ function findorfs(
     finder::Type{F}=NaiveFinder,
     kwargs...
 ) where {N,F<:GeneFinderMethod}
-    return finder(sequence; kwargs...)::Vector{ORFI{N,F}}
+    return finder(sequence; kwargs...)::Vector{ORF{F}}
 end
 
 
