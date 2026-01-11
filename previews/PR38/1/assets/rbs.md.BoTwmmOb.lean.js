@@ -1,0 +1,1 @@
+import{_ as A,c as G,o as C,aj as s}from"./chunks/framework.DozvYH8Q.js";const k=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"rbs.md","filePath":"rbs.md","lastUpdated":null}'),i={name:"rbs.md"};function a(t,T,n,e,h,l){return C(),G("div",null,[...T[0]||(T[0]=[s("",18)])])}const r=A(i,[["render",a]]);export{k as __pageData,r as default};

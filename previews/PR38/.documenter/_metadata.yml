@@ -1,0 +1,6 @@
+format: 
+  commonmark:
+    variant: -raw_html
+    wrap: preserve
+    self-contained: true
+bibliography: references.bib
