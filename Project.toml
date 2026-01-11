@@ -1,22 +1,24 @@
 name = "GeneFinder"
 uuid = "2bc6ee46-2158-4f5a-a720-91cb2d7cee64"
-authors = ["Camilo García-Botero"]
 version = "0.7.0"
+authors = ["Camilo García-Botero"]
 
 [deps]
 BioMarkovChains = "f861b655-cb5f-42ce-b66a-341b542d4f2c"
 BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
-GenomicFeatures = "899a7d2d-5c61-547b-bef9-6698a8d05446"
+BioSymbols = "3c28c6f8-a34d-59c4-9654-267d177fcfa9"
 IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
+Kmers = "445028e4-d31f-4f27-89ad-17affd83fc22"
 PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 
 [compat]
 BioMarkovChains = "1.0.0"
 BioSequences = "3"
-GenomicFeatures = "3"
+BioSymbols = "5.2.0"
 IterTools = "1.4"
+Kmers = "1.2.0"
 PrecompileTools = "1"
-julia = "1.10"
+julia = ">=1.10"
 
 [extras]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"

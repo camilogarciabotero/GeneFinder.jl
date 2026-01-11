@@ -22,25 +22,31 @@ using BioSequences:
     randdnaseq,
     ncbi_trans_table,
     translate,
+    findnext,
 
     ExactSearchQuery,
+    # ApproximateSearchQuery,
     iscompatible
 
 using BioMarkovChains: BioMarkovChain, ECOLICDS, ECOLINOCDS, log_odds_ratio_score
 using IterTools: takewhile, iterated
-using GenomicFeatures: GenomicFeatures, AbstractGenomicInterval, Strand, summary, groupname, strand, metadata, STRAND_POS, STRAND_NEG, STRAND_BOTH, STRAND_NA, leftposition, rightposition
 
-# Finder Algorithms
+using BioSymbols: encoded_data
+using Kmers: @mer_str, FwDNAMers, FwRvIterator, Kmer
+
+# Main types (must come first - defines Strand, ORF, etc.)
+include("types.jl")
+include("utils.jl")
+
+# Finder Algorithms (depends on types.jl)
 include("algorithms/naivefinder.jl")
 include("algorithms/naivecollector.jl")
 
 # Main functions
-include("types.jl")
 include("findorfs.jl")
 include("io.jl")
 
-# Utils and extended functions
-include("utils.jl")
+# Extended functions
 include("extended.jl")
 
 # RBS Scoring

@@ -54,22 +54,22 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
 
 orfs = findorfs(seq, finder=NaiveFinder) # use finder=NaiveCollector as an alternative
 
-12-element Vector{ORFI{4, NaiveFinder}}:
- ORFI{NaiveFinder}(29:40, '+', 2)
- ORFI{NaiveFinder}(137:145, '+', 2)
- ORFI{NaiveFinder}(164:184, '+', 2)
- ORFI{NaiveFinder}(173:184, '+', 2)
- ORFI{NaiveFinder}(236:241, '+', 2)
- ORFI{NaiveFinder}(248:268, '+', 2)
- ORFI{NaiveFinder}(362:373, '+', 2)
- ORFI{NaiveFinder}(470:496, '+', 2)
- ORFI{NaiveFinder}(551:574, '+', 2)
- ORFI{NaiveFinder}(569:574, '+', 2)
- ORFI{NaiveFinder}(581:601, '+', 2)
- ORFI{NaiveFinder}(695:706, '+', 2)
+12-element Vector{ORF{4, NaiveFinder}}:
+ ORF{NaiveFinder}(29:40, '+', 2)
+ ORF{NaiveFinder}(137:145, '+', 2)
+ ORF{NaiveFinder}(164:184, '+', 2)
+ ORF{NaiveFinder}(173:184, '+', 2)
+ ORF{NaiveFinder}(236:241, '+', 2)
+ ORF{NaiveFinder}(248:268, '+', 2)
+ ORF{NaiveFinder}(362:373, '+', 2)
+ ORF{NaiveFinder}(470:496, '+', 2)
+ ORF{NaiveFinder}(551:574, '+', 2)
+ ORF{NaiveFinder}(569:574, '+', 2)
+ ORF{NaiveFinder}(581:601, '+', 2)
+ ORF{NaiveFinder}(695:706, '+', 2)
 ```
 
-The `ORFI` structure displays the location, frame, and strand, but currently does not include the sequence *per se*. To extract the sequence of an `ORFI` instance, you can use the `sequence` method directly on it, or you can also broadcast it over the `orfs` collection using the dot syntax `.`:
+The `ORF` structure displays the location, frame, and strand, but currently does not include the sequence *per se*. To extract the sequence of an `ORF` instance, you can use the `sequence` method directly on it, or you can also broadcast it over the `orfs` collection using the dot syntax `.`:
 
 ```julia
 sequence.(orfs)
