@@ -98,7 +98,7 @@ const log_odds_ratio_decision_rule = lordr
 ## Ribosome Binding Site Decision Rule
 
 """
-    ribsome_binding_site_decision_rule(orf::ORF{F}) where {F<:GeneFinderMethod} -> Bool
+    ribosome_binding_site_decision_rule(orf::ORF{F}) where {F<:GeneFinderMethod} -> Bool
 
 Evaluates if an Open Reading Frame (ORF) has a significant ribosome binding site (RBS).
 
@@ -106,7 +106,7 @@ The function uses the `orf_rbs_score` to calculate a score for the ORF's RBS reg
 true if the score exceeds a threshold of 9, indicating the presence of at least one RBS.
 
 # Arguments
-- `orf::ORF{F}`: An Open Reading Frame Interface (ORFI) object parameterized by F,
+- `orf::ORF{F}`: An Open Reading Frame (ORF) object parameterized by F,
   where F is a subtype of GeneFinderMethod
 
 # Returns
