@@ -1,6 +1,6 @@
-export iscoding,
-    log_odds_ratio_decision_rule, lordr,
-    ribosome_binding_site_decision_rule, rbsdr
+export iscoding, 
+    log_odds_ratio_decision_rule, lordr, 
+    rbsdr
 
 @doc raw"""
     iscoding(orf::ORF{F}; criteria::Function = lordr, kwargs...) -> Bool
@@ -122,4 +122,4 @@ function rbsdr(orf::ORF{F}) where {F<:GeneFinderMethod}
     end
 end
 
-const ribsome_binding_site_decision_rule = rbsdr
+const ribosome_binding_site_decision_rule = rbsdr

@@ -1,4 +1,4 @@
-export write_orfs_fna, write_orfs_faa, write_orfs_bed, write_orfs_gff, visualize, visualize_orfs
+export write_orfs_fna, write_orfs_faa, write_orfs_bed, write_orfs_gff
 
 """
     write_orfs_bed(input::NucleicSeqOrView{DNAAlphabet{N}}, output::Union{IOStream, IOBuffer}, finder::F; kwargs...)
