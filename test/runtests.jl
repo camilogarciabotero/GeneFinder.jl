@@ -3,7 +3,6 @@ module GeneFinderTests
 using Test
 using BioSequences
 using FASTX
-using GenomicFeatures
 using GeneFinder
 using BioMarkovChains
 using Aqua
