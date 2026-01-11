@@ -1,4 +1,4 @@
-export findorfs, ORFCollection
+export findorfs
 
 """
     findorfs(sequence::NucleicSeqOrView{DNAAlphabet{N}}; ::F, kwargs...) where {N, F<:GeneFinderMethod}
