@@ -1,6 +1,6 @@
 export ORF, OpenReadingFrame
 export Strand, GeneFinderMethod
-export features, sequence, source, finder, frame, strand, seqid
+export features, sequence, source, finder, frame, strand
 
 """
     abstract type GeneFinderMethod
