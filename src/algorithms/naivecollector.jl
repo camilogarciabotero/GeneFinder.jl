@@ -52,7 +52,7 @@ function NaiveCollector(
                 start = x.captured[1]
                 stop = x.captured[3] + 1
             else
-                start = seqlen - x.captured[3] + 1
+                start = seqlen - x.captured[3]
                 stop = seqlen - x.captured[1] + 1
             end
             frm = start % 3 == 0 ? 3 : start % 3
