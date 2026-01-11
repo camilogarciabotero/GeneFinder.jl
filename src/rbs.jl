@@ -150,7 +150,7 @@ For each window, it searches for predefined RBS motifs (either forward or revers
 the strand orientation) and records their locations and scores.
 
 # Arguments
-- `orf::ORF{F}`: An Open Reading Frame Interface object containing sequence and strand information
+- `orf::ORF{F}`: An Open Reading Frame object containing sequence and strand information
 
 # Returns
 - `Vector{RBS}`: A vector of RBS objects, each containing:
@@ -241,6 +241,9 @@ function orbs(orf::ORF{F}) where {F}
     totscore = sum(values(maxscores))
     return totscore
 end
+
+const orf_rbs_score = orbs
+const orf_rbs_score = orbs
 
 export motifseq
 function motifseq(rbs::RBS)
