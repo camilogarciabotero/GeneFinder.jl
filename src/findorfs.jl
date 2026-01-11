@@ -40,42 +40,7 @@ function findorfs(
     return finder(sequence; kwargs...)::Vector{ORF{F}}
 end
 
-"""
-    findorfs(sequence::NucleicSeqOrView{DNAAlphabet{N}}, ::Type{ORFCollection}; finder::Type{F}=NaiveFinder, kwargs...) where {N,F<:GeneFinderMethod}
 
-Find ORFs and return them as an `ORFCollection` with the source sequence included.
-
-# Arguments
-- `sequence`: The nucleic acid sequence to search for ORFs.
-- `::Type{ORFCollection}`: Type indicating to return an ORFCollection instead of a Vector.
-
-# Keyword Arguments
-- `finder::Type{F}`: The algorithm used to find ORFs. Default is `NaiveFinder`.
-- Other kwargs are passed to the finder method.
-
-# Returns
-An `ORFCollection{N,F}` containing the source sequence and all found ORFs.
-
-# Example
-
-```julia
-seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-collection = findorfs(seq, ORFCollection)
-
-for orf in collection
-    println(orf)
-end
-```
-"""
-function findorfs(
-    sequence::LongSequence{DNAAlphabet{N}},
-    ::Type{ORFCollection};
-    finder::Type{F}=NaiveFinder,
-    kwargs...
-) where {N,F<:GeneFinderMethod}
-    orfs = findorfs(sequence; finder=finder, kwargs...)
-    return ORFCollection(sequence, orfs)
-end
 
 
 ### Some possible ideas:
