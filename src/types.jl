@@ -64,9 +64,9 @@ ORF{NaiveFinder}(:seq01, 1:33, STRAND_POS, 1, (score = 0.8,))
 """
 struct OpenReadingFrame{F<:GeneFinderMethod}
     seqid::Symbol
-    range::UnitRange{Int32} # Could be more complex for Introns? But for ORFs it's fine, maybe for the more general GeneInterval
+    range::UnitRange{Int} # Could be more complex for Introns? But for ORFs it's fine, maybe for the more general GeneInterval
     strand::Strand
-    frame::Int8
+    frame::Int
     features::NamedTuple
 end
 
