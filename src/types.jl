@@ -87,11 +87,34 @@ function OpenReadingFrame{F}(
     frame::Int,
     features::NamedTuple = (;)
 ) where {F<:GeneFinderMethod}
-    seqid_sym = isa(seqid, Symbol) ? seqid : Symbol(seqid)
-    return ORF{F}(seqid_sym, Int32(Base.first(range)):Int32(Base.last(range)), strand, frame, features)
+    # Sanity check: seqid definition
+    isdefinedglobal(Main, seqid) ||
+        @warn "The source sequence '$(seqid)' is not defined. Make sure to define it or supply the correct source sequence identifier."
+
+    # Sanity check: strand validity
+    strand in (PSTRAND, NSTRAND, '+', '-') ||
+        throw(ArgumentError("Cannot extract sequence for strand $(strand); expected PSTRAND ('+') or NSTRAND ('-')"))
+        
+    # Sanity check: frame validity
+    (1 ≤ frame ≤ 3) || 
+        throw(ArgumentError("Invalid frame: $(frame), expected 1, 2, or 3"))
+
+    orflen = length(range)
+    # Sanity check: range length divisible by 3
+    (orflen % 3 == 0) || 
+        throw(ArgumentError("ORF length ($(orflen)) is not divisible by 3, incomplete codons detected"))
+
+    # Sanity check: minimum length (start + stop codons)
+    orflen ≥ 6 ||
+        throw(ArgumentError("ORF sequence too short to contain start and stop codons"))
+
+    return ORF{F}(seqid, range, convert(Strand, strand), frame, features)
 end
 
 const ORF = OpenReadingFrame
+
+const START = dna"ATG"
+const STOPS = (dna"TAA", dna"TAG", dna"TGA")
 
 """
     sequence(i::ORF{F})
@@ -110,15 +133,35 @@ For negative strand ORFs, returns the reverse complement (requires allocation).
 """
 @inline function sequence(i::ORF{F}) where {F}
     src = source(i)
-    sub = @view src[i.range]
 
-    if i.strand === PSTRAND
-        return sub
-    elseif i.strand === NSTRAND
-        return convert(LongSubSeq, reverse_complement(sub))
-    else
-        throw(ArgumentError("Cannot extract sequence for strand $(i.strand); expected PSTRAND (+) or NSTRAND (-)"))
+    @views sub = src[i.range]  # view; no allocation
+
+    # s ∉ (PSTRAND, NSTRAND) && throw(ArgumentError("Cannot extract sequence for strand $(s); expected PSTRAND (+) or NSTRAND (-)"))
+    seq = i.strand === PSTRAND ? sub : reverse_complement(sub)  # reverse_complement allocates (can't be a view)
+
+    @boundscheck begin
+        # Frame consistency check
+        fr = frame(i)
+        if i.strand === PSTRAND
+            exp = mod1(leftposition(i), 3)
+            fr == exp || 
+                @warn "Frame $(fr) may be inconsistent with start position $(leftposition(i)), expected frame $exp"
+        end
+
+        @views begin
+        # Codon checks
+
+            # Start codon check
+            seq[1:3] == START || 
+            throw(ArgumentError("Invalid start codon $(seq[1:3]), expected ATG"))
+
+            # Stop codon check:
+            seq[end-2:end] in STOPS ||
+                throw(ArgumentError("Invalid stop codon $(seq[end-2:end]), expected TAA, TAG, or TGA"))
+        end
     end
+
+    return seq
 end
 
 """
@@ -136,11 +179,7 @@ The source sequence associated with the `ORF` object.
     The `source` method works if the sequence is defined in the global scope. Otherwise it will throw an error.
 """
 function source(i::ORF{F}) where {F}
-    try
-        return getfield(Main, i.seqid)
-    catch e
-        error("The source sequence of the ORF is defined as $(i.seqid). Make sure to either define it or supply the correct source sequence.")
-    end
+    return getfield(Main, i.seqid)
 end
 
 """
@@ -175,7 +214,11 @@ function strand(i::ORF{F}) where {F}
 end
 
 function seqid(i::ORF{F}) where {F}
-    return i.seqid
+    if i.seqid === nothing #|| i.seqid == "unnamedseq"
+        return :unnamedseq
+    else
+        return i.seqid
+    end
 end
 
 finder(i::ORF{F}) where {F} = F
@@ -183,16 +226,21 @@ finder(i::ORF{F}) where {F} = F
 function Base.show(io::IO, i::ORF{F}) where {F}
     print(io, "ORF{", finder(i), "}(", leftposition(i), ":", rightposition(i), ", '")
     show(io, strand(i))
-    print(io, "', ", frame(i), ")")
+    print(io, "', ", frame(i))
+    feats = features(i)
+    if !isempty(feats)
+        print(io, ", ", feats)
+    end
+    print(io, ")")
 end
 
 
 ## Ideas for Gene struct
 
 # struct CDS <: AbstractGene
-#     orf::ORFI
-#     coding::Bool
+#     orf::ORF
 #     join::Bool
+#     coding::Bool
 # end
 
 # #### Ribosome Binding Site (RBS) struct ####
