@@ -26,9 +26,9 @@ end
 
 function Base.show(io::IO, s::Strand)
     if s === PSTRAND
-        print(io, "+")
+        print(io, '+')
     elseif s === NSTRAND
-        print(io, "-")
+        print(io, '-')
     else
         print(io, "unknown")
     end
@@ -36,9 +36,9 @@ end
 
 function Base.print(io::IO, s::Strand)
     if s === PSTRAND
-        print(io, "+")
+        print(io, '+')
     elseif s === NSTRAND
-        print(io, "-")
+        print(io, '-')
     else
         print(io, "unknown")
     end
