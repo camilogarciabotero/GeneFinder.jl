@@ -1,5 +1,5 @@
 export ORF, OpenReadingFrame
-export Strand, GeneFinderMethod
+export Strand, GeneFinderMethod, PSTRAND, NSTRAND
 export features, sequence, source, finder, frame, strand, seqid, leftposition, rightposition
 
 """
@@ -18,30 +18,9 @@ abstract type GeneFinderMethod end
 
 An enumeration type representing DNA strand orientation.
 """
-
-@enum Strand::Int8 begin
+@enum Strand::Int begin
     PSTRAND = 1  # Positive/forward strand (+)
     NSTRAND = 2  # Negative/reverse strand (-)
-end
-
-function Base.show(io::IO, s::Strand)
-    if s === PSTRAND
-        print(io, '+')
-    elseif s === NSTRAND
-        print(io, '-')
-    else
-        print(io, "unknown")
-    end
-end
-
-function Base.print(io::IO, s::Strand)
-    if s === PSTRAND
-        print(io, '+')
-    elseif s === NSTRAND
-        print(io, '-')
-    else
-        print(io, "unknown")
-    end
 end
 
 """
@@ -59,23 +38,53 @@ The `ORF` struct represents an Open Reading Frame (ORF) in genomics.
 # Example
 
 ```julia
-ORF{NaiveFinder}(:seq01, 1:33, STRAND_POS, 1, (score = 0.8,))
+ORF{NaiveFinder}(:seq01, 1:33, PSTRAND, 1, (;score = 0.8))
 ```
 """
 struct OpenReadingFrame{F<:GeneFinderMethod}
     seqid::Symbol
-    range::UnitRange{Int} # Could be more complex for Introns? But for ORFs it's fine, maybe for the more general GeneInterval
+    range::UnitRange{<:Integer} # Could be more complex for Introns? But for ORFs it's fine, maybe for the more general GeneInterval
     strand::Strand
     frame::Int
     features::NamedTuple
 end
 
 function OpenReadingFrame(
-    ::Type{F},
-    seqid::Union{Symbol, String},
+    seqid::Symbol,
     range::UnitRange{<:Integer},
     strand::Strand,
-    frame::Int8,
+    frame::Int,
+    features::NamedTuple = (;)
+) where {F<:GeneFinderMethod}
+    # Sanity check: seqid definition
+    isdefined(Main, seqid) ||
+        @warn "The source sequence of the ORF is defined as $(seqid). Make sure to either define it or supply the correct source sequence."
+
+    # Sanity check: strand validity
+    strand in (PSTRAND, NSTRAND, '+', '-') ||
+        throw(ArgumentError("Cannot extract sequence for strand $(strand); expected PSTRAND ('+') or NSTRAND ('-')"))
+
+    # Sanity check: frame validity
+    (1 ≤ frame ≤ 3) || 
+        throw(ArgumentError("Invalid frame: $(frame), expected 1, 2, or 3"))
+
+    orflen = length(range)
+    # Sanity check: range length divisible by 3
+    (orflen % 3 == 0) || 
+        throw(ArgumentError("ORF length ($(orflen)) is not divisible by 3, incomplete codons detected"))
+
+    # Sanity check: minimum length (start + stop codons)
+    orflen ≥ 6 ||
+        throw(ArgumentError("ORF sequence too short to contain start and stop codons"))
+
+    return ORF{F}(seqid, range, strand, frame, features)
+end
+
+function OpenReadingFrame{F}(
+    seqid::Symbol,
+    range::UnitRange{<:Integer},
+    strand::Char,
+    frame::Int,
     features::NamedTuple = (;)
 ) where {F<:GeneFinderMethod}
     seqid_sym = isa(seqid, Symbol) ? seqid : Symbol(seqid)
