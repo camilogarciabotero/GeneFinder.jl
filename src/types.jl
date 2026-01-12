@@ -57,7 +57,7 @@ function OpenReadingFrame(
     features::NamedTuple = (;)
 ) where {F<:GeneFinderMethod}
     # Sanity check: seqid definition
-    isdefined(Main, seqid) ||
+    isdefinedglobal(Main, seqid) ||
         @warn "The source sequence of the ORF is defined as $(seqid). Make sure to either define it or supply the correct source sequence."
 
     # Sanity check: strand validity
