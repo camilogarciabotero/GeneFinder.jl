@@ -200,17 +200,26 @@ Get the source sequence associated with an ORF collection.
 - `orf::ORF{F}`: The ORF for which to extract the DNA sequence.
 
 # Returns
-- `LongSubSeq{DNAAlphabet{4}}`: For positive strand ORFs, returns a view (no allocation).
-- `LongDNA{4}`: For negative strand ORFs, returns the reverse complement (allocates).
+- The source DNA sequence.
 
-# Behavior
-- For `PSTRAND`: Returns a subsequence view of the source sequence.
-- For `NSTRAND`: Returns the reverse complement of the subsequence.
+# Example
+```julia
+collection = findorfs(seq)
+src = source(collection)  # Returns the original sequence
+```
+"""
+source(collection::ORFCollection) = collection.source
 
-# Validation (bounds checked)
-- Verifies the sequence starts with a valid start codon (ATG).
-- Verifies the sequence ends with a valid stop codon (TAA, TAG, or TGA).
-- Warns if frame is inconsistent with the start position.
+"""
+    orfvector(collection::ORFCollection)
+
+Get the vector of ORFs from a collection.
+
+# Arguments
+- `collection::ORFCollection`: The collection to query.
+
+# Returns
+- `Vector{ORF{F}}`: The vector of ORFs.
 
 # Example
 ```julia
