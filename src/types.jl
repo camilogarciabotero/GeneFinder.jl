@@ -523,11 +523,11 @@ finder(orf::ORF{F}) where {F} = F
 # Show Methods
 # ────────────────────────────────────────────────────────────────────────────────
 
-function Base.show(io::IO, i::ORF{F}) where {F}
-    print(io, "ORF{", finder(i), "}(", leftposition(i), ":", rightposition(i), ", '")
-    show(io, strand(i))
-    print(io, "', ", frame(i))
-    feats = features(i)
+function Base.show(io::IO, orf::ORF{F}) where {F}
+    print(io, "ORF{", finder(orf), "}(", leftposition(orf), ":", rightposition(orf), ", '")
+    show(io, strand(orf))
+    print(io, "', ", frame(orf))
+    feats = features(orf)
     if !isempty(feats)
         if length(feats) <= 3
             print(io, ", ", feats)
@@ -541,29 +541,24 @@ function Base.show(io::IO, i::ORF{F}) where {F}
     print(io, ")")
 end
 
-## Ideas for Gene struct
+function Base.show(io::IO, c::ORFCollection{F,S}) where {F,S}
+    n = length(c)
+    seqlen = length(c.source)
+    print(io, "ORFCollection{", F, "} with ", n, " ORF", n == 1 ? "" : "s", " in ", seqlen, "bp sequence")
+end
 
-# struct CDS <: AbstractGene
-#     orf::ORF
-#     join::Bool
-#     coding::Bool
-# end
-
-# #### Ribosome Binding Site (RBS) struct ####
-
-# struct RBS
-#     motif::BioRegex{DNA}
-#     offset::UnitRange{Int64} # offset
-#     score::Float64
-
-#     function RBS(motif::BioRegex{DNA}, offset::UnitRange{Int64}, score::Float64)
-#         return new(motif, offset, score)
-#     end
-#     # rbsinst = RBS(biore"RRR"dna, 3:4, 1.0)
-# end
-
-# seq[orf.first-bin01.offset.start:orf.first-1]
-
-# motifs = [dna"GGA", dna"GAG", dna"AGG"]
-
-####### End of RBS struct #######
+function Base.show(io::IO, ::MIME"text/plain", c::ORFCollection{F,S}) where {F,S}
+    n = length(c)
+    seqlen = length(c.source)
+    println(io, "ORFCollection{", F, "} with ", n, " ORF", n == 1 ? "" : "s", " in ", seqlen, "bp sequence:")
+    
+    max_show = get(io, :limit, true) ? 10 : n
+    for (i, orf) in enumerate(c.orfs)
+        i > max_show && break
+        println(io, " ", orf)
+    end
+    if n > max_show
+        println(io, " ⋮")
+        println(io, " ", c.orfs[end])
+    end
+end
