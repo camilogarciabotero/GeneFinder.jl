@@ -19,7 +19,7 @@ Abstract base type for different ORF finding methods/algorithms.
 Subtypes should implement the calling interface to find ORFs in a sequence, returning an `ORFCollection`.
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L6-L13" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L6-L13" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -75,7 +75,7 @@ orfseq = sequence(collection, 1)
 See also: [`ORF`](@ref), [`sequence`](/api#GeneFinder.sequence-Tuple{ORFCollection,%20Int64}), [`source`](/api#GeneFinder.source-Tuple{ORFCollection})
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L126-L166" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L126-L166" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -127,7 +127,7 @@ orfseq = sequence(collection, 1)
 See also: [`ORFCollection`](/orftype#ORFCollection), [`sequence`](/api#GeneFinder.sequence-Tuple{ORFCollection,%20Int64}), [`features`](/api#GeneFinder.features-Union{Tuple{OpenReadingFrame{F}},%20Tuple{F}}%20where%20F)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L68-L102" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L68-L102" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -158,7 +158,7 @@ strand = NSTRAND  # Negative strand
 
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L18-L32" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L18-L32" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -183,7 +183,7 @@ Handles strand orientation:
 Includes bounds checking and codon validation.
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L342-L352" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L342-L352" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -200,7 +200,7 @@ _isvalidorf(range, strand, frame, features) -> Bool
 Validate ORF parameters and throw descriptive errors for invalid inputs.
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L38-L42" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L38-L42" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -237,7 +237,7 @@ feats.score            # Access individual feature: 0.95
 See also: [`ORF`](@ref)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L384-L404" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L384-L404" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -258,7 +258,7 @@ Get the gene finding method type used for this collection.
   
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L227-L234" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L227-L234" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -293,7 +293,7 @@ finder(orf)  # Returns NaiveFinder
 See also: [`GeneFinderMethod`](/api#GeneFinder.GeneFinderMethod), [`ORF`](@ref)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L501-L519" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L501-L519" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -328,7 +328,7 @@ frame(orf)  # Returns 2
 See also: [`strand`](/api#GeneFinder.strand-Union{Tuple{OpenReadingFrame{F}},%20Tuple{F}}%20where%20F), [`ORF`](@ref)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L455-L473" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L455-L473" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -363,7 +363,7 @@ leftposition(orf)  # Returns 10
 See also: [`rightposition`](/api#GeneFinder.rightposition-Union{Tuple{OpenReadingFrame{F}},%20Tuple{F}}%20where%20F), [`ORF`](@ref)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L409-L427" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L409-L427" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -396,7 +396,7 @@ orf_vector = orfvector(collection)
 
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L208-L224" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L208-L224" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -431,7 +431,7 @@ rightposition(orf)  # Returns 42
 See also: [`leftposition`](/api#GeneFinder.leftposition-Union{Tuple{OpenReadingFrame{F}},%20Tuple{F}}%20where%20F), [`ORF`](@ref)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L432-L450" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L432-L450" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -503,7 +503,7 @@ orfseqs = collect(sequence(collection, i) for i in eachindex(collection))
 See also: [`sequences`](@ref), [`ORFCollection`](/orftype#ORFCollection)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L259-L312" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L259-L312" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -539,7 +539,7 @@ orfseq = sequence(collection, orf)
 
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L319-L337" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L319-L337" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -572,7 +572,7 @@ src = source(collection)  # Returns the original sequence
 
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L189-L205" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L189-L205" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -607,7 +607,7 @@ strand(orf)  # Returns PSTRAND
 See also: [`frame`](/api#GeneFinder.frame-Union{Tuple{OpenReadingFrame{F}},%20Tuple{F}}%20where%20F), [`Strand`](/api#GeneFinder.Strand), [`ORF`](@ref)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/types.jl#L478-L496" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/types.jl#L478-L496" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -664,7 +664,7 @@ collection = findorfs(seq, finder=NaiveFinderLazy)
 See also: [`NaiveFinder`](/api#NaiveFinder), [`NaiveFinderLazy`](/api#GeneFinder.NaiveFinderLazy), [`ORFCollection`](/orftype#ORFCollection)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/findorfs.jl#L3-L37" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/findorfs.jl#L3-L37" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -689,7 +689,7 @@ A simple ORF finding method that detects all Open Reading Frames in a DNA sequen
 See also: [`NaiveFinderLazy`](/api#GeneFinder.NaiveFinderLazy), [`GeneFinderMethod`](/api#GeneFinder.GeneFinderMethod)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/algorithms/naivefinder.jl#L3-L10" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/algorithms/naivefinder.jl#L3-L10" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -742,7 +742,7 @@ first_seq = sequence(collection, 1)
 See also: [`NaiveFinderLazy`](/api#GeneFinder.NaiveFinderLazy), [`ORFCollection`](/orftype#ORFCollection), [`sequence`](/api#GeneFinder.sequence-Tuple{ORFCollection,%20Int64})
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/algorithms/naivefinder.jl#L62-L97" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/algorithms/naivefinder.jl#L62-L97" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -761,7 +761,7 @@ A memory-optimized variant of `NaiveFinder` that pre-allocates the ORF vector ba
 See also: [`NaiveFinder`](/api#NaiveFinder), [`GeneFinderMethod`](/api#GeneFinder.GeneFinderMethod)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/algorithms/naivefinder.jl#L13-L20" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/algorithms/naivefinder.jl#L13-L20" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -782,7 +782,7 @@ Memory-optimized ORF finder with smart pre-allocation.
   
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/algorithms/naivefinder.jl#L208-L215" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/algorithms/naivefinder.jl#L208-L215" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -815,7 +815,7 @@ Uses `FwRvIterator` with 3-mers to efficiently count start codon occurrences on 
 See also: [`NaiveFinderLazy`](/api#GeneFinder.NaiveFinderLazy)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/algorithms/naivefinder.jl#L126-L145" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/algorithms/naivefinder.jl#L126-L145" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -860,7 +860,7 @@ The iterator uses `findfirst` with progressive offsets to find non-overlapping O
 See also: [`NaiveFinder`](/api#NaiveFinder)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/algorithms/naivefinder.jl#L23-L48" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/algorithms/naivefinder.jl#L23-L48" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -901,7 +901,7 @@ This is an internal helper function that avoids code duplication between forward
 See also: [`NaiveFinderLazy`](/api#GeneFinder.NaiveFinderLazy)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/algorithms/naivefinder.jl#L162-L184" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/algorithms/naivefinder.jl#L162-L184" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -966,7 +966,7 @@ end
 See also: [`write_orfs_gff`](/api#GeneFinder.write_orfs_gff-Union{Tuple{F},%20Tuple{N},%20Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}},%20Union{IOStream,%20IOBuffer}}}%20where%20{N,%20F<:GeneFinderMethod}), [`write_orfs_fna`](/api#GeneFinder.write_orfs_fna-Union{Tuple{F},%20Tuple{N},%20Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}},%20Union{IOStream,%20IOBuffer}}}%20where%20{N,%20F<:GeneFinderMethod}), [`findorfs`](/api#GeneFinder.findorfs-Union{Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}}},%20Tuple{F},%20Tuple{N}}%20where%20{N,%20F<:GeneFinderMethod})
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/io.jl#L3-L43" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/io.jl#L3-L43" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -1033,7 +1033,7 @@ end
 See also: [`write_orfs_fna`](/api#GeneFinder.write_orfs_fna-Union{Tuple{F},%20Tuple{N},%20Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}},%20Union{IOStream,%20IOBuffer}}}%20where%20{N,%20F<:GeneFinderMethod}), [`write_orfs_gff`](/api#GeneFinder.write_orfs_gff-Union{Tuple{F},%20Tuple{N},%20Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}},%20Union{IOStream,%20IOBuffer}}}%20where%20{N,%20F<:GeneFinderMethod}), [`findorfs`](/api#GeneFinder.findorfs-Union{Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}}},%20Tuple{F},%20Tuple{N}}%20where%20{N,%20F<:GeneFinderMethod}), [`BioSequences.translate`](@extref)
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/io.jl#L153-L198" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/io.jl#L153-L198" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -1095,7 +1095,7 @@ end
 See also: [`write_orfs_faa`](/api#GeneFinder.write_orfs_faa-Union{Tuple{F},%20Tuple{N},%20Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}},%20Union{IOStream,%20IOBuffer}}}%20where%20{N,%20F<:GeneFinderMethod}), [`write_orfs_gff`](/api#GeneFinder.write_orfs_gff-Union{Tuple{F},%20Tuple{N},%20Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}},%20Union{IOStream,%20IOBuffer}}}%20where%20{N,%20F<:GeneFinderMethod}), [`findorfs`](/api#GeneFinder.findorfs-Union{Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}}},%20Tuple{F},%20Tuple{N}}%20where%20{N,%20F<:GeneFinderMethod})
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/io.jl#L72-L113" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/io.jl#L72-L113" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -1162,7 +1162,7 @@ end
 See also: [`write_orfs_bed`](/api#GeneFinder.write_orfs_bed-Union{Tuple{F},%20Tuple{N},%20Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}},%20Union{IOStream,%20IOBuffer}}}%20where%20{N,%20F<:GeneFinderMethod}), [`write_orfs_fna`](/api#GeneFinder.write_orfs_fna-Union{Tuple{F},%20Tuple{N},%20Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}},%20Union{IOStream,%20IOBuffer}}}%20where%20{N,%20F<:GeneFinderMethod}), [`findorfs`](/api#GeneFinder.findorfs-Union{Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}}},%20Tuple{F},%20Tuple{N}}%20where%20{N,%20F<:GeneFinderMethod})
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/d6342db7f34d0110efe0326e9cab12d2e3d73a15/src/io.jl#L240-L285" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/15b5d0b084774c26d53f7f187acfe6400f891d8a/src/io.jl#L240-L285" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
