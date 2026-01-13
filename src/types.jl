@@ -197,7 +197,7 @@ end
 Get the source sequence associated with an ORF collection.
 
 # Arguments
-- `orf::ORF{F}`: The ORF for which to extract the DNA sequence.
+- `collection::ORFCollection`: The collection to query.
 
 # Returns
 - The source DNA sequence.
