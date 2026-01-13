@@ -19,7 +19,7 @@ Abstract base type for different ORF finding methods/algorithms.
 Subtypes should implement the calling interface to find ORFs in a sequence.
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/types.jl#L5-L11" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/types.jl#L5-L11" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -55,7 +55,7 @@ ORF{NaiveFinder}(:seq01, 1:33, PSTRAND, Int8(1), (;score = 0.8))
 
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/types.jl#L57-L74" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/types.jl#L57-L74" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -72,7 +72,7 @@ Strand
 An enumeration type representing DNA strand orientation.
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/types.jl#L16-L20" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/types.jl#L16-L20" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -97,7 +97,7 @@ Extracts the features from an `ORF` object.
 The features of the `ORF` object.
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/types.jl#L165-L175" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/types.jl#L165-L175" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -124,7 +124,7 @@ For positive strand ORFs, returns a LongSubSeq view (avoiding unnecessary copyin
   
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/types.jl#L99-L113" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/types.jl#L99-L113" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -155,7 +155,7 @@ The `source` method works if the sequence is defined in the global scope. Otherw
 :::
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/types.jl#L147-L160" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/types.jl#L147-L160" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -209,7 +209,7 @@ findorfs(sequence, finder=NaiveFinder)
 
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/findorfs.jl#L3-L34" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/findorfs.jl#L3-L34" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -258,7 +258,7 @@ If the log-odds ratio exceeds a given threshold (`η`), the sequence is consider
 :::
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/algorithms/naivefinder.jl#L39-L68" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/algorithms/naivefinder.jl#L39-L68" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -277,7 +277,7 @@ Estimate the number of ORFs based on start codon count.
 Counts ATG start codons in the sequence using a k-mer iterator. Returns the count as a heuristic estimate for pre-allocating the ORF vector.
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/algorithms/naivefinder.jl#L104-L111" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/algorithms/naivefinder.jl#L104-L111" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -306,7 +306,7 @@ See more about the discussion [here](https://discourse.julialang.org/t/how-to-im
 :::
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/algorithms/naivefinder.jl#L6-L25" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/algorithms/naivefinder.jl#L6-L25" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -325,7 +325,7 @@ Helper function to search for ORFs in a single strand direction.
 Avoids code duplication between forward and reverse strand searching.
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/algorithms/naivefinder.jl#L128-L134" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/algorithms/naivefinder.jl#L128-L134" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -368,7 +368,7 @@ Using the `overlap = true` flag will increase the runtime of the function signif
 :::
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/algorithms/naivecollector.jl#L5-L30" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/algorithms/naivecollector.jl#L5-L30" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -402,7 +402,7 @@ Write BED data to a file.
   
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/io.jl#L3-L17" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/io.jl#L3-L17" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -449,7 +449,7 @@ end
 
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/io.jl#L112-L140" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/io.jl#L112-L140" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -494,7 +494,7 @@ end
 
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/io.jl#L46-L74" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/io.jl#L46-L74" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
@@ -528,7 +528,7 @@ Write GFF data to a file.
   
 
 
-<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/50478f27f5ac3d8dfd1db72b5bbd5aa2edae9ecc/src/io.jl#L180-L197" target="_blank" rel="noreferrer">source</a></Badge>
+<Badge type="info" class="source-link" text="source"><a href="https://github.com/camilogarciabotero/GeneFinder.jl/blob/a31b5b9a0a5affe5569e58e3f589934e0b4e5223/src/io.jl#L180-L197" target="_blank" rel="noreferrer">source</a></Badge>
 
 </details>
 
