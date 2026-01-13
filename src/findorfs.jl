@@ -1,45 +1,47 @@
 export findorfs
 
 """
-    findorfs(sequence::NucleicSeqOrView{DNAAlphabet{N}}; ::F, kwargs...) where {N, F<:GeneFinderMethod}
+    findorfs(sequence::NucleicSeqOrView{DNAAlphabet{N}}; finder::Type{F}, kwargs...) where {N, F<:GeneFinderMethod}
 
-This is the main interface method for finding open reading frames (ORFs) in a DNA sequence.
+Main interface for finding Open Reading Frames (ORFs) in a DNA sequence.
 
-It takes the following required arguments:
+Returns an `ORFCollection` containing the found ORFs bundled with the source sequence,
+providing a clean API for sequence extraction.
 
-- `sequence`: The nucleic acid sequence to search for ORFs.
-- `finder`: The algorithm used to find ORFs. It can be either `NaiveFinder`, `NaiveCollector` or yet other implementations.
+# Arguments
+- `sequence::NucleicSeqOrView{DNAAlphabet{N}}`: The DNA sequence to search for ORFs.
 
-## Keyword Arguments regardless of the finder method:
-- `alternative_start::Bool`: A boolean indicating whether to consider alternative start codons. Default is `false`.
-- `minlen::Int`: The minimum length of an ORF. Default is `6`.
-- `scheme::Function`: The scoring scheme to use for scoring the sequence from the ORF. Default is `nothing`.
+# Keywords
+- `finder::Type{F}=NaiveFinder`: The algorithm to use (`NaiveFinder`, `NaiveFinderLazy`, etc.).
+- `alternative_start::Bool=false`: Whether to consider alternative start codons (GTG, TTG).
+- `minlen::Int=6`: Minimum ORF length in nucleotides.
 
-## Returns
-A vector of `ORF` objects representing the found ORFs.
+# Returns
+- `ORFCollection{F}`: Collection of ORFs bundled with the source sequence.
 
-## Example
-
+# Example
 ```julia
-sequence = randdnaseq(120)
+using BioSequences, GeneFinder
 
-120nt DNA Sequence:
- GCCGGACAGCGAAGGCTAATAAATGCCCGTGCCAGTATC…TCTGAGTTACTGTACACCCGAAAGACGTTGTACGCATTT
+seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+collection = findorfs(seq)
 
-findorfs(sequence, finder=NaiveFinder)
+# Access ORFs sequences
+orfseqs = sequence.(Ref(collection), collection.orfs)  # Get sequences of all ORFs
 
-1-element Vector{ORF}:
- ORF{NaiveFinder}(77:118, '-', 2)
+# Use a different finder
+collection = findorfs(seq, finder=NaiveFinderLazy)
 ```
+
+See also: [`NaiveFinder`](@ref), [`NaiveFinderLazy`](@ref), [`ORFCollection`](@ref)
 """
 function findorfs(
-    sequence::NucleicSeqOrView{DNAAlphabet{N}};
+    seq::NucleicSeqOrView{DNAAlphabet{N}};
     finder::Type{F}=NaiveFinder,
     kwargs...
 ) where {N,F<:GeneFinderMethod}
-    return finder(sequence; kwargs...)::Vector{ORF{F}}
+    return finder(seq; kwargs...)::ORFCollection{F}
 end
-
 
 
 
