@@ -23,17 +23,6 @@ An enumeration type representing DNA strand orientation.
     NSTRAND = 2  # Negative/reverse strand (-)
 end
 
-# # Helper function to convert Char strand to Strand enum
-# function _to_strand(s::Strand)::Strand
-#     return s
-# end
-
-# function _to_strand(s::Char)::Strand
-#     s == '+' && return PSTRAND
-#     s == '-' && return NSTRAND
-#     throw(ArgumentError("Invalid strand character '$s'; expected '+' or '-'"))
-# end
-
 # Helper function for validation
 function _isvalidorf(seqid::Symbol, range::UnitRange{Int64}, strand::Strand, frame::Int8, features::NamedTuple)::Bool
 
