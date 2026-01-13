@@ -10,20 +10,16 @@ The main function in the GeneFinder package is `findorfs`, which serves as an in
 
 Here's an example of using `findorfs` with the `NaiveFinder` algorithm:
 
-```julia
-using BioSequences, GeneFinder
+```julia-repl
+julia> using BioSequences, GeneFinder
 
-seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
+julia> seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC";
 
-collection = findorfs(seq, finder=NaiveFinder)
-```
-
-Output:
-```
+julia> collection = findorfs(seq, finder=NaiveFinder)
 ORFCollection{NaiveFinder} with 12 ORFs in 726bp sequence:
- ORF{NaiveFinder}(29:40, 'PSTRAND', 2)
- ORF{NaiveFinder}(137:145, 'PSTRAND', 2)
- ORF{NaiveFinder}(164:184, 'PSTRAND', 2)
+ ORF{NaiveFinder}(29:40, '+', 2)
+ ORF{NaiveFinder}(137:145, '+', 2)
+ ORF{NaiveFinder}(164:184, '+', 2)
  ⋮
 ```
 
@@ -31,46 +27,58 @@ ORFCollection{NaiveFinder} with 12 ORFs in 726bp sequence:
 
 The `ORFCollection` provides a convenient interface for working with ORFs:
 
-```julia
-# Iteration
-for orf in collection
-    println(leftposition(orf), " - ", rightposition(orf))
-end
+```julia-repl
+julia> collection[1]  # First ORF
+ORF{NaiveFinder}(29:40, '+', 2)
 
-# Indexing
-first_orf = collection[1]
-subset = collection[1:5]
+julia> collection[1:5]  # Range of ORFs (returns a Vector)
+5-element Vector{OpenReadingFrame{NaiveFinder}}:
+ ORF{NaiveFinder}(29:40, '+', 2)
+ ⋮
 
-# Length
-n_orfs = length(collection)
+julia> length(collection)  # Number of ORFs
+12
 
-# Access source sequence
-src = source(collection)
+julia> source(collection)  # Access source sequence
+726nt DNA Sequence:
+AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC
 ```
 
 ## Extracting Sequences from ORFs
 
 Extract sequences using the `sequence` function with an index or ORF:
 
-```julia
-# By index
-dna_seq = sequence(collection, 1)
+```julia-repl
+julia> sequence(collection, 1)  # By index
+12nt DNA Sequence:
+ATGCAACCCTGA
 
-# By ORF object
-orf = collection[1]
-dna_seq = sequence(collection, orf)
+julia> orf = collection[1]; sequence(collection, orf)  # By ORF
+12nt DNA Sequence:
+ATGCAACCCTGA
+
+julia> sequence.(Ref(collection), collection.orfs)  # All sequences using broadcasting
+12-element Vector{LongSubSeq{DNAAlphabet{4}}}:
+ ATGCAACCCTGA
+ ATGCGCTGA
+ ⋮
 ```
 
 ## Translating ORF Sequences
 
 To translate ORF sequences to amino acids, use `BioSequences.translate` on extracted sequences:
 
-```julia
-using BioSequences
+```julia-repl
+julia> using BioSequences
 
-# Translate a single ORF
-protein = translate(sequence(collection, 1))
+julia> translate(sequence(collection, 1))
+4aa Amino Acid Sequence:
+MQP*
 
-# Translate all ORFs
-proteins = [translate(sequence(collection, i)) for i in eachindex(collection)]
+julia> translate.(sequence.(Ref(collection), collection.orfs))  # Translate all ORFs
+12-element Vector{LongAA}:
+ MQP*
+ MR*
+ MRRMAR*
+ ⋮
 ```

@@ -18,43 +18,50 @@
 
 ***
 
-<!-- [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl) -->
-
 ## Overview
 
->This is a species-agnostic, algorithm extensible, sequence-anonymous (genome, metagenomes) *gene finder* library framework for the Julia Language.
+> This is a species-agnostic, algorithm extensible, sequence-anonymous (genome, metagenomes) *gene finder* library framework for the Julia Language.
 
-The `GeneFinder` package aims to be a versatile module that enables the application of different gene finding algorithms to the `BioSequence` type, by providing a common interface and a flexible data structure to store the predicted ORFI or genes. The package is designed to be easily extensible, allowing users to implement their own algorithms and integrate them into the framework.
+The `GeneFinder` package provides a versatile framework for finding Open Reading Frames (ORFs) in DNA sequences. It offers a common interface for different gene finding algorithms and returns results as `ORFCollection` objects that bundle ORFs with their source sequence for clean sequence extraction.
 
 > [!WARNING] 
-  This package is currently under development and is not yet ready for production use. The API is subject to change.
+> This package is currently under development and the API is subject to change.
 
 ## Installation
 
-You can install `GeneFinder` from the julia REPL. Press `]` to enter pkg mode, and enter the following command:
+You can install `GeneFinder` from the Julia REPL. Press `]` to enter pkg mode:
 
-```julia
-add GeneFinder
+```julia-repl
+julia> add GeneFinder
 ```
 
-## Finding complete and overlapped ORFIs
+## Quick Start
 
-The main package function is `findorfs`. Under the hood, the `findorfs` function is an interface for different gene finding algorithms that can be plugged using the `finder` keyword argument. By default it uses the `NaiveFinder` algorithm, which is a simple algorithm that finds all (non-outbounded) ORFIs in a DNA sequence (see the [NaiveFinder](https://camilogarciabotero.github.io/GeneFinder.jl/dev/api/#GeneFinder.NaiveFinder-Union{Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}}},%20Tuple{N}}%20where%20N) documentation for more details).
+```julia-repl
+julia> using BioSequences, GeneFinder
 
-> [!NOTE] 
-  The `minlen` kwarg in the `NaiveFinder` mehtod has been set to 6nt, so it will catch random ORFIs not necesarily genes thus it might consider `dna"ATGTGA"` -> `aa"M*"` as a plausible ORFI.
+seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA";
+collection = findorfs(seq) # Find all ORFs - returns an ORFCollection
 
-Here is an example of how to use the `findorfs` function with the `NaiveFinder` algorithm:
+ORFCollection{NaiveFinder} with 5 ORFs in 44bp sequence:
+ ORF{NaiveFinder}(1:33, '+', 1)
+ ORF{NaiveFinder}(4:33, '+', 1)
+ ORF{NaiveFinder}(8:22, '+', 2)
+ ORF{NaiveFinder}(12:29, '+', 3)
+ ORF{NaiveFinder}(16:33, '+', 1)
+```
 
-```julia
-using BioSequences, GeneFinder
+## Finding ORFs
 
-# > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
-seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
+The main function is `findorfs`, which uses the `NaiveFinder` algorithm by default:
 
-orfs = findorfs(seq, finder=NaiveFinder) # use finder=NaiveCollector as an alternative
+```julia-repl
+julia> using BioSequences, GeneFinder
 
-12-element Vector{ORF{4, NaiveFinder}}:
+julia> seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC";
+
+julia> collection = findorfs(seq, finder = NaiveFinder)
+ORFCollection{NaiveFinder} with 12 ORFs in 726bp sequence:
  ORF{NaiveFinder}(29:40, '+', 2)
  ORF{NaiveFinder}(137:145, '+', 2)
  ORF{NaiveFinder}(164:184, '+', 2)
@@ -65,15 +72,52 @@ orfs = findorfs(seq, finder=NaiveFinder) # use finder=NaiveCollector as an alter
  ORF{NaiveFinder}(470:496, '+', 2)
  ORF{NaiveFinder}(551:574, '+', 2)
  ORF{NaiveFinder}(569:574, '+', 2)
- ORF{NaiveFinder}(581:601, '+', 2)
+ ⋮
  ORF{NaiveFinder}(695:706, '+', 2)
 ```
 
-The `ORF` structure displays the location, frame, and strand, but currently does not include the sequence *per se*. To extract the sequence of an `ORF` instance, you can use the `sequence` method directly on it, or you can also broadcast it over the `orfs` collection using the dot syntax `.`:
+> [!NOTE] 
+> The `minlen` kwarg defaults to 6nt, so short ORFs like `dna"ATGTGA"` → `aa"M*"` may be detected.
 
-```julia
-sequence.(orfs)
+## Working with ORFCollection
 
+The `ORFCollection` bundles ORFs with their source sequence:
+
+```julia-repl
+# Access ORFs
+julia> collection[1]           # First ORF
+ORF{NaiveFinder}(29:40, '+', 2)
+
+julia> collection[1:5]         # Range of ORFs
+5-element Vector{OpenReadingFrame{NaiveFinder}}: # Note that subseting returns a vector
+ ORF{NaiveFinder}(29:40, '+', 2)
+ ORF{NaiveFinder}(137:145, '+', 2)
+ ORF{NaiveFinder}(164:184, '+', 2)
+ ORF{NaiveFinder}(173:184, '+', 2)
+ ORF{NaiveFinder}(236:241, '+', 2)
+
+julia> length(collection)      # Number of ORFs
+12
+
+
+julia> src = source(collection) # Get source sequence
+726nt DNA Sequence:
+AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTG…GCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC
+```
+
+## Extracting Sequences
+
+```julia-repl
+julia> orfseq = sequence(collection, 1) # By index
+12nt DNA Sequence:
+ATGCAACCCTGA
+
+
+julia> orf = collection[1]; orfseq = sequence(collection, orf) # By ORF
+12nt DNA Sequence:
+ATGCAACCCTGA
+
+julia> all_orfs_seqs = sequence.(Ref(collection), collection.orfs) # All sequences at once
 12-element Vector{LongSubSeq{DNAAlphabet{4}}}:
  ATGCAACCCTGA
  ATGCGCTGA
@@ -89,11 +133,16 @@ sequence.(orfs)
  ATGCAACCCTGA
 ```
 
-Similarly, you can extract the amino acid sequences of the ORFIs using the `translate` function.
+## Translation
 
-```julia
-translate.(orfs)
+Using `BioSequences.translate` on extracted sequences:
 
+```julia-repl
+julia> protein = translate(sequence(collection, 1)) # Single ORF
+4aa Amino Acid Sequence:
+MQP*
+
+julia> proteins = translate.(sequence.(Ref(collection), collection)) # All ORFs
 12-element Vector{LongAA}:
  MQP*
  MR*
@@ -109,21 +158,16 @@ translate.(orfs)
  MQP*
 ```
 
-## Let's score the ORFIs
+## Scoring ORFs
 
-ORFIs sequences can be scored using different schemes that evaluate them under a biological context. There are two ways to make this possible: by adding a scoring method to the finder algorithm or by using a scoring method after predicting the ORFIs. The first approach is likely more efficient, but the second approach is more flexible. We will showcase the second approach in this example.
+ORF sequences can be scored using the log-odds ratio approach from [BioMarkovChains.jl](https://github.com/camilogarciabotero/BioMarkovChains.jl):
 
-A commonly used scoring scheme for ORFIs is the *log-odds ratio* score. This score is based on the likelihood of a sequence belonging to a specific stochastic model, such as coding or non-coding. The [BioMarkovChains](https://github.com/camilogarciabotero/BioMarkovChains.jl) package provides a `log_odds_ratio_score` method (currently imported), also known as `lors`, which can be used to score ORFIs using the log-odds ratio approach.
+```julia-repl
+julia> using BioMarkovChains
 
-```julia
-orfs = findorfs(seq, finder=NaiveFinder)
-```
+julia> orfseqs = sequence.(Ref(collection), collection); # Extract sequences
 
-The `lors` method has been overloaded to take an ORFI object and can be used later to calculate the score of the ORFIs.
-
-```julia
-lors.(orfs)
-
+julia> scores = log_odds_ratio_score.(orfseqs)
 12-element Vector{Float64}:
  0.469404606944017
  1.0174520899042823
@@ -139,69 +183,107 @@ lors.(orfs)
  0.469404606944017
 ```
 
-We can extend basically any method that scores a `BioSequence` to score an `ORFI` object. To see more about scoring ORFIs, check out the [Scoring ORFIs](https://camilogarciabotero.github.io/GeneFinder.jl/dev/features/) section in the documentation.
+Check if sequences are likely coding using a conding decision rule, check the `iscoding` function:
 
-## Writting ORFIs   into bioinformatic formats
+```julia-repl
+julia> iscoding(sequence(collection, 1)) # Check individual sequence
+true
 
-`GeneFinder` also now facilitates the generation of `FASTA`, `BED`, and `GFF` files directly from the found ORFIs. This feature is particularly useful for downstream analysis and visualization of the ORFIs. To accomplish this, the package provides the following functions: `write_orfs_fna`, `write_orfs_faa`, `write_orfs_bed`, and `write_orfs_gff`.
+julia> orfseqs = sequence.(Ref(collection), collection); # Check all sequences
+julia> coding_bit_mask = iscoding.(orfseqs)
+12-element BitVector:
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
 
-Functionality:
+# Filter for coding ORFs
+julia> codingorfs = collection[coding_bit_mask]
 
-The package provides four distinct functions for writing files in different formats:
-
-| Function          | Description                                            |
-|-------------------|--------------------------------------------------------|
-| `write_orfs_fna`    | Writes nucleotide sequences in FASTA format.     |
-| `write_orfs_faa`    | Writes amino acid sequences in FASTA format.  |
-| `write_orfs_bed`    | Outputs information in BED format.                           |
-| `write_orfs_gff`    | Generates files in GFF format.                              |
-
-All these function support processing `BioSequences` instances. To demonstrate the use of the `write_*` methods with a `BioSequence`, consider the following example:
-
-```julia
-using BioSequences, GeneFinder
-
-# > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
-seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
+12-element Vector{OpenReadingFrame{NaiveFinder}}:
+ ORF{NaiveFinder}(29:40, '+', 2)
+ ORF{NaiveFinder}(137:145, '+', 2)
+ ORF{NaiveFinder}(164:184, '+', 2)
+ ORF{NaiveFinder}(173:184, '+', 2)
+ ORF{NaiveFinder}(236:241, '+', 2)
+ ORF{NaiveFinder}(248:268, '+', 2)
+ ORF{NaiveFinder}(362:373, '+', 2)
+ ORF{NaiveFinder}(470:496, '+', 2)
+ ORF{NaiveFinder}(551:574, '+', 2)
+ ORF{NaiveFinder}(569:574, '+', 2)
+ ORF{NaiveFinder}(581:601, '+', 2)
+ ORF{NaiveFinder}(695:706, '+', 2)
 ```
 
-Once a `BioSequence` object has been created, the `write_orfs_fna` function proves useful for generating a `FASTA` file containing the nucleotide sequences of the ORFIs. Notably, the `write_orfs*` methods support either an `IOStream` or an `IOBuffer` as an output argument, allowing flexibility in directing the output either to a file or a buffer. In the following example, we demonstrate writing the output directly to a file.
+## Writing to Files
 
-```julia
-outfile = "LFLS01000089.fna"
+GeneFinder supports exporting ORFs in multiple formats:
+<div align="center">
 
-open(outfile, "w") do io
-    write_orfs_fna(seq, io, finder=NaiveFinder) # use finder=NaiveCollector as an alternative
-end
+| Function | Description |
+|----------|-------------|
+| `write_orfs_fna` | Nucleotide sequences (FASTA) |
+| `write_orfs_faa` | Amino acid sequences (FASTA) |
+| `write_orfs_bed` | BED format |
+| `write_orfs_gff` | GFF3 format |
+
+</div>
+
+Example:
+
+```julia-repl
+julia> open("output.fna", "w") do io
+          write_orfs_fna(seq, io; finder=NaiveFinder) # Write nucleotide FASTA
+       end
+
+julia> open("output.faa", "w") do io
+          write_orfs_faa(seq, io; finder=NaiveFinder) # Write amino acid FASTA
+       end
+
+
+julia> open("output.gff", "w") do io
+          write_orfs_gff(seq, io; finder=NaiveFinder, seqname="myseq") # Write GFF3
+       end
 ```
 
-```bash
-cat LFLS01000089.fna
-
->seq id=01 start=29 stop=40 strand=+ frame=2 features=[]
+Output (FASTA):
+```
+>ORF01 id=01 start=29 stop=40 strand=+ frame=2 features=[]
 ATGCAACCCTGA
->seq id=02 start=137 stop=145 strand=+ frame=2 features=[]
+>ORF02 id=02 start=137 stop=145 strand=+ frame=2 features=[]
 ATGCGCTGA
->seq id=03 start=164 stop=184 strand=+ frame=2 features=[]
-ATGCGTCGAATGGCACGGTGA
->seq id=04 start=173 stop=184 strand=+ frame=2 features=[]
-ATGGCACGGTGA
->seq id=05 start=236 stop=241 strand=+ frame=2 features=[]
-ATGTGA
->seq id=06 start=248 stop=268 strand=+ frame=2 features=[]
-ATGTGTCCAACGGCAGTCTGA
->seq id=07 start=362 stop=373 strand=+ frame=2 features=[]
-ATGCAACCCTGA
->seq id=08 start=470 stop=496 strand=+ frame=2 features=[]
-ATGCACTGGCTGGTCCTGTCAATCTGA
->seq id=09 start=551 stop=574 strand=+ frame=2 features=[]
-ATGTCACCGCACAAGGCAATGTGA
->seq id=10 start=569 stop=574 strand=+ frame=2 features=[]
-ATGTGA
->seq id=11 start=581 stop=601 strand=+ frame=2 features=[]
-ATGTGTCCAACGGCAGCCTGA
->seq id=12 start=695 stop=706 strand=+ frame=2 features=[]
-ATGCAACCCTGA
+⋮
 ```
 
-This could also be done to writting a `FASTA` file with the nucleotide sequences of the ORFIs using the `write_orfs_fna` function. Similarly for the `BED` and `GFF` files using the `write_orfs_bed` and `write_orfs_gff` functions respectively.
+## Alternative Start Codons
+
+Use `alternative_start=true` to include GTG, TTG, and CTG as start codons:
+
+```julia
+collection = findorfs(seq, finder=NaiveFinder, alternative_start=true)
+```
+
+## Available Algorithms
+
+| Algorithm | Description |
+|-----------|-------------|
+| `NaiveFinder` | Regex-based ORF detection (default) |
+| `NaiveFinderLazy` | Memory-optimized variant with pre-allocation |
+
+## Documentation
+
+For more details, see the [full documentation](https://camilogarciabotero.github.io/GeneFinder.jl/dev/).
+
+## Citation
+
+If you use GeneFinder in your research, please cite:
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7519184.svg)](https://doi.org/10.5281/zenodo.7519184)

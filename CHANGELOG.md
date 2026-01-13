@@ -25,7 +25,7 @@ typeof(collection)  # ORFCollection{NaiveFinder, LongSubSeq{DNAAlphabet{4}}}
 # Extract sequences
 seq1 = sequence(collection, 1)
 seq1 = sequence(collection, collection[1])
-all_seqs = sequences(collection)
+all_seqs = [sequence(collection, i) for i in eachindex(collection)]
 ```
 
 #### ORF Type Refactoring
@@ -68,7 +68,6 @@ A memory-efficient variant of NaiveFinder with intelligent optimizations:
 |----------|-------------|
 | `sequence(collection, i)` | Extract DNA sequence for ORF at index i |
 | `sequence(collection, orf)` | Extract DNA sequence for specific ORF |
-| `sequences(collection)` | Extract all ORF sequences at once |
 | `source(collection)` | Get source sequence from collection |
 | `orfs(collection)` | Get vector of ORFs from collection |
 | `finder(collection)` | Get finder method type used |
@@ -78,9 +77,7 @@ A memory-efficient variant of NaiveFinder with intelligent optimizations:
 | Removed | Replacement |
 |---------|-------------|
 | `sequence(orf)` | `sequence(collection, orf)` |
-| `sequences(orfs)` | `sequences(collection)` |
 | `translate(collection, i)` | `translate(sequence(collection, i))` |
-| `translations(collection)` | `[translate(sequence(collection, i)) for i in eachindex(collection)]` |
 
 #### Accessor Functions (Breaking)
 
@@ -120,7 +117,8 @@ iscoding(orf)
 iscoding(sequence(collection, orf))
 
 # Or for multiple ORFs
-iscoding.(sequences(collection))
+orfseqs = [sequence(collection, i) for i in eachindex(collection)]
+iscoding.(orfseqs)
 ```
 
 ### Collection Indexing
@@ -164,7 +162,6 @@ ORFCollection efficiency:
 ### Features Added
 
 - `ORFCollection` type for bundling ORFs with source
-- `sequences(collection)` convenience function
 - Alternative start codon support (ATG, GTG, TTG, CTG)
 - Boolean/integer vector indexing for collections
 - Improved docstrings with examples
