@@ -59,6 +59,6 @@ collection = findorfs(phi, finder=NaiveFinder, minlen=100)
 orfseqs = [sequence(collection, i) for i in eachindex(collection)]
 
 # Filter for coding ORFs
-coding_mask = iscoding.(orfseqs, η=1e-10)
+coding_mask = iscoding.(orfseqs; η=1e-10)
 coding_indices = findall(coding_mask)
-````
+```
