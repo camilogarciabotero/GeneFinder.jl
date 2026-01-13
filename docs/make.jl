@@ -34,7 +34,7 @@ makedocs(;
     warnonly = true,
 )
 
-deploydocs(; 
+DocumenterVitepress.deploydocs(; 
     repo = "https://github.com/camilogarciabotero/GeneFinder.jl",
     devbranch = "main",
     target = "build", # this is where Vitepress stores its output
