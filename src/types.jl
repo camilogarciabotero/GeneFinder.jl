@@ -17,6 +17,16 @@ abstract type GeneFinderMethod end
     Strand
 
 An enumeration type representing DNA strand orientation.
+
+# Values
+- `PSTRAND = 1`: Positive/forward strand (+)
+- `NSTRAND = 2`: Negative/reverse strand (-)
+
+# Example
+```julia
+strand = PSTRAND  # Positive strand
+strand = NSTRAND  # Negative strand
+```
 """
 @enum Strand::Int begin
     PSTRAND = 1  # Positive/forward strand (+)
@@ -55,22 +65,42 @@ function _isvalidorf(seqid::Symbol, range::UnitRange{Int64}, strand::Strand, fra
 end
 
 """
-    struct ORF{F}
+    struct OpenReadingFrame{F<:GeneFinderMethod}
 
-The `ORF` struct represents an Open Reading Frame (ORF) in genomics.
+The `OpenReadingFrame` (aliased as `ORF`) struct represents an Open Reading Frame in genomics.
+
+# Type Parameter
+- `F<:GeneFinderMethod`: The gene finding algorithm used to identify this ORF.
 
 # Fields
-- `seqid::Symbol`: The identifier of the sequence to which the ORF belongs.
-- `range::UnitRange{<:Int64}`: The position range of the ORF on the sequence.
-- `strand::Strand`: The strand on which the ORF is located.
-- `frame::Int8`: The reading frame of the ORF (1, 2, or 3).
-- `features::NamedTuple`: The features associated with the ORF.
+- `seqid::Symbol`: The identifier of the source sequence to which the ORF belongs.
+- `range::UnitRange{Int64}`: The position range (start:stop) of the ORF on the sequence.
+- `strand::Strand`: The strand orientation (`PSTRAND` or `NSTRAND`).
+- `frame::Int8`: The reading frame (1, 2, or 3).
+- `features::NamedTuple`: Additional features/metadata associated with the ORF.
+
+# Validation
+The constructor validates:
+- Strand must be `PSTRAND` or `NSTRAND`
+- Frame must be 1, 2, or 3
+- Range length must be divisible by 3
+- Range length must be ≥ 6 (minimum for start + stop codons)
+- Features must be a `NamedTuple`
 
 # Example
-
 ```julia
-ORF{NaiveFinder}(:seq01, 1:33, PSTRAND, Int8(1), (;score = 0.8))
+using BioSequences, GeneFinder
+
+seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+
+# Create an ORF with NaiveFinder method
+orf = ORF{NaiveFinder}(:seq, 1:33, PSTRAND, Int8(1), (;))
+
+# Create an ORF with additional features
+orf = ORF{NaiveFinder}(:seq, 1:33, PSTRAND, Int8(1), (score=0.95, gc_content=0.52))
 ```
+
+See also: [`sequence`](@ref), [`features`](@ref), [`strand`](@ref), [`frame`](@ref)
 """
 struct OpenReadingFrame{F<:GeneFinderMethod}
     seqid::Symbol
@@ -97,19 +127,35 @@ const START = dna"ATG"
 const STOPS = (dna"TAA", dna"TAG", dna"TGA")
 
 """
-    sequence(i::ORF{F})
+    sequence(orf::ORF{F}) where {F}
 
-Extracts the DNA sequence corresponding to the given open reading frame (ORF).
-Uses the source sequence referenced by the ORF's seqid.
-
-For positive strand ORFs, returns a LongSubSeq view (avoiding unnecessary copying).
-For negative strand ORFs, returns the reverse complement (requires allocation).
+Extract the DNA sequence corresponding to the given Open Reading Frame (ORF).
 
 # Arguments
-- `i::ORF{F}`: The open reading frame (ORF) for which the DNA sequence needs to be extracted.
+- `orf::ORF{F}`: The ORF for which to extract the DNA sequence.
 
 # Returns
-- A LongSubSeq for positive strand ORFs, or a reverse complement sequence for negative strand ORFs.
+- `LongSubSeq{DNAAlphabet{4}}`: For positive strand ORFs, returns a view (no allocation).
+- `LongDNA{4}`: For negative strand ORFs, returns the reverse complement (allocates).
+
+# Behavior
+- For `PSTRAND`: Returns a subsequence view of the source sequence.
+- For `NSTRAND`: Returns the reverse complement of the subsequence.
+
+# Validation (bounds checked)
+- Verifies the sequence starts with a valid start codon (ATG).
+- Verifies the sequence ends with a valid stop codon (TAA, TAG, or TGA).
+- Warns if frame is inconsistent with the start position.
+
+# Example
+```julia
+seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+orf = ORF{NaiveFinder}(:seq, 1:33, PSTRAND, Int8(1), (;))
+
+dna_seq = sequence(orf)  # Returns the DNA sequence for this ORF
+```
+
+See also: [`source`](@ref), [`ORF`](@ref)
 """
 @inline function sequence(i::ORF{F}) where {F}
     src = source(i)
@@ -145,54 +191,170 @@ For negative strand ORFs, returns the reverse complement (requires allocation).
 end
 
 """
-    source(i::ORF{F})
+    source(orf::ORF{F}) where {F}
 
-Get the source sequence associated with the given `ORF` object.
+Retrieve the source sequence associated with the given ORF.
 
 # Arguments
-- `i::ORF{F}`: The `ORF` object for which to retrieve the source sequence.
+- `orf::ORF{F}`: The ORF for which to retrieve the source sequence.
 
 # Returns
-The source sequence associated with the `ORF` object.
+- The source sequence object referenced by the ORF's `seqid` field.
 
-!!! warning
-    The `source` method works if the sequence is defined in the global scope. Otherwise it will throw an error.
+# Note
+The source sequence must be defined in the `Main` module scope. If the sequence
+identifier does not correspond to a defined variable, an error will be thrown.
+
+# Example
+```julia
+seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+orf = ORF{NaiveFinder}(:seq, 1:33, PSTRAND, Int8(1), (;))
+
+src = source(orf)  # Returns the `seq` variable
+```
+
+See also: [`sequence`](@ref), [`seqid`](@ref)
 """
 function source(i::ORF{F}) where {F}
     return getfield(Main, i.seqid)
 end
 
 """
-    features(i::ORF{F})
+    features(orf::ORF{F}) where {F}
 
-Extracts the features from an `ORF` object.
+Extract the features/metadata from an ORF.
 
 # Arguments
-- `i::ORF{F}`: An `ORF` object.
+- `orf::ORF{F}`: The ORF from which to extract features.
 
 # Returns
-The features of the `ORF` object.
+- `NamedTuple`: The features associated with the ORF (may be empty).
+
+# Example
+```julia
+orf = ORF{NaiveFinder}(:seq, 1:33, PSTRAND, Int8(1), (score=0.95, gc=0.52))
+
+feats = features(orf)  # Returns (score = 0.95, gc = 0.52)
+feats.score            # Access individual feature: 0.95
+```
+
+See also: [`ORF`](@ref)
 """
 function features(i::ORF{F}) where {F}
     return i.features
 end
 
+"""
+    leftposition(orf::ORF{F}) where {F}
+
+Get the left (start) position of the ORF range.
+
+# Arguments
+- `orf::ORF{F}`: The ORF to query.
+
+# Returns
+- `Int`: The first position of the ORF range.
+
+# Example
+```julia
+orf = ORF{NaiveFinder}(:seq, 10:42, PSTRAND, Int8(1), (;))
+leftposition(orf)  # Returns 10
+```
+
+See also: [`rightposition`](@ref), [`ORF`](@ref)
+"""
 function leftposition(i::ORF{F}) where {F}
     return Int(Base.first(i.range))
 end
 
+"""
+    rightposition(orf::ORF{F}) where {F}
+
+Get the right (end) position of the ORF range.
+
+# Arguments
+- `orf::ORF{F}`: The ORF to query.
+
+# Returns
+- `Int`: The last position of the ORF range.
+
+# Example
+```julia
+orf = ORF{NaiveFinder}(:seq, 10:42, PSTRAND, Int8(1), (;))
+rightposition(orf)  # Returns 42
+```
+
+See also: [`leftposition`](@ref), [`ORF`](@ref)
+"""
 function rightposition(i::ORF{F}) where {F}
     return Int(Base.last(i.range))
 end
 
+"""
+    frame(orf::ORF{F}) where {F}
+
+Get the reading frame of the ORF.
+
+# Arguments
+- `orf::ORF{F}`: The ORF to query.
+
+# Returns
+- `Int8`: The reading frame (1, 2, or 3).
+
+# Example
+```julia
+orf = ORF{NaiveFinder}(:seq, 1:33, PSTRAND, Int8(2), (;))
+frame(orf)  # Returns 2
+```
+
+See also: [`strand`](@ref), [`ORF`](@ref)
+"""
 function frame(i::ORF{F}) where {F}
     return i.frame
 end
 
+"""
+    strand(orf::ORF{F}) where {F}
+
+Get the strand orientation of the ORF.
+
+# Arguments
+- `orf::ORF{F}`: The ORF to query.
+
+# Returns
+- `Strand`: Either `PSTRAND` (positive/forward) or `NSTRAND` (negative/reverse).
+
+# Example
+```julia
+orf = ORF{NaiveFinder}(:seq, 1:33, PSTRAND, Int8(1), (;))
+strand(orf)  # Returns PSTRAND
+```
+
+See also: [`frame`](@ref), [`Strand`](@ref), [`ORF`](@ref)
+"""
 function strand(i::ORF{F}) where {F}
     return i.strand
 end
 
+"""
+    seqid(orf::ORF{F}) where {F}
+
+Get the sequence identifier of the ORF.
+
+# Arguments
+- `orf::ORF{F}`: The ORF to query.
+
+# Returns
+- `Symbol`: The identifier of the source sequence, or `:unnamedseq` if not set.
+
+# Example
+```julia
+orf = ORF{NaiveFinder}(:chromosome1, 1:33, PSTRAND, Int8(1), (;))
+seqid(orf)  # Returns :chromosome1
+```
+
+See also: [`source`](@ref), [`ORF`](@ref)
+"""
 function seqid(i::ORF{F}) where {F}
     if i.seqid === nothing #|| i.seqid == "unnamedseq"
         return :unnamedseq
@@ -201,6 +363,25 @@ function seqid(i::ORF{F}) where {F}
     end
 end
 
+"""
+    finder(orf::ORF{F}) where {F}
+
+Get the gene finding method type used to identify this ORF.
+
+# Arguments
+- `orf::ORF{F}`: The ORF to query.
+
+# Returns
+- `Type{F}`: The gene finder method type (e.g., `NaiveFinder`).
+
+# Example
+```julia
+orf = ORF{NaiveFinder}(:seq, 1:33, PSTRAND, Int8(1), (;))
+finder(orf)  # Returns NaiveFinder
+```
+
+See also: [`GeneFinderMethod`](@ref), [`ORF`](@ref)
+"""
 finder(i::ORF{F}) where {F} = F
 
 function Base.show(io::IO, i::ORF{F}) where {F}
