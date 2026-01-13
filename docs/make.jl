@@ -38,6 +38,6 @@ deploydocs(;
     repo = "https://github.com/camilogarciabotero/GeneFinder.jl",
     devbranch = "main",
     target = "build", # this is where Vitepress stores its output
-    branch = "gh-pages",
+    # branch = "gh-pages",
     push_preview = true
 )
