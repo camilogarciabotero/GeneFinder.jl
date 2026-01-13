@@ -1,6 +1,7 @@
-export ORF, OpenReadingFrame
-export Strand, GeneFinderMethod, Strand, PSTRAND, NSTRAND
-export features, sequence, source, finder, frame, strand, seqid, leftposition, rightposition
+export ORF, OpenReadingFrame, ORFCollection
+export Strand, GeneFinderMethod, PSTRAND, NSTRAND
+export features, sequence, finder, frame, strand, leftposition, rightposition
+export source, orfvector
 
 """
     abstract type GeneFinderMethod
@@ -149,45 +150,102 @@ Extract the DNA sequence corresponding to the given Open Reading Frame (ORF).
 
 # Example
 ```julia
-seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-orf = ORF{NaiveFinder}(:seq, 1:33, PSTRAND, Int8(1), (;))
+collection = findorfs(seq)
+orf_vector = orfvector(collection)
+```
+"""
+orfvector(collection::ORFCollection) = collection.orfs
 
-dna_seq = sequence(orf)  # Returns the DNA sequence for this ORF
+"""
+    finder(collection::ORFCollection{F}) where {F}
+
+Get the gene finding method type used for this collection.
+
+# Returns
+- `Type{F}`: The gene finder method type (e.g., `NaiveFinder`).
+"""
+finder(::ORFCollection{F}) where {F} = F
+# orfvector(collection::ORFCollection{F}) where {F} = collection.orfs
+
+# Iteration interface
+Base.iterate(c::ORFCollection) = iterate(c.orfs)
+Base.iterate(c::ORFCollection, state) = iterate(c.orfs, state)
+Base.length(c::ORFCollection) = length(c.orfs)
+Base.eltype(::Type{ORFCollection{F,S}}) where {F,S} = ORF{F}
+Base.isempty(c::ORFCollection) = isempty(c.orfs)
+
+# Indexing interface
+Base.getindex(c::ORFCollection, i::Int) = c.orfs[i]
+Base.getindex(c::ORFCollection, r::AbstractRange) = c.orfs[r]
+Base.getindex(c::ORFCollection, v::AbstractVector{Bool}) = c.orfs[v]
+Base.getindex(c::ORFCollection, v::AbstractVector{<:Integer}) = c.orfs[v]
+Base.firstindex(c::ORFCollection) = firstindex(c.orfs)
+Base.lastindex(c::ORFCollection) = lastindex(c.orfs)
+Base.keys(c::ORFCollection) = keys(c.orfs)
+Base.eachindex(c::ORFCollection) = eachindex(c.orfs)
+
+# ────────────────────────────────────────────────────────────────────────────────
+# Sequence Extraction
+# ────────────────────────────────────────────────────────────────────────────────
+
+"""
+    sequence(collection::ORFCollection, i::Int)
+
+Extract the DNA sequence for the ORF at index `i` in the collection.
+
+# Arguments
+- `collection::ORFCollection`: The collection containing the ORF and source sequence.
+- `i::Int`: The index of the ORF.
+
+# Returns
+- `LongSubSeq{DNAAlphabet{4}}`: The DNA sequence corresponding to the ORF as a view.
+
+# Example
+```julia
+collection = findorfs(seq)
+orfseq = sequence(collection, 1)  # Get sequence of first ORF
 ```
 
-See also: [`source`](@ref), [`ORF`](@ref)
+# Example
+
+For getting the sequence of all ORFs are several alternatives:
+
+```julia
+collection = findorfs(seq)
+# Using a for loop with push!
+orfseqs = Vector{LongSubSeq{DNAAlphabet{4}}}()
+for orf in collection
+    push!(orfseqs, sequence(collection, orf))
+end
+
+# Using broadcasting
+orfseq = sequence.(Ref(collection), collection.orfs)
+
+# Using list comprehension
+orfseqs = [sequence(collection, orf) for orf in collection]
+
+# Using map
+orfseqs = map(orf -> sequence(collection, orf), collection)
+
+# Using indices
+orfseqs = [sequence(collection, i) for i in eachindex(collection)]
+
+# Using map with indices
+orfseqs = map(i -> sequence(collection, i), eachindex(collection))
+
+# Using a generator expression
+orfseqs = collect(sequence(collection, orf) for orf in collection)
+
+# Using a generator with indices
+orfseqs = collect(sequence(collection, i) for i in eachindex(collection))
+```
+
+See also: [`sequences`](@ref), [`ORFCollection`](@ref)
 """
-@inline function sequence(i::ORF{F}) where {F}
-    src = source(i)
-
-    @views sub = src[i.range]  # view; no allocation
-
-    # s ∉ (PSTRAND, NSTRAND) && throw(ArgumentError("Cannot extract sequence for strand $(s); expected PSTRAND (+) or NSTRAND (-)"))
-    seq = i.strand === PSTRAND ? sub : reverse_complement(sub)  # reverse_complement allocates (can't be a view)
-
-    @boundscheck begin
-        # Frame consistency check
-        fr = frame(i)
-        if i.strand === PSTRAND
-            exp = mod1(leftposition(i), 3)
-            fr == exp || 
-                @warn "Frame $(fr) may be inconsistent with start position $(leftposition(i)), expected frame $exp"
-        end
-
-        @views begin
-        # Codon checks
-
-            # Start codon check
-            seq[1:3] == START || 
-            throw(ArgumentError("Invalid start codon $(seq[1:3]), expected ATG"))
-
-            # Stop codon check:
-            seq[end-2:end] in STOPS ||
-                throw(ArgumentError("Invalid stop codon $(seq[end-2:end]), expected TAA, TAG, or TGA"))
-        end
-    end
-
-    return seq
+@inline function sequence(collection::ORFCollection, i::Int; kwargs...)
+    @boundscheck checkbounds(collection.orfs, i)
+    orf = @inbounds collection.orfs[i]
+    return _extract_sequence(collection.source, orf; kwargs...)
 end
 
 """
