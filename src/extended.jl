@@ -11,16 +11,6 @@ end
 
 # Methods extending `Strand`
 
-function Base.convert(::Type{Strand}, c::Char)
-    if c == '+'
-        return PSTRAND
-    elseif c == '-'
-        return NSTRAND
-    else
-        throw(ArgumentError("Invalid strand character '$c', expected '+' or '-'"))
-    end
-end
-
 function Base.show(io::IO, s::Strand)
     if s === PSTRAND
         print(io, '+')
