@@ -21,7 +21,7 @@ seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCA
 
 orfs = findorfs(seq, finder=NaiveFinder) # use finder=NaiveCollector as an alternative
 
-12-element Vector{ORF{4, NaiveFinder}}:
+12-element Vector{ORF{NaiveFinder}}:
  ORF{NaiveFinder}(29:40, '+', 2)
  ORF{NaiveFinder}(137:145, '+', 2)
  ORF{NaiveFinder}(164:184, '+', 2)
