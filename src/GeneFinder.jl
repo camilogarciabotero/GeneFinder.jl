@@ -25,7 +25,6 @@ using BioSequences:
     findnext,
 
     ExactSearchQuery,
-    # ApproximateSearchQuery,
     iscompatible
 
 using BioMarkovChains: BioMarkovChain, ECOLICDS, ECOLINOCDS, log_odds_ratio_score
@@ -34,7 +33,7 @@ using IterTools: takewhile, iterated
 using BioSymbols: encoded_data
 using Kmers: @mer_str, FwDNAMers, FwRvIterator, Kmer
 
-# Main types (must come first - defines Strand, ORF, etc.)
+
 include("types.jl")
 include("utils.jl")
 
@@ -42,20 +41,20 @@ include("utils.jl")
 include("algorithms/naivefinder.jl")
 include("algorithms/naivecollector.jl")
 
-# Main functions
+# Main Interface
 include("findorfs.jl")
-include("io.jl")
 
-# Extended functions
+# Extended Interface (translation, comparison, set operations)
+# Depends on types.jl and uses translate from BioSequences
 include("extended.jl")
 
-# RBS Scoring
+include("io.jl")
+
 include("rbs.jl")
 
 # Coding Criteria
 include("criteria.jl")
 
-# Precompiled workloads
 include("workload.jl")
 
 end
