@@ -60,66 +60,49 @@ function _locationiterator(
 end
 
 @doc raw"""
-    NaiveFinder(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) where {N} -> Vector{ORF{NaiveFinder}}
+    NaiveFinder(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) where {N} -> ORFCollection{NaiveFinder}
 
 Find all Open Reading Frames (ORFs) in a DNA sequence using regular expression matching.
 
-This method searches for ORFs on both the forward and reverse complement strands,
-returning a sorted vector of `ORF{NaiveFinder}` objects.
+Returns an `ORFCollection` containing the source sequence and all found ORFs,
+providing a clean API for sequence extraction.
 
 # Arguments
 - `seq::NucleicSeqOrView{DNAAlphabet{N}}`: The DNA sequence to search for ORFs.
 
 # Keywords
 - `alternative_start::Bool=false`: If `true`, uses extended start codons (ATG, GTG, TTG).
-  Studies show that in *E. coli* K-12, these are used ~83%, ~14%, and ~3% respectively.
-  Enabling this increases execution time by approximately 3x.
-- `minlen::Int64=6`: Minimum ORF length in nucleotides. The default of 6 allows
-  detection of the shortest possible ORF (`dna"ATGTGA"` → `aa"M*"`).
+- `minlen::Int64=6`: Minimum ORF length in nucleotides.
 
 # Returns
-- `Vector{ORF{NaiveFinder}}`: A sorted vector of ORFs found in the sequence.
+- `ORFCollection{NaiveFinder}`: Collection of ORFs bundled with the source sequence.
 
 # Example
 ```julia
 using BioSequences, GeneFinder
 
 seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-orfs = NaiveFinder(seq)
+collection = NaiveFinder(seq)
 
-# With alternative start codons and minimum length filter
-orfs = NaiveFinder(seq; alternative_start=true, minlen=30)
+# Iterate over ORFs
+for orf in collection
+    println(sequence(collection, orf))
+end
+
+# Index access
+first_seq = sequence(collection, 1)
 ```
 
-# Scoring Note
-This implementation does not include a scoring scheme by default. For coding potential
-assessment, consider using a log-odds ratio score:
-
-```math
-S(x) = \sum_{i=1}^{L} \log \frac{a^{\mathscr{m}_{1}}_{x_{i-1} x_i}}{a^{\mathscr{m}_{2}}_{x_{i-1} x_i}}
-```
-
-Where the score compares the probability of the sequence under a coding model
-versus a non-coding model. See [`lordr`](@ref) for more information.
-
-See also: [`NaiveFinderLazy`](@ref), [`findorfs`](@ref), [`ORF`](@ref)
+See also: [`NaiveFinderLazy`](@ref), [`ORFCollection`](@ref), [`sequence`](@ref)
 """
 function NaiveFinder(
     seq::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
     minlen::Int64 = 6,
     kwargs...
-) where {N}
+)::ORFCollection{NaiveFinder} where {N}
     seqlen = length(seq)
-    orfs = Vector{ORF{NaiveFinder}}()
-    
-    # Handle the sequence name
-    seqname = _varname(seq)
-    if seqname === nothing
-        seqname = :unnamedseq
-    else
-        seqname = Symbol(seqname)
-    end
+    orfvec = Vector{ORF{NaiveFinder}}()
 
     @inbounds for strand in (PSTRAND, NSTRAND)
         s = strand == NSTRAND ? reverse_complement(seq) : seq
@@ -127,13 +110,14 @@ function NaiveFinder(
             if length(location) >= minlen
                 start = strand == PSTRAND ? location.start : seqlen - location.stop + 1
                 stop = start + length(location) - 1
-                frm = start % 3 == 0 ? 3 : start % 3
+                frm = mod1(start, 3)
 
-                push!(orfs, ORF{NaiveFinder}(seqname, start:stop, strand, Int8(frm), NamedTuple()))
+                push!(orfvec, ORF{NaiveFinder}(start:stop, strand, Int8(frm)))
             end
         end
     end
-    return sort!(orfs)
+    sort!(orfvec)
+    return ORFCollection(convert(LongSubSeq{DNAAlphabet{N}}, seq), orfvec)
 end
 
 
@@ -159,7 +143,7 @@ on both strands in a single pass.
 
 See also: [`NaiveFinderLazy`](@ref)
 """
-function _estimate_orf_count(seq::NucleicSeqOrView{DNAAlphabet{N}}) where {N}
+function _estimate_orf_count(seq::NucleicSeqOrView{DNAAlphabet{N}})::Int where {N}
     # 4^3 = 64 possible 3-mers; only count ATG
     counts = 10 # Start with a base count to avoid zero allocation
     forwardtarget = Kmer{DNAAlphabet{4},3,1}(dna"ATG")
@@ -176,7 +160,7 @@ end
 
 
 """
-    _search_strand!(orfs, seq, seqname, strand, seqlen, alternative_start, minlen)
+    _search_strand!(orfs, seq, strand, seqlen, alternative_start, minlen)
 
 Search for ORFs on a single strand and append results to the ORF vector.
 
@@ -186,7 +170,6 @@ forward and reverse strand searching in `NaiveFinderLazy`.
 # Arguments
 - `orfs::Vector{ORF{NaiveFinderLazy}}`: Vector to append found ORFs to (mutated).
 - `seq::NucleicSeqOrView{DNAAlphabet{N}}`: The DNA sequence to search.
-- `seqname::Symbol`: Identifier for the source sequence.
 - `strand::Strand`: The strand being searched (`PSTRAND` or `NSTRAND`).
 - `seqlen::Int`: Length of the original sequence (for coordinate transformation).
 - `alternative_start::Bool`: Whether to use alternative start codons.
@@ -202,7 +185,6 @@ See also: [`NaiveFinderLazy`](@ref)
 function _search_strand!(
     orfs::Vector{ORF{NaiveFinderLazy}},
     seq::NucleicSeqOrView{DNAAlphabet{N}},
-    seqname::Symbol,
     strand::Strand,
     seqlen::Int,
     alternative_start::Bool,
@@ -210,7 +192,6 @@ function _search_strand!(
 ) where {N}
     @inbounds for location in _locationiterator(seq; alternative_start)
         if length(location) >= minlen
-            # Adjust coordinates based on strand
             if strand === PSTRAND
                 start, stop = location.start, location.stop
             else
@@ -218,68 +199,40 @@ function _search_strand!(
                 stop = seqlen - location.start + 1
             end
             
-            frm = start % 3 == 0 ? 3 : start % 3
-            push!(orfs, ORF{NaiveFinderLazy}(seqname, start:stop, strand, Int8(frm), NamedTuple()))
+            frm = mod1(start, 3)
+            push!(orfs, ORF{NaiveFinderLazy}(start:stop, strand, Int8(frm)))
         end
     end
 end
 
 """
-    NaiveFinderLazy(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) where {N} -> Vector{ORF{NaiveFinderLazy}}
+    NaiveFinderLazy(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) where {N} -> ORFCollection{NaiveFinderLazy}
 
 Memory-optimized ORF finder with smart pre-allocation.
 
-Similar to `NaiveFinder`, but estimates the number of ORFs before searching
-to pre-allocate the result vector, reducing memory allocations during the search.
-
-# Arguments
-- `seq::NucleicSeqOrView{DNAAlphabet{N}}`: The DNA sequence to search for ORFs.
-
-# Keywords
-- `alternative_start::Bool=false`: If `true`, uses extended start codons (ATG, GTG, TTG).
-- `minlen::Int64=6`: Minimum ORF length in nucleotides.
-
 # Returns
-- `Vector{ORF{NaiveFinderLazy}}`: A sorted vector of ORFs found in the sequence.
-
-# Performance
-This variant is optimized for sequences where memory allocation overhead is significant.
-It uses `_estimate_orf_count` to pre-allocate the result vector with `sizehint!`.
-
-# Example
-```julia
-using BioSequences, GeneFinder
-
-seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
-orfs = NaiveFinderLazy(seq)
-```
-
-See also: [`NaiveFinder`](@ref), [`findorfs`](@ref), [`ORF`](@ref)
+- `ORFCollection{NaiveFinderLazy}`: Collection of ORFs bundled with the source sequence.
 """
 function NaiveFinderLazy(
     seq::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
     minlen::Int64 = 6,
     kwargs...
-) where {N}
+)::ORFCollection{NaiveFinderLazy} where {N}
     seqlen = length(seq)
     
     # Estimate ORF count for smart pre-allocation
     estimated_orfs = _estimate_orf_count(seq)
-    orfs = Vector{ORF{NaiveFinderLazy}}()
-    sizehint!(orfs, estimated_orfs)
-    
-    # Handle the sequence name
-    seqname = _varname(seq)
-    seqname = seqname === nothing ? :unnamedseq : Symbol(seqname)
+    orfvec = Vector{ORF{NaiveFinderLazy}}()
+    sizehint!(orfvec, estimated_orfs)
 
     # Search forward strand
-    _search_strand!(orfs, seq, seqname, PSTRAND, seqlen, alternative_start, minlen)
+    _search_strand!(orfvec, seq, PSTRAND, seqlen, alternative_start, minlen)
     
     # Search reverse strand (compute reverse complement once)
     rev_seq = reverse_complement(seq)
-    _search_strand!(orfs, rev_seq, seqname, NSTRAND, seqlen, alternative_start, minlen)
+    _search_strand!(orfvec, rev_seq, NSTRAND, seqlen, alternative_start, minlen)
     
-    sort!(orfs)
-    return orfs
+    sort!(orfvec)
+    return ORFCollection(convert(LongSubSeq{DNAAlphabet{N}}, seq), orfvec)
 end
