@@ -4,7 +4,7 @@ using DocumenterVitepress
 
 DocMeta.setdocmeta!(GeneFinder, :DocTestSetup, :(using GeneFinder); recursive = true)
 
-deploydocs(; repo = "https://github.com/camilogarciabotero/GeneFinder.jl", devbranch = "main")
+# deploydocs(; repo = "https://github.com/camilogarciabotero/GeneFinder.jl", devbranch = "main")
 
 fmt = DocumenterVitepress.MarkdownVitepress(
     repo = "https://github.com/camilogarciabotero/GeneFinder.jl",
