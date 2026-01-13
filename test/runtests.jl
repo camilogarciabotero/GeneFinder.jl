@@ -11,7 +11,6 @@ using Aqua
 
 include("findorfstest.jl")
 include("aquatest.jl")
-# include("iotest.jl")
+include("iotest.jl")
 
 end
-
