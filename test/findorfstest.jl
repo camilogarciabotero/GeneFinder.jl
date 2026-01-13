@@ -318,7 +318,7 @@ end
         c_30 = findorfs(TEST_SEQ_SHORT, finder=NaiveFinder, minlen=30)
         
         @test length(c_6) >= length(c_30)
-        @test all(orf -> rightposition(orf) - leftposition(orf) + 1 >= 30, orfs(c_30))
+        @test all(orf -> rightposition(orf) - leftposition(orf) + 1 >= 30, orfvector(c_30))
     end
     
     @testset "No ORFs found" begin
