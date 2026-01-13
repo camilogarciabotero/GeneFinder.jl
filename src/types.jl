@@ -35,16 +35,15 @@ strand = NSTRAND  # Negative strand
     NSTRAND = 2  # Negative/reverse strand (-)
 end
 
-# Helper function for validation
-function _isvalidorf(seqid::Symbol, range::UnitRange{Int64}, strand::Strand, frame::Int8, features::NamedTuple)::Bool
+"""
+    _isvalidorf(range, strand, frame, features) -> Bool
 
+Validate ORF parameters and throw descriptive errors for invalid inputs.
+"""
+function _isvalidorf(range::UnitRange{Int64}, strand::Strand, frame::Int8, features::NamedTuple)::Bool
     # Sanity check: strand validity
     strand in (PSTRAND, NSTRAND) ||
         throw(ArgumentError("Invalid strand: $(strand), expected PSTRAND (+) or NSTRAND (-)"))
-
-    # Sanity check: seqid definition
-    isdefined(Main, seqid) ||
-        @warn "The source sequence '$(seqid)' is not defined. Make sure to define it or supply the correct source sequence identifier."
 
     # Sanity check: frame validity
     (1 ≤ frame ≤ 3) || 
@@ -71,6 +70,10 @@ end
 
 The `OpenReadingFrame` (aliased as `ORF`) struct represents an Open Reading Frame in genomics.
 
+An ORF is a lightweight coordinate-based structure that stores the location and metadata
+of a potential coding region. ORFs are typically contained within an `ORFCollection`,
+which provides access to the source sequence.
+
 # Type Parameter
 - `F<:GeneFinderMethod`: The gene finding algorithm used to identify this ORF.
 
@@ -81,45 +84,37 @@ The `OpenReadingFrame` (aliased as `ORF`) struct represents an Open Reading Fram
 - `frame::Int8`: The reading frame (1, 2, or 3).
 - `features::NamedTuple`: Additional features/metadata associated with the ORF.
 
-# Validation
-The constructor validates:
-- Strand must be `PSTRAND` or `NSTRAND`
-- Frame must be 1, 2, or 3
-- Range length must be divisible by 3
-- Range length must be ≥ 6 (minimum for start + stop codons)
-- Features must be a `NamedTuple`
-
 # Example
 ```julia
 using BioSequences, GeneFinder
 
+# ORFs are typically obtained from an ORFCollection
 seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+collection = findorfs(seq)
 
-# Create an ORF with NaiveFinder method
-orf = ORF{NaiveFinder}(:seq, 1:33, PSTRAND, Int8(1), (;))
+# Access individual ORF
+orf = collection[1]
 
-# Create an ORF with additional features
-orf = ORF{NaiveFinder}(:seq, 1:33, PSTRAND, Int8(1), (score=0.95, gc_content=0.52))
+# Extract sequence through the collection
+orfseq = sequence(collection, 1)
 ```
 
-See also: [`sequence`](@ref), [`features`](@ref), [`strand`](@ref), [`frame`](@ref)
+See also: [`ORFCollection`](@ref), [`sequence`](@ref), [`features`](@ref)
 """
 struct OpenReadingFrame{F<:GeneFinderMethod}
-    seqid::Symbol
     range::UnitRange{Int64}
     strand::Strand
     frame::Int8
     features::NamedTuple
 
     function OpenReadingFrame{F}(
-        seqid::Symbol,
         range::UnitRange{Int64},
         strand::Strand,
         frame::Int8,
         features::NamedTuple = (;)
     ) where {F<:GeneFinderMethod}
-        _isvalidorf(seqid, range, strand, frame, features)
-        return new{F}(seqid, range, strand, frame, features)
+        _isvalidorf(range, strand, frame, features)
+        return new{F}(range, strand, frame, features)
     end
 end
 
