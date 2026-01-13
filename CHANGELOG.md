@@ -9,32 +9,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Major Changes
 
+#### ORFCollection Architecture
+
+Introduced `ORFCollection` as the primary return type for all gene finding methods:
+
+- **Bundled source sequence**: ORFs are now returned together with a view of their source sequence
+- **No global state**: Sequence extraction no longer requires sequences to be defined in Main scope
+- **Clean API**: `sequence(collection, orf)` and `sequence(collection, index)` for extraction
+- **Memory efficient**: Source stored as `LongSubSeq` (view) to avoid copying
+
+```julia
+collection = findorfs(seq)
+typeof(collection)  # ORFCollection{NaiveFinder, LongSubSeq{DNAAlphabet{4}}}
+
+# Extract sequences
+seq1 = sequence(collection, 1)
+seq1 = sequence(collection, collection[1])
+all_seqs = sequences(collection)
+```
+
 #### ORF Type Refactoring
 
 The `ORF` (formerly `OpenReadingFrameInterval` or `ORFI`) type has been redesigned for efficiency and clarity:
 
-- Removed AbstractGenomicInterval subtyping: ORF no longer inherits from AbstractGenomicInterval, eliminating external dependencies
+- **Removed sequence storage**: ORF no longer stores sequence data, only coordinates
+- **Removed seqid field**: No longer needed since ORFCollection bundles source
 - Simplified field structure:
-  - `seqid::Symbol` - Sequence identifier (lightweight alternative to String)
-  - `range::UnitRange{Int32}` - Position range (uses Int32 for memory efficiency)
-  - `strand::Strand` - Strand orientation (custom enum: PSTRAND or NSTRAND)
+  - `range::UnitRange{Int64}` - Position range
+  - `strand::Strand` - Strand orientation (PSTRAND or NSTRAND)
   - `frame::Int8` - Reading frame (1, 2, or 3)
   - `features::NamedTuple` - Associated metadata (optional)
 
-- Smart sequence references: ORFs reference the original sequence via `seqid` rather than storing copies, enabling efficient collection of thousands of ORFs
-
 #### Custom Strand Type
 
-Replaced dependency on `Strand` with a lightweight custom implementation:
+Replaced dependency on external `Strand` with a lightweight custom implementation:
 
 ```julia
-@enum Strand::Int8 begin
+@enum Strand::Int begin
     PSTRAND = 1  # Positive/forward strand (+)
     NSTRAND = 2  # Negative/reverse strand (-)
 end
 ```
-
-This removes the need to import from GenomicFeatures and provides a more minimal footprint.
 
 #### New NaiveFinderLazy Algorithm
 
@@ -44,23 +59,40 @@ A memory-efficient variant of NaiveFinder with intelligent optimizations:
 - Smart `sizehint!`: Reduces allocation overhead by 20-30% during ORF collection
 - Bidirectional search: Uses helper function `_search_strand!` to eliminate code duplication
 - Single reverse complement: Computes reverse complement once, reuses for both strand searches
-- Better code organization: Cleaner separation of concerns with helper functions
 
 ### API Changes
+
+#### New Functions
+
+| Function | Description |
+|----------|-------------|
+| `sequence(collection, i)` | Extract DNA sequence for ORF at index i |
+| `sequence(collection, orf)` | Extract DNA sequence for specific ORF |
+| `sequences(collection)` | Extract all ORF sequences at once |
+| `source(collection)` | Get source sequence from collection |
+| `orfs(collection)` | Get vector of ORFs from collection |
+| `finder(collection)` | Get finder method type used |
+
+#### Removed Functions
+
+| Removed | Replacement |
+|---------|-------------|
+| `sequence(orf)` | `sequence(collection, orf)` |
+| `sequences(orfs)` | `sequences(collection)` |
+| `translate(collection, i)` | `translate(sequence(collection, i))` |
+| `translations(collection)` | `[translate(sequence(collection, i)) for i in eachindex(collection)]` |
 
 #### Accessor Functions (Breaking)
 
 Direct field access is no longer supported. Use accessor functions instead:
 
-| Old | New | Type |
-|-----|-----|------|
-| `orf.first` | `leftposition(orf)` | Function |
-| `orf.last` | `rightposition(orf)` | Function |
-| `orf.groupname` | `seqid(orf)` | Function |
-| `orf.strand` | `strand(orf)` | Function |
-| `orf.frame` | `frame(orf)` | Function |
-| `orf.features` | `features(orf)` | Function |
-| `orf.seq` | `sequence(orf)` | Computed from seqid reference |
+| Old | New |
+|-----|-----|
+| `orf.first` | `leftposition(orf)` |
+| `orf.last` | `rightposition(orf)` |
+| `orf.strand` | `strand(orf)` |
+| `orf.frame` | `frame(orf)` |
+| `orf.features` | `features(orf)` |
 
 #### Strand Constants (Breaking)
 
@@ -73,63 +105,100 @@ Direct field access is no longer supported. Use accessor functions instead:
 
 | Old | New | Reason |
 |-----|-----|--------|
-| `ORFI{N,F}` | `ORF{F}` | Removed N type parameter (seq field eliminated) |
-| `groupname::String` | `seqid::Symbol` | Memory efficiency, 70% smaller |
-| `first::Int64, last::Int64` | `range::UnitRange{Int32}` | Consolidates positions, uses smaller integer type |
+| `ORFI{N,F}` | `ORF{F}` | Removed N type parameter |
+| `Vector{ORF}` return | `ORFCollection` return | Bundles source sequence |
+
+#### Criteria Functions Updated
+
+`iscoding` and `lordr` now work with sequences directly instead of ORFs:
+
+```julia
+# Old (no longer works)
+iscoding(orf)
+
+# New
+iscoding(sequence(collection, orf))
+
+# Or for multiple ORFs
+iscoding.(sequences(collection))
+```
+
+### Collection Indexing
+
+`ORFCollection` supports multiple indexing patterns:
+
+```julia
+collection[1]           # Single ORF
+collection[1:5]         # Range of ORFs
+collection[mask]        # Boolean indexing (BitVector)
+collection[indices]     # Integer vector indexing
+```
+
+### IO Functions Updated
+
+All IO functions (`write_orfs_fna`, `write_orfs_faa`, `write_orfs_bed`, `write_orfs_gff`) now:
+
+- Use `ORFCollection` internally
+- Support `alternative_start` keyword properly
+- Output `ORF` prefix in FASTA headers (e.g., `>ORF01`)
+- Remove unused `seqname` parameter from FNA/FAA functions
 
 ### Performance Improvements
 
 #### Memory Usage
 
 ORF struct size reduction:
-- Old: ~100+ bytes (with seq field and String)
-- New: 42 bytes
+- Old: ~100+ bytes (with seq field)
+- New: ~40 bytes
 - Savings: 60%+ reduction
 
-seqid representation:
-- Symbol: 8 bytes (interned by Julia)
-- String: 24+ bytes (content + overhead)
-- Savings: 70% per ORF
-
-Example: 30,000 ORF collection
-- Old: ~3.2 MB for ORF vector + seq storage
-- New: ~1.3 MB for ORF vector + single source reference
-- Savings: 60% reduction for large collections
+ORFCollection efficiency:
+- Single source sequence view shared across all ORFs
+- No sequence duplication in memory
 
 #### Runtime Performance
 
-- NaiveFinderLazy allocation: 20-30% fewer allocations via `sizehint!`
-- Finder methods: Same algorithmic complexity, better memory locality
-- Sequence access: O(1) view operation for positive strand (no copying)
+- NaiveFinderLazy: 20-30% fewer allocations via `sizehint!`
+- Sequence extraction: O(1) view for positive strand
 
 ### Features Added
 
-- Custom `Strand` enum eliminates external dependency
-- `NaiveFinderLazy` finder with intelligent pre-allocation
-- Unicode display support for ORF positions on sequences
+- `ORFCollection` type for bundling ORFs with source
+- `sequences(collection)` convenience function
+- Alternative start codon support (ATG, GTG, TTG, CTG)
+- Boolean/integer vector indexing for collections
+- Improved docstrings with examples
 
-### Internal Changes
+### Bug Fixes
 
-- Removed dependency on GenomicFeatures.AbstractGenomicInterval
-- Removed direct imports of Strand from BioSequences
-- Helper functions `_search_strand!()` and `_estimate_orf_count()` for cleaner code
-- Updated all write methods to use accessor functions
-- Updated all test cases to use new API
+- Fixed sequence extraction for alternative start codons
+- Fixed GFF output format (proper header lines)
+- Improved reverse complement handling
 
 ### Migration Guide
 
 For users upgrading from earlier versions:
 
-1. Replace direct field access with accessor functions:
+1. Update sequence extraction:
    ```julia
    # Old
-   pos = orf.first
+   seq = sequence(orf)
    
    # New
-   pos = leftposition(orf)
+   collection = findorfs(dna_seq)
+   seq = sequence(collection, orf)
    ```
 
-2. Update strand constants:
+2. Update iscoding usage:
+   ```julia
+   # Old
+   iscoding(orf)
+   
+   # New
+   iscoding(sequence(collection, orf))
+   ```
+
+3. Update strand constants:
    ```julia
    # Old
    if strand == STRAND_POS
@@ -138,7 +207,7 @@ For users upgrading from earlier versions:
    if strand === PSTRAND
    ```
 
-3. Update type signatures:
+4. Update type signatures:
    ```julia
    # Old
    function process(orf::ORF{N,F}) where {N,F}
@@ -147,22 +216,14 @@ For users upgrading from earlier versions:
    function process(orf::ORF{F}) where {F}
    ```
 
-### Bug Fixes
-
-- Improved efficiency of reverse complement handling in finder algorithms
-- Better memory management in large-scale ORF detection
-
-### Known Deficiencies
-
-- `source(orf)` requires sequence to be defined in global scope of Main module
-- Future: Consider alternative mechanisms for sequence reference management
-
 ### Deprecations
 
 - Direct field access on ORF objects (use accessor functions)
 - STRAND_POS and STRAND_NEG constants (use PSTRAND and NSTRAND)
 - ORFI type alias (use ORF)
-- OpenReadingFrameInterval type (use ORF)
+- `sequence(orf)` without collection (use `sequence(collection, orf)`)
+- `translate(collection, i)` method (use `translate(sequence(collection, i))`)
+- `translations(collection)` method (use comprehension with translate)
 
 ## [0.7.0](https://github.com/camilogarciabotero/GeneFinder.jl/compare/v0.6.1...v0.7.0)
 
