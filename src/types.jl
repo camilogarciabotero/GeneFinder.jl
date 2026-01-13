@@ -8,7 +8,8 @@ export source, orfvector
 
 Abstract base type for different ORF finding methods/algorithms.
 
-Subtypes should implement the calling interface to find ORFs in a sequence.
+Subtypes should implement the calling interface to find ORFs in a sequence,
+returning an `ORFCollection`.
 """
 abstract type GeneFinderMethod end
 
@@ -128,9 +129,72 @@ const START = dna"ATG"
 const STOPS = (dna"TAA", dna"TAG", dna"TGA")
 
 """
-    sequence(orf::ORF{F}) where {F}
+    struct ORFCollection{F<:GeneFinderMethod, S<:NucleicSeqOrView}
 
-Extract the DNA sequence corresponding to the given Open Reading Frame (ORF).
+A collection of Open Reading Frames (ORFs) bundled with a view of their source sequence.
+
+This is the primary return type for all `GeneFinderMethod` implementations.
+It provides a clean API for accessing ORFs and their corresponding sequences
+without relying on global state.
+
+The source is always stored as a view (`LongSubSeq`) to avoid unnecessary copying
+while maintaining a reference to the original sequence data.
+
+# Type Parameters
+- `F<:GeneFinderMethod`: The gene finding algorithm used to identify these ORFs.
+- `S<:NucleicSeqOrView`: The type of the source sequence view.
+
+# Fields
+- `source::S`: A view of the source DNA sequence containing the ORFs.
+- `orfs::Vector{ORF{F}}`: The vector of ORFs found in the source sequence.
+
+# Example
+```julia
+using BioSequences, GeneFinder
+
+seq = dna"ATGATGCATGCATGCATGCTAG"
+collection = findorfs(seq, finder=NaiveFinder)
+
+# Source is stored as a view
+typeof(source(collection))  # LongSubSeq{DNAAlphabet{4}}
+
+# Iteration
+for orf in collection
+    println(orf)
+end
+
+# Sequence extraction
+orfseq = sequence(collection, 1)
+```
+
+See also: [`ORF`](@ref), [`sequence`](@ref), [`source`](@ref)
+"""
+struct ORFCollection{F<:GeneFinderMethod, S<:LongSubSeq}
+    source::S
+    orfs::Vector{ORF{F}}
+    
+    function ORFCollection(source::LongSubSeq{DNAAlphabet{N}}, orfs::Vector{ORF{F}}) where {N, F<:GeneFinderMethod}
+        # Always store as a view for consistency and memory efficiency
+        srcview = @view source[begin:end]
+        
+        # Validate all ORFs are within bounds
+        seqlen = length(srcview)
+        for orf in orfs
+            rightposition(orf) <= seqlen || 
+                throw(BoundsError(srcview, orf.range))
+        end
+        return new{F, typeof(srcview)}(srcview, orfs)
+    end
+end
+
+# ────────────────────────────────────────────────────────────────────────────────
+# ORFCollection Interface
+# ────────────────────────────────────────────────────────────────────────────────
+
+"""
+    source(collection::ORFCollection)
+
+Get the source sequence associated with an ORF collection.
 
 # Arguments
 - `orf::ORF{F}`: The ORF for which to extract the DNA sequence.
