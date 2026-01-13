@@ -151,7 +151,7 @@ end
     end
     
     @testset "orfs accessor" begin
-        orf_vec = orfs(collection)
+        orf_vec = orfvector(collection)
         @test orf_vec isa Vector{ORF{NaiveFinder}}
         @test length(orf_vec) == length(collection)
     end
