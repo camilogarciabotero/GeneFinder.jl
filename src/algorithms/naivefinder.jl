@@ -1,27 +1,50 @@
 export NaiveFinder, NaiveFinderLazy
 
+"""
+    NaiveFinder <: GeneFinderMethod
+
+A simple ORF finding method that detects all Open Reading Frames in a DNA sequence
+using regular expression matching.
+
+See also: [`NaiveFinderLazy`](@ref), [`GeneFinderMethod`](@ref)
+"""
 struct NaiveFinder <: GeneFinderMethod end
+
+"""
+    NaiveFinderLazy <: GeneFinderMethod
+
+A memory-optimized variant of `NaiveFinder` that pre-allocates the ORF vector
+based on estimated start codon counts.
+
+See also: [`NaiveFinder`](@ref), [`GeneFinderMethod`](@ref)
+"""
 struct NaiveFinderLazy <: GeneFinderMethod end
 
 """
-    _locationiterator(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) where {N}
+    _locationiterator(seq::NucleicSeqOrView{DNAAlphabet{N}}; alternative_start::Bool=false) where {N}
 
-This is an iterator function that uses regular expressions to search the entire ORFI (instead of start and stop codons) in a `LongSequence{DNAAlphabet{4}}` sequence.
-    It uses an anonymous function that will find the first regularly expressed ORFI. Then using this anonymous function it creates an iterator that will apply it until there is no other CDS.
+Create an iterator that yields ORF location ranges in a DNA sequence.
 
-!!! note
-    As a note of the implementation we want to expand on how the ORFIs are found:
+# Arguments
+- `seq::NucleicSeqOrView{DNAAlphabet{N}}`: The DNA sequence to search.
 
-    The expression `(?:[N]{3})*?` serves as the boundary between the start and stop codons. 
-    Within this expression, the character class `[N]{3}` captures exactly three occurrences of any character (representing nucleotides using IUPAC codes). 
-    This portion functions as the regular codon matches. 
-    Since it is enclosed within a non-capturing group `(?:)` and followed by `*?`, it allows for the matching of intermediate codons,
-    but with a preference for the smallest number of repetitions. 
-    
-    In summary, the regular expression `ATG(?:[N]{3})*?T(AG|AA|GA)` identifies patterns that start with "ATG," followed by any number of three-character codons (represented by "N" in the IUPAC code), and ends with a stop codon "TAG," "TAA," or "TGA." This pattern is commonly used to identify potential protein-coding regions within genetic sequences.
+# Keywords
+- `alternative_start::Bool=false`: If `true`, matches NTG (ATG, GTG, TTG) as start codons;
+  if `false`, only matches ATG.
 
-    See more about the discussion [here](https://discourse.julialang.org/t/how-to-improve-a-generator-to-be-more-memory-efficient-when-it-is-collected/92932/8?u=camilogarciabotero)
+# Returns
+An iterator yielding `UnitRange{Int64}` objects representing ORF locations.
 
+# Implementation Details
+The function uses a regular expression to find ORFs:
+- Pattern: `ATG(?:[N]{3})*?T(AG|AA|GA)` (or `NTG...` with alternative starts)
+- `ATG` or `NTG`: Start codon
+- `(?:[N]{3})*?`: Non-greedy match of any number of 3-nucleotide codons
+- `T(AG|AA|GA)`: Stop codons (TAA, TAG, TGA)
+
+The iterator uses `findfirst` with progressive offsets to find non-overlapping ORFs.
+
+See also: [`NaiveFinder`](@ref)
 """
 function _locationiterator(
     seq::NucleicSeqOrView{DNAAlphabet{N}};
@@ -37,34 +60,49 @@ function _locationiterator(
 end
 
 @doc raw"""
-    NaiveFinder(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) -> Vector{ORF{F}} where {N,F}
+    NaiveFinder(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) where {N} -> Vector{ORF{NaiveFinder}}
 
-A simple implementation that finds ORFIs in a DNA sequence.
+Find all Open Reading Frames (ORFs) in a DNA sequence using regular expression matching.
 
-The `NaiveFinder` method takes a LongSequence{DNAAlphabet{4}} sequence and returns a Vector{ORFIs} containing the ORFIs found in the sequence. 
-    It searches entire regularly expressed CDS, adding each ORFI it finds to the vector. The function also searches the reverse complement of the sequence, so it finds ORFIs on both strands.
-        Extending the starting codons with the `alternative_start = true` will search for ATG, GTG, and TTG.
-    Some studies have shown that in *E. coli* (K-12 strain), ATG, GTG and TTG are used 83 %, 14 % and 3 % respectively.
-!!! note
-    This function has neither ORFIs scoring scheme by default nor length constraints. Thus it might consider `aa"M*"` a posible encoding protein from the resulting ORFIs.
+This method searches for ORFs on both the forward and reverse complement strands,
+returning a sorted vector of `ORF{NaiveFinder}` objects.
 
- 
-# Required Arguments
+# Arguments
+- `seq::NucleicSeqOrView{DNAAlphabet{N}}`: The DNA sequence to search for ORFs.
 
-- `seq::NucleicSeqOrView{DNAAlphabet{N}}`: The nucleic acid sequence to search for ORFIs.
+# Keywords
+- `alternative_start::Bool=false`: If `true`, uses extended start codons (ATG, GTG, TTG).
+  Studies show that in *E. coli* K-12, these are used ~83%, ~14%, and ~3% respectively.
+  Enabling this increases execution time by approximately 3x.
+- `minlen::Int64=6`: Minimum ORF length in nucleotides. The default of 6 allows
+  detection of the shortest possible ORF (`dna"ATGTGA"` → `aa"M*"`).
 
-# Keywords Arguments
+# Returns
+- `Vector{ORF{NaiveFinder}}`: A sorted vector of ORFs found in the sequence.
 
-- `alternative_start::Bool`: If true will pass the extended start codons to search. This will increase 3x the execution time. Default is `false`.
-- `minlen::Int64=6`:  Length of the allowed ORFI. Default value allow `aa"M*"` a posible encoding protein from the resulting ORFIs.
-. Default value allow `aa"M*"` a posible encoding protein from the resulting ORF
-!!! note
-    As the scheme is generally a scoring function that at least requires a sequence, one simple scheme is the log-odds ratio score. This score is a log-odds ratio that compares the probability of the sequence generated by a coding model to the probability of the sequence generated by a non-coding model:
-    ```math
-    S(x) = \sum_{i=1}^{L} \beta_{x_{i}x} = \sum_{i=1} \log \frac{a^{\mathscr{m}_{1}}_{i-1} x_i}{a^{\mathscr{m}_{2}}_{i-1} x_i}
-    ```
-    If the log-odds ratio exceeds a given threshold (`η`), the sequence is considered likely to be coding. See [`lordr`](@ref) for more information about coding creteria.
+# Example
+```julia
+using BioSequences, GeneFinder
 
+seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+orfs = NaiveFinder(seq)
+
+# With alternative start codons and minimum length filter
+orfs = NaiveFinder(seq; alternative_start=true, minlen=30)
+```
+
+# Scoring Note
+This implementation does not include a scoring scheme by default. For coding potential
+assessment, consider using a log-odds ratio score:
+
+```math
+S(x) = \sum_{i=1}^{L} \log \frac{a^{\mathscr{m}_{1}}_{x_{i-1} x_i}}{a^{\mathscr{m}_{2}}_{x_{i-1} x_i}}
+```
+
+Where the score compares the probability of the sequence under a coding model
+versus a non-coding model. See [`lordr`](@ref) for more information.
+
+See also: [`NaiveFinderLazy`](@ref), [`findorfs`](@ref), [`ORF`](@ref)
 """
 function NaiveFinder(
     seq::NucleicSeqOrView{DNAAlphabet{N}};
@@ -102,12 +140,24 @@ end
 ### NAIVE FINDER LAZY IMPLEMENTATION ###
 
 """
-    _estimate_orf_count(seq::NucleicSeqOrView{DNAAlphabet{N}}; alternative_start::Bool=false) where {N}
+    _estimate_orf_count(seq::NucleicSeqOrView{DNAAlphabet{N}}) where {N} -> Int
 
-Estimate the number of ORFs based on start codon count.
+Estimate the number of ORFs in a sequence for vector pre-allocation.
 
-Counts ATG start codons in the sequence using a k-mer iterator.
-Returns the count as a heuristic estimate for pre-allocating the ORF vector.
+Counts ATG start codons (and their reverse complement CAT) using a k-mer iterator
+to provide a heuristic estimate for the expected number of ORFs.
+
+# Arguments
+- `seq::NucleicSeqOrView{DNAAlphabet{N}}`: The DNA sequence to analyze.
+
+# Returns
+- `Int`: Estimated ORF count (minimum of 10 to avoid zero allocation).
+
+# Implementation
+Uses `FwRvIterator` with 3-mers to efficiently count start codon occurrences
+on both strands in a single pass.
+
+See also: [`NaiveFinderLazy`](@ref)
 """
 function _estimate_orf_count(seq::NucleicSeqOrView{DNAAlphabet{N}}) where {N}
     # 4^3 = 64 possible 3-mers; only count ATG
@@ -126,11 +176,28 @@ end
 
 
 """
-    _search_strand!(orfs::Vector{ORF{NaiveFinderLazy}}, seq::NucleicSeqOrView{DNAAlphabet{N}}, seqname::Symbol, strand::Strand, seqlen::Int, alternative_start::Bool, minlen::Int64) where {N}
+    _search_strand!(orfs, seq, seqname, strand, seqlen, alternative_start, minlen)
 
-Helper function to search for ORFs in a single strand direction.
+Search for ORFs on a single strand and append results to the ORF vector.
 
-Avoids code duplication between forward and reverse strand searching.
+This is an internal helper function that avoids code duplication between
+forward and reverse strand searching in `NaiveFinderLazy`.
+
+# Arguments
+- `orfs::Vector{ORF{NaiveFinderLazy}}`: Vector to append found ORFs to (mutated).
+- `seq::NucleicSeqOrView{DNAAlphabet{N}}`: The DNA sequence to search.
+- `seqname::Symbol`: Identifier for the source sequence.
+- `strand::Strand`: The strand being searched (`PSTRAND` or `NSTRAND`).
+- `seqlen::Int`: Length of the original sequence (for coordinate transformation).
+- `alternative_start::Bool`: Whether to use alternative start codons.
+- `minlen::Int64`: Minimum ORF length filter.
+
+# Coordinate Handling
+- For `PSTRAND`: Coordinates are used directly.
+- For `NSTRAND`: Coordinates are transformed from reverse complement positions
+  back to original sequence positions.
+
+See also: [`NaiveFinderLazy`](@ref)
 """
 function _search_strand!(
     orfs::Vector{ORF{NaiveFinderLazy}},
@@ -157,6 +224,38 @@ function _search_strand!(
     end
 end
 
+"""
+    NaiveFinderLazy(seq::NucleicSeqOrView{DNAAlphabet{N}}; kwargs...) where {N} -> Vector{ORF{NaiveFinderLazy}}
+
+Memory-optimized ORF finder with smart pre-allocation.
+
+Similar to `NaiveFinder`, but estimates the number of ORFs before searching
+to pre-allocate the result vector, reducing memory allocations during the search.
+
+# Arguments
+- `seq::NucleicSeqOrView{DNAAlphabet{N}}`: The DNA sequence to search for ORFs.
+
+# Keywords
+- `alternative_start::Bool=false`: If `true`, uses extended start codons (ATG, GTG, TTG).
+- `minlen::Int64=6`: Minimum ORF length in nucleotides.
+
+# Returns
+- `Vector{ORF{NaiveFinderLazy}}`: A sorted vector of ORFs found in the sequence.
+
+# Performance
+This variant is optimized for sequences where memory allocation overhead is significant.
+It uses `_estimate_orf_count` to pre-allocate the result vector with `sizehint!`.
+
+# Example
+```julia
+using BioSequences, GeneFinder
+
+seq = dna"ATGATGCATGCATGCATGCTAGTAACTAGCTAGCTAGCTAGTAA"
+orfs = NaiveFinderLazy(seq)
+```
+
+See also: [`NaiveFinder`](@ref), [`findorfs`](@ref), [`ORF`](@ref)
+"""
 function NaiveFinderLazy(
     seq::NucleicSeqOrView{DNAAlphabet{N}};
     alternative_start::Bool = false,
