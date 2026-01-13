@@ -1,80 +1,76 @@
 ## Finding Complete and Overlapped ORFs
 
-The main function in the GeneFinder package is `findorfs`, which serves as an interface to various gene-finding algorithms. By default, `findorfs` uses a `NaiveFinder` algorithm, a simple approach that detects all non-outbounded Open Reading Frames (ORFs) in a DNA sequence. You can also specify a different algorithm by setting the `finder` keyword argument. For more details on the NaiveFinder algorithm, see the [NaiveFinder](https://camilogarciabotero.github.io/GeneFinder.jl/dev/api#GeneFinder.NaiveFinder-Union{Tuple{Union{BioSequences.LongDNA{N},%20BioSequences.LongSubSeq{BioSequences.DNAAlphabet{N}}}},%20Tuple{N}}%20where%20N) documentation.
+The main function in the GeneFinder package is `findorfs`, which serves as an interface to various gene-finding algorithms. All methods return an `ORFCollection`—a structure that bundles the found ORFs with their source sequence, providing a clean API for sequence extraction.
 
 !!! note
-    The `minlen` keyword argument in `NaiveFinder` is set to a minimum length of 6 nucleotides (nt). As a result, it may identify short ORFs that aren't necessarily genes, such as `dna"ATGTGA"` producing the amino acid sequence `aa"M*"`.
+    The `minlen` keyword argument is set to a minimum length of 6 nucleotides (nt). As a result, it may identify short ORFs that aren't necessarily genes, such as `dna"ATGTGA"` producing the amino acid sequence `aa"M*"`.
 
 
 ## Usage Example
 
-Here's an example of using `findorfs` with the `NaiveFinder` algorithm to identify ORFs in a DNA sequence:
+Here's an example of using `findorfs` with the `NaiveFinder` algorithm:
 
 ```julia
-julia> using BioSequences, GeneFinder
+using BioSequences, GeneFinder
 
-# > 180195.SAMN03785337.LFLS01000089 -> finds only 1 gene in Prodigal (from Pyrodigal tests)
 seq = dna"AACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAACAGCACTGGCAATCTGACTGTGGGCGGTGTTACCAACGGCACTGCTACTACTGGCAACATCGCACTGACCGGTAACAATGCGCTGAGCGGTCCGGTCAATCTGAATGCGTCGAATGGCACGGTGACCTTGAACACGACCGGCAATACCACGCTCGGTAACGTGACGGCACAAGGCAATGTGACGACCAATGTGTCCAACGGCAGTCTGACGGTTACCGGCAATACGACAGGTGCCAACACCAACCTCAGTGCCAGCGGCAACCTGACCGTGGGTAACCAGGGCAATATCAGTACCGCAGGCAATGCAACCCTGACGGCCGGCGACAACCTGACGAGCACTGGCAATCTGACTGTGGGCGGCGTCACCAACGGCACGGCCACCACCGGCAACATCGCGCTGACCGGTAACAATGCACTGGCTGGTCCTGTCAATCTGAACGCGCCGAACGGCACCGTGACCCTGAACACAACCGGCAATACCACGCTGGGTAATGTCACCGCACAAGGCAATGTGACGACTAATGTGTCCAACGGCAGCCTGACAGTCGCTGGCAATACCACAGGTGCCAACACCAACCTGAGTGCCAGCGGCAATCTGACCGTGGGCAACCAGGGCAATATCAGTACCGCGGGCAATGCAACCCTGACTGCCGGCGGTAACCTGAGC"
 
-orfs = findorfs(seq, finder=NaiveFinder) # use finder=NaiveCollector as an alternative
+collection = findorfs(seq, finder=NaiveFinder)
+```
 
-12-element Vector{ORF{NaiveFinder}}:
- ORF{NaiveFinder}(29:40, '+', 2)
- ORF{NaiveFinder}(137:145, '+', 2)
- ORF{NaiveFinder}(164:184, '+', 2)
- ORF{NaiveFinder}(173:184, '+', 2)
- ORF{NaiveFinder}(236:241, '+', 2)
- ORF{NaiveFinder}(248:268, '+', 2)
- ORF{NaiveFinder}(362:373, '+', 2)
- ORF{NaiveFinder}(470:496, '+', 2)
- ORF{NaiveFinder}(551:574, '+', 2)
- ORF{NaiveFinder}(569:574, '+', 2)
- ORF{NaiveFinder}(581:601, '+', 2)
- ORF{NaiveFinder}(695:706, '+', 2)
+Output:
+```
+ORFCollection{NaiveFinder} with 12 ORFs in 726bp sequence:
+ ORF{NaiveFinder}(29:40, 'PSTRAND', 2)
+ ORF{NaiveFinder}(137:145, 'PSTRAND', 2)
+ ORF{NaiveFinder}(164:184, 'PSTRAND', 2)
+ ⋮
+```
+
+## Working with ORFCollections
+
+The `ORFCollection` provides a convenient interface for working with ORFs:
+
+```julia
+# Iteration
+for orf in collection
+    println(leftposition(orf), " - ", rightposition(orf))
+end
+
+# Indexing
+first_orf = collection[1]
+subset = collection[1:5]
+
+# Length
+n_orfs = length(collection)
+
+# Access source sequence
+src = source(collection)
 ```
 
 ## Extracting Sequences from ORFs
 
-The `ORF` structure displays the location, frame, and strand, along with other fields (see more about the [ORF struct](https://camilogarciabotero.github.io/GeneFinder.jl/dev/orftype#The-ORF-type)). To extract the sequence of an `ORF` instance, you can use the `sequence` method directly on it, or you can also broadcast it over the `orfs` collection using the dot syntax `.`:
+Extract sequences using the `sequence` function with an index or ORF:
 
 ```julia
-julia> sequence.(orfs)
+# By index
+dna_seq = sequence(collection, 1)
 
-12-element Vector{LongSubSeq{DNAAlphabet{4}}}:
- ATGCAACCCTGA
- ATGCGCTGA
- ATGCGTCGAATGGCACGGTGA
- ATGGCACGGTGA
- ATGTGA
- ATGTGTCCAACGGCAGTCTGA
- ATGCAACCCTGA
- ATGCACTGGCTGGTCCTGTCAATCTGA
- ATGTCACCGCACAAGGCAATGTGA
- ATGTGA
- ATGTGTCCAACGGCAGCCTGA
- ATGCAACCCTGA
+# By ORF object
+orf = collection[1]
+dna_seq = sequence(collection, orf)
 ```
 
-## Translating ORFs to Amino Acid Sequences
+## Translating ORF Sequences
 
-Similarly, you can extract the amino acid sequences of the ORFs using the `translate` function:
+To translate ORF sequences to amino acids, use `BioSequences.translate` on extracted sequences:
 
 ```julia
-julia> translate.(orfs)
+using BioSequences
 
-12-element Vector{LongAA}:
- MQP*
- MR*
- MRRMAR*
- MAR*
- M*
- MCPTAV*
- MQP*
- MHWLVLSI*
- MSPHKAM*
- M*
- MCPTAA*
- MQP*
+# Translate a single ORF
+protein = translate(sequence(collection, 1))
+
+# Translate all ORFs
+proteins = [translate(sequence(collection, i)) for i in eachindex(collection)]
 ```
-
-This returns a vector of translated amino acid sequences, allowing for easy interpretation of each ORF's potential protein product.

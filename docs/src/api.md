@@ -5,32 +5,41 @@ DocTestSetup = quote
 end
 ```
 
-## The Main ORF type
+## Core Types
 
-The main type of the package is `ORFI` which represents an Open Reading Frame Interval. It is a subtype of the `GenomicInterval` type from the `GenomicFeatures` package.
+The main types of the package are `ORF` (Open Reading Frame) and `ORFCollection`. 
+An `ORF` stores coordinates and metadata, while `ORFCollection` bundles ORFs with 
+their source sequence for clean sequence extraction.
 
 ```@autodocs
 Modules = [GeneFinder]
 Pages = ["types.jl"]
 ```
 
-## Finding ORFIs
+## Finding ORFs
 
-The function `findorfs` serves as a method interface as it is generic method that can handle different gene finding methods.
+The `findorfs` function serves as a unified interface for different gene finding methods.
+All methods return an `ORFCollection`.
 
 ```@autodocs
 Modules = [GeneFinder]
 Pages = ["findorfs.jl"]
 ```
 
-## Finding ORFs using BioRegex
+## ORF Finding Algorithms
+
+### NaiveFinder
+
+Uses regular expression matching to find ORFs.
 
 ```@autodocs
 Modules = [GeneFinder]
-Pages = ["algorithms/naivefinder.jl", "algorithms/naivecollector.jl"]
+Pages = ["algorithms/naivefinder.jl"]
 ```
 
-## Writing ORFs to files
+## Writing ORFs to Files
+
+Export ORFs in various formats (FASTA, BED, GFF3).
 
 ```@autodocs
 Modules = [GeneFinder]
