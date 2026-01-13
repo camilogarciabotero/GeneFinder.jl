@@ -31,7 +31,7 @@ function _isvalidorf(seqid::Symbol, range::UnitRange{Int64}, strand::Strand, fra
         throw(ArgumentError("Invalid strand: $(strand), expected PSTRAND (+) or NSTRAND (-)"))
 
     # Sanity check: seqid definition
-    isdefinedglobal(Main, seqid) ||
+    isdefined(Main, seqid) ||
         @warn "The source sequence '$(seqid)' is not defined. Make sure to define it or supply the correct source sequence identifier."
 
     # Sanity check: frame validity
@@ -220,7 +220,6 @@ function Base.show(io::IO, i::ORF{F}) where {F}
     end
     print(io, ")")
 end
-
 
 ## Ideas for Gene struct
 
