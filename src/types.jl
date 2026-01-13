@@ -1,5 +1,5 @@
 export ORF, OpenReadingFrame
-export Strand, GeneFinderMethod, PSTRAND, NSTRAND
+export Strand, GeneFinderMethod, Strand, PSTRAND, NSTRAND
 export features, sequence, source, finder, frame, strand, seqid, leftposition, rightposition
 
 """
@@ -23,6 +23,48 @@ An enumeration type representing DNA strand orientation.
     NSTRAND = 2  # Negative/reverse strand (-)
 end
 
+# # Helper function to convert Char strand to Strand enum
+# function _to_strand(s::Strand)::Strand
+#     return s
+# end
+
+# function _to_strand(s::Char)::Strand
+#     s == '+' && return PSTRAND
+#     s == '-' && return NSTRAND
+#     throw(ArgumentError("Invalid strand character '$s'; expected '+' or '-'"))
+# end
+
+# Helper function for validation
+function _isvalidorf(seqid::Symbol, range::UnitRange{Int64}, strand::Strand, frame::Int8, features::NamedTuple)::Bool
+
+    # Sanity check: strand validity
+    strand in (PSTRAND, NSTRAND) ||
+        throw(ArgumentError("Invalid strand: $(strand), expected PSTRAND (+) or NSTRAND (-)"))
+
+    # Sanity check: seqid definition
+    isdefinedglobal(Main, seqid) ||
+        @warn "The source sequence '$(seqid)' is not defined. Make sure to define it or supply the correct source sequence identifier."
+
+    # Sanity check: frame validity
+    (1 ≤ frame ≤ 3) || 
+        throw(ArgumentError("Invalid frame: $(frame), expected 1, 2, or 3"))
+
+    orflen = length(range)
+    # Sanity check: range length divisible by 3
+    (orflen % 3 == 0) || 
+        throw(ArgumentError("ORF length ($(orflen)) is not divisible by 3, incomplete codons detected"))
+
+    # Sanity check: minimum length (start + stop codons)
+    orflen ≥ 6 ||
+        throw(ArgumentError("ORF sequence too short to contain start and stop codons"))
+
+    # Sanity check: features must be a NamedTuple
+    features isa NamedTuple ||
+        throw(ArgumentError("Features must be a NamedTuple, got $(typeof(features))"))
+
+    return true
+end
+
 """
     struct ORF{F}
 
@@ -30,7 +72,7 @@ The `ORF` struct represents an Open Reading Frame (ORF) in genomics.
 
 # Fields
 - `seqid::Symbol`: The identifier of the sequence to which the ORF belongs.
-- `range::UnitRange{Int32}`: The position range of the ORF on the sequence.
+- `range::UnitRange{<:Int64}`: The position range of the ORF on the sequence.
 - `strand::Strand`: The strand on which the ORF is located.
 - `frame::Int8`: The reading frame of the ORF (1, 2, or 3).
 - `features::NamedTuple`: The features associated with the ORF.
@@ -38,77 +80,26 @@ The `ORF` struct represents an Open Reading Frame (ORF) in genomics.
 # Example
 
 ```julia
-ORF{NaiveFinder}(:seq01, 1:33, PSTRAND, 1, (;score = 0.8))
+ORF{NaiveFinder}(:seq01, 1:33, PSTRAND, Int8(1), (;score = 0.8))
 ```
 """
 struct OpenReadingFrame{F<:GeneFinderMethod}
     seqid::Symbol
-    range::UnitRange{<:Integer} # Could be more complex for Introns? But for ORFs it's fine, maybe for the more general GeneInterval
+    range::UnitRange{Int64}
     strand::Strand
-    frame::Int
+    frame::Int8
     features::NamedTuple
-end
 
-function OpenReadingFrame(
-    seqid::Symbol,
-    range::UnitRange{<:Integer},
-    strand::Strand,
-    frame::Int,
-    features::NamedTuple = (;)
-) where {F<:GeneFinderMethod}
-    # Sanity check: seqid definition
-    isdefinedglobal(Main, seqid) ||
-        @warn "The source sequence of the ORF is defined as $(seqid). Make sure to either define it or supply the correct source sequence."
-
-    # Sanity check: strand validity
-    strand in (PSTRAND, NSTRAND, '+', '-') ||
-        throw(ArgumentError("Cannot extract sequence for strand $(strand); expected PSTRAND ('+') or NSTRAND ('-')"))
-
-    # Sanity check: frame validity
-    (1 ≤ frame ≤ 3) || 
-        throw(ArgumentError("Invalid frame: $(frame), expected 1, 2, or 3"))
-
-    orflen = length(range)
-    # Sanity check: range length divisible by 3
-    (orflen % 3 == 0) || 
-        throw(ArgumentError("ORF length ($(orflen)) is not divisible by 3, incomplete codons detected"))
-
-    # Sanity check: minimum length (start + stop codons)
-    orflen ≥ 6 ||
-        throw(ArgumentError("ORF sequence too short to contain start and stop codons"))
-
-    return ORF{F}(seqid, range, strand, frame, features)
-end
-
-function OpenReadingFrame{F}(
-    seqid::Symbol,
-    range::UnitRange{<:Integer},
-    strand::Char,
-    frame::Int,
-    features::NamedTuple = (;)
-) where {F<:GeneFinderMethod}
-    # Sanity check: seqid definition
-    isdefinedglobal(Main, seqid) ||
-        @warn "The source sequence '$(seqid)' is not defined. Make sure to define it or supply the correct source sequence identifier."
-
-    # Sanity check: strand validity
-    strand in (PSTRAND, NSTRAND, '+', '-') ||
-        throw(ArgumentError("Cannot extract sequence for strand $(strand); expected PSTRAND ('+') or NSTRAND ('-')"))
-        
-    # Sanity check: frame validity
-    (1 ≤ frame ≤ 3) || 
-        throw(ArgumentError("Invalid frame: $(frame), expected 1, 2, or 3"))
-
-    orflen = length(range)
-    # Sanity check: range length divisible by 3
-    (orflen % 3 == 0) || 
-        throw(ArgumentError("ORF length ($(orflen)) is not divisible by 3, incomplete codons detected"))
-
-    # Sanity check: minimum length (start + stop codons)
-    orflen ≥ 6 ||
-        throw(ArgumentError("ORF sequence too short to contain start and stop codons"))
-
-    return ORF{F}(seqid, range, convert(Strand, strand), frame, features)
+    function OpenReadingFrame{F}(
+        seqid::Symbol,
+        range::UnitRange{Int64},
+        strand::Strand,
+        frame::Int8,
+        features::NamedTuple = (;)
+    ) where {F<:GeneFinderMethod}
+        _isvalidorf(seqid, range, strand, frame, features)
+        return new{F}(seqid, range, strand, frame, features)
+    end
 end
 
 const ORF = OpenReadingFrame
@@ -224,12 +215,19 @@ end
 finder(i::ORF{F}) where {F} = F
 
 function Base.show(io::IO, i::ORF{F}) where {F}
-    print(io, "ORF{", finder(i), "}(", seqid(i), ", ", leftposition(i), ":", rightposition(i), ", '")
+    print(io, "ORF{", finder(i), "}(", leftposition(i), ":", rightposition(i), ", '")
     show(io, strand(i))
     print(io, "', ", frame(i))
     feats = features(i)
     if !isempty(feats)
-        print(io, ", ", feats)
+        if length(feats) <= 3
+            print(io, ", ", feats)
+        else
+            keys_subset = keys(feats)[1:3]
+            vals_subset = Tuple(feats[k] for k in keys_subset)
+            truncated = NamedTuple{keys_subset}(vals_subset)
+            print(io, ", ", truncated, "…")
+        end
     end
     print(io, ")")
 end

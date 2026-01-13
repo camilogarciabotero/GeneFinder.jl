@@ -1,5 +1,6 @@
 # General purposes methods supporting main functions
-export _hasprematurestop, _varname, _varsymbol, _orfseq # ougth to be public but unexported
+export _hasprematurestop, _varname, _varsymbol, _orfseq  # ougth to be public but unexported
+
 
 """
     hasprematurestop(seq::LongNucOrView{4})::Bool
