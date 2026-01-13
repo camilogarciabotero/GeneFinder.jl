@@ -280,12 +280,12 @@ end
     @testset "intersect" begin
         common = intersect(c_all, c_long)
         @test length(common) == length(c_long)
-        @test all(orf -> orf in orfs(c_long), common)
+        @test all(orf -> orf in orfvector(c_long), common)
     end
     
     @testset "setdiff" begin
         short_only = setdiff(c_all, c_long)
-        @test all(orf -> orf ∉ orfs(c_long), short_only)
+        @test all(orf -> orf ∉ orfvector(c_long), short_only)
         @test length(short_only) == length(c_all) - length(c_long)
     end
     
