@@ -7,6 +7,44 @@ GeneFinder uses two complementary types for representing Open Reading Frames:
 
 This design ensures ORFs are composable, serializable, and independent of global state.
 
+### The ORF Type
+
+Individual ORFs store only coordinates and metadata:
+
+```julia
+orf = collection[1]
+
+leftposition(orf)   # Start position
+rightposition(orf)  # End position
+strand(orf)         # PSTRAND or NSTRAND
+frame(orf)          # Reading frame (1, 2, or 3)
+features(orf)       # NamedTuple of features
+finder(orf)         # The method that found it
+```
+
+#### Validation Rules
+
+The `ORF` constructor validates:
+- Strand must be `PSTRAND` or `NSTRAND`
+- Frame must be 1, 2, or 3
+- Range length must be divisible by 3
+- Range length must be ≥ 6 (start + stop codons)
+- Features must be a `NamedTuple`
+
+```julia
+# This will error - frame must be 1, 2, or 3
+ORF{NaiveFinder}(1:33, PSTRAND, Int8(4))
+# ERROR: ArgumentError: Invalid frame: 4, expected 1, 2, or 3
+```
+
+This architecture provides:
+- **No global state**: Source sequence is explicitly bundled
+- **Composability**: Works in any function or module context
+- **Serialization**: Collections can be saved/loaded
+- **Type safety**: Compile-time guarantees on finder method
+- **Efficiency**: Views used where possible, validation at construction
+
+
 ### ORFCollection
 
 All `GeneFinderMethod` implementations return an `ORFCollection`:
@@ -24,7 +62,7 @@ typeof(collection)  # ORFCollection{NaiveFinder, LongSubSeq{DNAAlphabet{4}}}
 typeof(source(collection))  # LongSubSeq{DNAAlphabet{4}}
 
 # Access ORFs
-orfs(collection)      # Vector of ORFs
+orfvector(collection)      # Vector of ORFs
 collection[1]         # First ORF
 length(collection)    # Number of ORFs
 ```
@@ -45,6 +83,9 @@ seq1 = sequence(collection, 1)
 # Extract by ORF
 orf = collection[1]
 seq1 = sequence(collection, orf)
+
+# Extract all sequences using broadcasting
+all_seqs = sequence.(Ref(collection), collection.orfs)
 ```
 
 ### Translation
@@ -55,47 +96,10 @@ Translate ORF sequences to amino acids using `BioSequences.translate`:
 using BioSequences
 
 # Translate a single ORF
-protein = translate(sequence(collection, 1))
+protein = translate(collection, 1)
 
-# Translate multiple ORFs
-proteins = [translate(sequence(collection, i)) for i in eachindex(collection)]
+# Translate multiple ORFs with a comprehension
+proteins = [translate(collection, i) for i in eachindex(collection)]
 ```
 
-### The ORF Type
-
-Individual ORFs store only coordinates and metadata:
-
-```julia
-orf = collection[1]
-
-leftposition(orf)   # Start position
-rightposition(orf)  # End position
-strand(orf)         # PSTRAND or NSTRAND
-frame(orf)          # Reading frame (1, 2, or 3)
-features(orf)       # NamedTuple of features
-finder(orf)         # The method that found it
-```
-
-### Validation Rules
-
-The `ORF` constructor validates:
-- Strand must be `PSTRAND` or `NSTRAND`
-- Frame must be 1, 2, or 3
-- Range length must be divisible by 3
-- Range length must be ≥ 6 (start + stop codons)
-
-```julia
-# This will error - frame must be 1, 2, or 3
-ORF{NaiveFinder}(1:33, PSTRAND, Int8(4))
-# ERROR: ArgumentError: Invalid frame: 4, expected 1, 2, or 3
-```
-
-### Design Benefits
-
-This architecture provides:
-- **No global state**: Source sequence is explicitly bundled
-- **Composability**: Works in any function or module context
-- **Serialization**: Collections can be saved/loaded
-- **Type safety**: Compile-time guarantees on finder method
-- **Efficiency**: Views used where possible, validation at construction
 

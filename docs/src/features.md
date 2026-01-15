@@ -71,4 +71,6 @@ axislegend(ax)
 f
 ```
 
+![Scores of Lambda ORFs vs Random Sequences](assets/lors-lambda.png)
+
 This plot shows that ORFs in the lambda genome have higher scores than random sequences, indicating they are more likely to be coding regions.
