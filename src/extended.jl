@@ -233,6 +233,19 @@ function Base.hash(c::ORFCollection, h::UInt)
     return h
 end
 
+function Base.getindex(c::ORFCollection, orf::ORF)
+    for (i, o) in enumerate(c.orfs)
+        if o == orf
+            return i
+        end
+    end
+    throw(KeyError("ORF not found in collection"))
+end
+
+function Base.length(c::ORFCollection, idx::Int)
+    return length(c.orfs[idx])
+end
+
 # ────────────────────────────────────────────────────────────────────────────────
 # Set Operations for ORFCollection
 # ────────────────────────────────────────────────────────────────────────────────
