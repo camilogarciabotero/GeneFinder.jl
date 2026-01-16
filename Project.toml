@@ -1,6 +1,6 @@
 name = "GeneFinder"
 uuid = "2bc6ee46-2158-4f5a-a720-91cb2d7cee64"
-version = "0.7.0"
+version = "0.8.0"
 authors = ["Camilo García-Botero"]
 
 [deps]
@@ -18,7 +18,7 @@ BioSymbols = "5.2.0"
 IterTools = "1.4"
 Kmers = "1.2.0"
 PrecompileTools = "1"
-julia = ">=1.10"
+julia = ">=1.11"
 
 [extras]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
