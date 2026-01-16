@@ -38,3 +38,36 @@ function _hasprematurestop(seq::NucleicSeqOrView{DNAAlphabet{N}})::Bool where {N
 
     return false
 end
+
+
+function _adjust_circular_windows(windows, seqlen)
+    adjusted_windows = []
+    for w in windows
+        w_first = first(w)
+        w_last = last(w)
+        
+        # Normalize positions to 1-based indexing in circular space
+        norm_first = mod(w_first - 1, seqlen) + 1
+        norm_last = mod(w_last - 1, seqlen) + 1
+        
+        # Check if window wraps around sequence boundary
+        if w_first < 1 || w_last > seqlen || norm_first > norm_last
+            # Split into two ranges: end of sequence and beginning of sequence
+            if w_first < 1
+                # Window extends before sequence start
+                range1 = (seqlen + w_first):seqlen
+                range2 = 1:w_last
+                push!(adjusted_windows, range1, range2)
+            else
+                # Window extends past sequence end
+                range1 = w_first:seqlen
+                range2 = 1:norm_last
+                push!(adjusted_windows, range1, range2)
+            end
+        else
+            # Window doesn't wrap, use normalized range
+            push!(adjusted_windows, norm_first:norm_last)
+        end
+    end
+    return Tuple(adjusted_windows)
+end
