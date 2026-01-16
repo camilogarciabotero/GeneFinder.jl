@@ -258,7 +258,7 @@ function orbs(orfc::ORFCollection{F,S}, idx::Int; circular::Bool=true) where {F,
     windows = _rbswindows(orfc, idx; circular=circular)
     seq = source(orfc)
     
-    maxscores = ntuple(3) do i
+    maxscores = ntuple(length(windows)) do i
         window = windows[i]
         wsqv = seq[window]
         mapreduce(rbs -> occursin(rbs, wsqv) ? motifs[rbs] : 0, max, keys(motifs), init=0)
