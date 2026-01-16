@@ -244,9 +244,10 @@ Base.isempty(c::ORFCollection) = isempty(c.orfs)
 
 # Indexing interface
 Base.getindex(c::ORFCollection, i::Int) = c.orfs[i]
-Base.getindex(c::ORFCollection, r::AbstractRange) = c.orfs[r]
-Base.getindex(c::ORFCollection, v::AbstractVector{Bool}) = c.orfs[v]
-Base.getindex(c::ORFCollection, v::AbstractVector{<:Integer}) = c.orfs[v]
+Base.getindex(c::ORFCollection, r::AbstractRange) = ORFCollection(c.source, c.orfs[r])
+Base.getindex(c::ORFCollection, v::AbstractVector{<:Integer}) = ORFCollection(c.source, c.orfs[v])
+Base.getindex(c::ORFCollection, a::AbstractVector{AbstractRange}) = ORFCollection(c.source, c.orfs[a])
+Base.getindex(c::ORFCollection, v::AbstractVector{Bool}) = ORFCollection(c.source, c.orfs[v])
 Base.firstindex(c::ORFCollection) = firstindex(c.orfs)
 Base.lastindex(c::ORFCollection) = lastindex(c.orfs)
 Base.keys(c::ORFCollection) = keys(c.orfs)
