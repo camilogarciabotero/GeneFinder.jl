@@ -106,7 +106,7 @@ const REVERSERBSMOTIFS = Dict(
 #       -20  -15  -10  -5    |-> start codon
 #        |....|....|....|....ATG...
 #EX1.              GGAGGACCCCATGACACACACAACAC  
-#                  |----|:RBS(dna"GGAGGA", 1:5, :A, 27, STRAND_POS)
+#                  |----|:RBS(dna"GGAGGA", 1:5, :a, 27, STRAND_POS)
 
 """
     _rbswindows(orfc::ORFCollection{F,S}, idx::Int; circular::Bool=true) where {F,S} -> Tuple{UnitRange{Int64}, UnitRange{Int64}, UnitRange{Int64}}
