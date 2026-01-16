@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/src/assets/logo.svg" height="150"><br/>
+  <img src="docs/src/assets/logo.svg" height="180"><br/>
   <i>A Gene Finder Framework for the Julia Programming Language.</i>
 </p>
 
@@ -277,6 +277,7 @@ collection = findorfs(seq, finder=NaiveFinder, alternative_start=true)
 |-----------|-------------|
 | `NaiveFinder` | Regex-based ORF detection (default) |
 | `NaiveFinderLazy` | Memory-optimized variant with pre-allocation |
+| `NaiveCollector` | Uses simple `eachmatch` for non-overlapping ORF detection |
 
 ## Documentation
 
