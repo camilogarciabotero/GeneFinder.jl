@@ -177,11 +177,13 @@ end
         @test seq1 == seq2
     end
     
-    # @testset "Extract all sequences" begin
-    #     seqs = sequences(collection)
-    #     @test length(seqs) == length(collection)
-    #     @test all(s -> s isa Union{LongSubSeq, LongDNA}, seqs)
-    # end
+    @testset "Extract all sequences" begin
+        fi = firstindex(collection)
+        li = lastindex(collection)
+        seqs = GeneFinder.sequence(collection, fi:li)
+        @test length(seqs) == length(collection)
+        @test all(s -> s isa LongSubSeq, seqs)
+    end
     
     @testset "Sequence starts with ATG" begin
         for i in 1:length(collection)
@@ -220,13 +222,15 @@ end
         @test protein1 == protein2
     end
     
-    # @testset "Translate all" begin
-    #     proteins = translations(collection)
-    #     @test length(proteins) == length(collection)
-    #     @test all(p -> p isa LongAA, proteins)
-    #     @test all(p -> p[1] == AA_M, proteins)
-    #     @test all(p -> p[end] == AA_Term, proteins)
-    # end
+    @testset "Translate all" begin
+        fi = firstindex(collection)
+        li = lastindex(collection)
+        proteins = translate(collection, fi:li)
+        @test length(proteins) == length(collection)
+        @test all(p -> p isa LongAA, proteins)
+        @test all(p -> p[1] == AA_M, proteins)
+        @test all(p -> p[end] == AA_Term, proteins)
+    end
     
     @testset "Translation consistency" begin
         # Manual translation should match
