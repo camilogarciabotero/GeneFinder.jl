@@ -268,8 +268,9 @@ function orbs(orfc::ORFCollection{F,S}, idx::Int; circular::Bool=true) where {F,
 end
 
 function orbs(orfc::ORFCollection{F,S}, orf::ORF{F}; circular::Bool=true) where {F,S}
-    # idx = orfc[orf]
-    return orbs(orfc, orfc[orf]; circular=circular)
+    idx = findfirst(o -> o === orf, orfc)
+    idx === nothing && throw(ArgumentError("ORF not found in ORFCollection"))
+    return orbs(orfc, idx; circular=circular)
 end
 
 
