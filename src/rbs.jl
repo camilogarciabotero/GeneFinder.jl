@@ -143,7 +143,10 @@ function _rbswindows(orfc::ORFCollection{F,S}, idx::Int; circular::Bool=true) wh
     windows = (windowa, windowb, windowc)
 
     # Adjust for circular sequences if needed
-    windows = circular ?  map(w -> (mod(first(w)-1, seqlen)+1 : mod(last(w)-1, seqlen)+1), windows) : windows
+    # windows = circular ? map(w -> (mod(first(w)-1, seqlen)+1:mod(last(w)-1, seqlen)+1), windows) : windows
+    if circular
+        windows = _adjust_circular_windows(windows, seqlen)
+    end
 
     return filter(window -> Base.first(window) >= 1 && Base.last(window) <= seqlen, windows)
 end
@@ -176,8 +179,6 @@ the strand orientation) and records all occurrences of the highest-scoring motif
 - Identifies all occurrences of the best RBS motif in each window
 - Records both the sequence and its position information
 
-# Note
-This is an internal and public function as indicated by the leading underscore.
 """
 function _findrbs(orfc::ORFCollection{F,S}, idx::Int; circular::Bool=true) where {F,S}
     rbsvect = RBS[]
@@ -187,23 +188,24 @@ function _findrbs(orfc::ORFCollection{F,S}, idx::Int; circular::Bool=true) where
     motifs = strand(orf) == PSTRAND ? FORWARDRBSMOTIFS : REVERSERBSMOTIFS
     wsymb = (:a, :b, :c)
 
-    @inbounds for i in 1:3
+    nwindows = min(length(windows), length(wsymb))  
+    @inbounds for i in 1:nwindows
         window = windows[i]
-        symbol = wsymb[i]
         wsqv = @view seq[window]
         offset_base = first(window) - 1
         
         # Track best match in this window
         best_motif = nothing
         best_score = 0
-        best_ranges = []
-        
+        best_ranges = UnitRange{Int}[]
         for (rbs, scr) in pairs(motifs)
-            if scr >= best_score && occursin(rbs, wsqv)
+            if occursin(rbs, wsqv)
                 if scr > best_score
                     best_score = scr
                     best_motif = rbs
                     best_ranges = findall(rbs, wsqv)
+                elseif scr == best_score
+                    append!(best_ranges, findall(rbs, wsqv))
                 end
             end
         end
@@ -212,7 +214,7 @@ function _findrbs(orfc::ORFCollection{F,S}, idx::Int; circular::Bool=true) where
             for motifrange in best_ranges
                 offset = (offset_base + first(motifrange)):(offset_base + last(motifrange))
                 rbseq = @view wsqv[motifrange]
-                push!(rbsvect, RBS(rbseq, offset, symbol, best_score, strand(orf)))
+                push!(rbsvect, RBS(rbseq, offset, wsymb[i], best_score, strand(orf)))
             end
         end
     end
@@ -260,7 +262,7 @@ function orbs(orfc::ORFCollection{F,S}, idx::Int; circular::Bool=true) where {F,
     
     maxscores = ntuple(length(windows)) do i
         window = windows[i]
-        wsqv = seq[window]
+        wsqv = @view seq[window]
         mapreduce(rbs -> occursin(rbs, wsqv) ? motifs[rbs] : 0, max, keys(motifs), init=0)
     end
     
@@ -296,7 +298,7 @@ end
 ## Another idea would be to fastly count the number of ATG in a sequence twice. This will be the approx number of ORFs
 ## in the sequence.Them we can use other way to store the ORFs in the memory layout.
 
-## Another idea would be to use the findall function to find all the ATG in the sequence and then use the memory layout
+## Another idea would be to use the findall function to find all ATG in the sequence and then use the memory layout
 
 # export findrbs
 # function findrbs(seq::SeqOrView{A}, orf::ORFI{N,F}) where {A,N,F}
