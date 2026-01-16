@@ -282,31 +282,13 @@ For getting the sequence of all ORFs are several alternatives:
 ```julia
 collection = findorfs(seq)
 # Using a for loop with push!
-orfseqs = Vector{LongSubSeq{DNAAlphabet{4}}}()
-for orf in collection
-    push!(orfseqs, sequence(collection, orf))
-end
+
+# Using sequence methods
+
+orfseqs = sequence(collection, 1:length(collection))  # All ORF sequences
 
 # Using broadcasting
-orfseq = sequence.(Ref(collection), collection.orfs)
-
-# Using list comprehension
-orfseqs = [sequence(collection, orf) for orf in collection]
-
-# Using map
-orfseqs = map(orf -> sequence(collection, orf), collection)
-
-# Using indices
-orfseqs = [sequence(collection, i) for i in eachindex(collection)]
-
-# Using map with indices
-orfseqs = map(i -> sequence(collection, i), eachindex(collection))
-
-# Using a generator expression
-orfseqs = collect(sequence(collection, orf) for orf in collection)
-
-# Using a generator with indices
-orfseqs = collect(sequence(collection, i) for i in eachindex(collection))
+orfseqs = sequence.(Ref(collection), 1:length(collection))  # All ORF sequences
 ```
 
 See also: [`sequences`](@ref), [`ORFCollection`](@ref)
@@ -338,6 +320,24 @@ orfseq = sequence(collection, orf)
 """
 @inline function sequence(collection::ORFCollection, orf::ORF; kwargs...)
     return _extract_sequence(collection.source, orf; kwargs...)
+end
+
+@inline function sequence(collection::ORFCollection, r::AbstractRange; kwargs...)
+    result = Vector{LongSubSeq{DNAAlphabet{4}}}(undef, length(r))
+    for (i, idx) in enumerate(r)
+        @boundscheck checkbounds(collection.orfs, idx)
+        result[i] = _extract_sequence(collection.source, @inbounds collection.orfs[idx]; kwargs...)
+    end
+    return result
+end
+
+@inline function sequence(collection::ORFCollection, v::AbstractVector{Int}; kwargs...)
+    result = Vector{LongSubSeq{DNAAlphabet{4}}}(undef, length(v))
+    for (i, idx) in enumerate(v)
+        @boundscheck checkbounds(collection.orfs, idx)
+        result[i] = _extract_sequence(collection.source, @inbounds collection.orfs[idx]; kwargs...)
+    end
+    return result
 end
 
 """
