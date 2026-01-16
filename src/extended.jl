@@ -85,6 +85,24 @@ function translate(collection::ORFCollection, i::Int; kwargs...)
     return translate(sequence(collection, i); kwargs...)
 end
 
+function translate(orfc::ORFCollection, v::AbstractRange{<:Integer}; kwargs...)
+    result = Vector{LongAA}(undef, length(v))
+    for (i, idx) in enumerate(v)
+        @boundscheck checkbounds(orfc.orfs, idx)
+        result[i] = translate(sequence(orfc, @inbounds orfc.orfs[idx]); kwargs...)
+    end
+    return result
+end
+
+function translate(orfc::ORFCollection, v::AbstractVector{<:Integer}; kwargs...)
+    result = Vector{LongAA}(undef, length(v))
+    for (i, idx) in enumerate(v)
+        @boundscheck checkbounds(orfc.orfs, idx)
+        result[i] = translate(sequence(orfc, @inbounds orfc.orfs[idx]); kwargs...)
+    end
+    return result
+end
+
 """
     translate(collection::ORFCollection, orf::ORF; kwargs...)
 
